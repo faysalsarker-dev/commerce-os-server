@@ -73,25 +73,28 @@ export const config = buildConfig({
     env:            str ("NODE_ENV",       "development"),
     enableSwagger:  bool("ENABLE_SWAGGER", false),
   },
+  frontend: {
+    url: str("FRONTEND_URL", "http://localhost:3000"),
+  },
   db: {
     url:            str("DATABASE_URL"),
   },
-//   jwt: {
-//     secret:           str("JWT_SECRET"),
-//     expiresIn:        str("JWT_EXPIRES_IN",         "7d"),
-//     refreshSecret:    str("JWT_REFRESH_SECRET"),
-//     refreshExpiresIn: str("JWT_REFRESH_EXPIRES_IN", "30d"),
-//   },
-//   bcrypt: {
-//     saltRounds: num("BCRYPT_SALT_ROUNDS", 10),
-//   },
-//   email: {
-//     host: str("SMTP_HOST"),
-//     port: num("SMTP_PORT", 587),
-//     user: str("SMTP_USER"),
-//     pass: str("SMTP_PASS"),
-//     from: str("SMTP_FROM", "noreply@app.com"),
-//   },
+  jwt: {
+    secret:           str("JWT_SECRET"),
+    expiresIn:        str("JWT_EXPIRES_IN",         "7d"),
+    refreshSecret:    str("JWT_REFRESH_SECRET"),
+    refreshExpiresIn: str("JWT_REFRESH_EXPIRES_IN", "30d"),
+  },
+  bcrypt: {
+    saltRounds: num("BCRYPT_SALT_ROUNDS", 10),
+  },
+  email: {
+    host: str("SMTP_HOST"),
+    port: num("SMTP_PORT", 587),
+    user: str("SMTP_USER"),
+    pass: str("SMTP_PASS"),
+    from: str("SMTP_FROM", "noreply@app.com"),
+  },
   cloudinary: {
     cloudName: str("CLOUDINARY_CLOUD_NAME"),
     apiKey:    str("CLOUDINARY_API_KEY"),

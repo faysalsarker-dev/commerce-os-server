@@ -2,13 +2,13 @@ import { Server } from "http";
 import app from './app';
 import { config } from "./app/config";
 
-const PORT = process.env.PORT || 5000;
 let server: Server;
 
 async function bootstrap() {
   try {
-    server = app.listen(config.app.port, () => {
-      console.log(`🚀 Server is humming along on http://localhost:${config.app.port}`);
+    const PORT = config.app.port || 5000;
+    server = app.listen(PORT, () => {
+      console.log(`🚀 Server is humming along on http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error("❌ Failed to start server:", error);

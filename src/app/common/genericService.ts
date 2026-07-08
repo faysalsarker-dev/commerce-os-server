@@ -10,8 +10,8 @@ export const getAllFromDB = async (
 
   // Execute both queries in parallel for performance
   const [data, total] = await Promise.all([
-    (prisma[modelName] as any).findMany({ where, orderBy, skip, take }),
-    (prisma[modelName] as any).count({ where }),
+    (prisma as any)[modelName].findMany({ where, orderBy, skip, take }),
+    (prisma as any)[modelName].count({ where }),
   ]);
 
   return {

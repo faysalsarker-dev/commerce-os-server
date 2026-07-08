@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.4.0
- * Query Engine version: ab56fe763f921d033a6c195e7ddeb3e255bdbb57
+ * Prisma Client JS version: 7.8.0
+ * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.4.0",
-  engine: "ab56fe763f921d033a6c195e7ddeb3e255bdbb57"
+  client: "7.8.0",
+  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
 }
 
 /**
@@ -384,7 +384,9 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  User: 'User'
+  User: 'User',
+  EmployeeDetail: 'EmployeeDetail',
+  SalaryRecord: 'SalaryRecord'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -400,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user"
+    modelProps: "user" | "employeeDetail" | "salaryRecord"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -478,6 +480,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    EmployeeDetail: {
+      payload: Prisma.$EmployeeDetailPayload<ExtArgs>
+      fields: Prisma.EmployeeDetailFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EmployeeDetailFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeDetailPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EmployeeDetailFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeDetailPayload>
+        }
+        findFirst: {
+          args: Prisma.EmployeeDetailFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeDetailPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EmployeeDetailFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeDetailPayload>
+        }
+        findMany: {
+          args: Prisma.EmployeeDetailFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeDetailPayload>[]
+        }
+        create: {
+          args: Prisma.EmployeeDetailCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeDetailPayload>
+        }
+        createMany: {
+          args: Prisma.EmployeeDetailCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EmployeeDetailCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeDetailPayload>[]
+        }
+        delete: {
+          args: Prisma.EmployeeDetailDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeDetailPayload>
+        }
+        update: {
+          args: Prisma.EmployeeDetailUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeDetailPayload>
+        }
+        deleteMany: {
+          args: Prisma.EmployeeDetailDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EmployeeDetailUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EmployeeDetailUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeDetailPayload>[]
+        }
+        upsert: {
+          args: Prisma.EmployeeDetailUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeDetailPayload>
+        }
+        aggregate: {
+          args: Prisma.EmployeeDetailAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmployeeDetail>
+        }
+        groupBy: {
+          args: Prisma.EmployeeDetailGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmployeeDetailGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EmployeeDetailCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmployeeDetailCountAggregateOutputType> | number
+        }
+      }
+    }
+    SalaryRecord: {
+      payload: Prisma.$SalaryRecordPayload<ExtArgs>
+      fields: Prisma.SalaryRecordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SalaryRecordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SalaryRecordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SalaryRecordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SalaryRecordPayload>
+        }
+        findFirst: {
+          args: Prisma.SalaryRecordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SalaryRecordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SalaryRecordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SalaryRecordPayload>
+        }
+        findMany: {
+          args: Prisma.SalaryRecordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SalaryRecordPayload>[]
+        }
+        create: {
+          args: Prisma.SalaryRecordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SalaryRecordPayload>
+        }
+        createMany: {
+          args: Prisma.SalaryRecordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SalaryRecordCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SalaryRecordPayload>[]
+        }
+        delete: {
+          args: Prisma.SalaryRecordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SalaryRecordPayload>
+        }
+        update: {
+          args: Prisma.SalaryRecordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SalaryRecordPayload>
+        }
+        deleteMany: {
+          args: Prisma.SalaryRecordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SalaryRecordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SalaryRecordUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SalaryRecordPayload>[]
+        }
+        upsert: {
+          args: Prisma.SalaryRecordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SalaryRecordPayload>
+        }
+        aggregate: {
+          args: Prisma.SalaryRecordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSalaryRecord>
+        }
+        groupBy: {
+          args: Prisma.SalaryRecordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SalaryRecordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SalaryRecordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SalaryRecordCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -519,11 +669,53 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
+  name: 'name',
   email: 'email',
-  name: 'name'
+  phone: 'phone',
+  password: 'password',
+  role: 'role',
+  status: 'status',
+  image: 'image',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const EmployeeDetailScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  designation: 'designation',
+  joinDate: 'joinDate',
+  baseSalary: 'baseSalary',
+  nidNumber: 'nidNumber',
+  address: 'address',
+  emergencyContact: 'emergencyContact',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeeDetailScalarFieldEnum = (typeof EmployeeDetailScalarFieldEnum)[keyof typeof EmployeeDetailScalarFieldEnum]
+
+
+export const SalaryRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  month: 'month',
+  year: 'year',
+  baseSalary: 'baseSalary',
+  bonus: 'bonus',
+  deduction: 'deduction',
+  netPay: 'netPay',
+  status: 'status',
+  paidAt: 'paidAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SalaryRecordScalarFieldEnum = (typeof SalaryRecordScalarFieldEnum)[keyof typeof SalaryRecordScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -557,6 +749,76 @@ export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 /**
+ * Reference to a field of type 'String'
+ */
+export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
+    
+
+
+/**
+ * Reference to a field of type 'String[]'
+ */
+export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Role'
+ */
+export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
+    
+
+
+/**
+ * Reference to a field of type 'Role[]'
+ */
+export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EmployeeStatus'
+ */
+export type EnumEmployeeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmployeeStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'EmployeeStatus[]'
+ */
+export type ListEnumEmployeeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmployeeStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime'
+ */
+export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime[]'
+ */
+export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -571,16 +833,16 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'String'
+ * Reference to a field of type 'SalaryStatus'
  */
-export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
+export type EnumSalaryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SalaryStatus'>
     
 
 
 /**
- * Reference to a field of type 'String[]'
+ * Reference to a field of type 'SalaryStatus[]'
  */
-export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+export type ListEnumSalaryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SalaryStatus[]'>
     
 
 
@@ -690,9 +952,26 @@ export type PrismaClientOptions = ({
    * ```
    */
   comments?: runtime.SqlCommenterPlugin[]
+  /**
+   * Optional maximum size for the query plan cache. If not provided, a default size will be used.
+   * A value of `0` can be used to disable the cache entirely. A higher cache size can improve
+   * performance for applications that execute a large number of unique queries, while a smaller
+   * cache size can reduce memory usage.
+   * 
+   * @example
+   * ```
+   * const prisma = new PrismaClient({
+   *   adapter,
+   *   queryPlanCacheMaxSize: 100,
+   * })
+   * ```
+   */
+  queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  employeeDetail?: Prisma.EmployeeDetailOmit
+  salaryRecord?: Prisma.SalaryRecordOmit
 }
 
 /* Types for Logging */

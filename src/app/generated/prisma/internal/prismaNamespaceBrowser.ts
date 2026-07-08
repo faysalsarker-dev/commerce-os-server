@@ -51,7 +51,9 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User'
+  User: 'User',
+  EmployeeDetail: 'EmployeeDetail',
+  SalaryRecord: 'SalaryRecord'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -72,11 +74,53 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
+  name: 'name',
   email: 'email',
-  name: 'name'
+  phone: 'phone',
+  password: 'password',
+  role: 'role',
+  status: 'status',
+  image: 'image',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const EmployeeDetailScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  designation: 'designation',
+  joinDate: 'joinDate',
+  baseSalary: 'baseSalary',
+  nidNumber: 'nidNumber',
+  address: 'address',
+  emergencyContact: 'emergencyContact',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeeDetailScalarFieldEnum = (typeof EmployeeDetailScalarFieldEnum)[keyof typeof EmployeeDetailScalarFieldEnum]
+
+
+export const SalaryRecordScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  month: 'month',
+  year: 'year',
+  baseSalary: 'baseSalary',
+  bonus: 'bonus',
+  deduction: 'deduction',
+  netPay: 'netPay',
+  status: 'status',
+  paidAt: 'paidAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SalaryRecordScalarFieldEnum = (typeof SalaryRecordScalarFieldEnum)[keyof typeof SalaryRecordScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -1,5 +1,63 @@
-model User { 
-  id    Int     @id @default(autoincrement()) 
-  email String  @unique
-  name  String?
-} 
+
+
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  phone        String?        @unique
+  password String
+  role         Role
+  status       EmployeeStatus @default(ACTIVE)
+  image    String?
+
+  employeeDetail EmployeeDetail?
+  salaryRecords  SalaryRecord[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([role])
+}
+
+
+
+model EmployeeDetail {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  designation      String?           // e.g. "Senior Offline Salesman"
+  joinDate         DateTime
+  baseSalary       Decimal           @db.Decimal(10, 2)
+  nidNumber        String?
+  address          String?
+  emergencyContact String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model SalaryRecord {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  month      Int          // 1-12
+  year       Int
+  baseSalary Decimal      @db.Decimal(10, 2)
+  bonus      Decimal      @default(0) @db.Decimal(10, 2)
+  deduction  Decimal      @default(0) @db.Decimal(10, 2)
+  netPay     Decimal      @db.Decimal(10, 2)   // baseSalary + bonus - deduction
+
+  status  SalaryStatus @default(PENDING)
+  paidAt  DateTime?
+  notes   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, month, year])   // prevents duplicate salary rows for same month
+  @@index([month, year])
+}

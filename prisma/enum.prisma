@@ -1,0 +1,17 @@
+enum Role {
+  SUPER_ADMIN       
+  MARKETER         
+  ONLINE_SALESMAN   
+  OFFLINE_SALESMAN  
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+  TERMINATED
+}
+
+enum SalaryStatus {
+  PENDING
+  PAID
+}
