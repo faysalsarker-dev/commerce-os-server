@@ -3,21 +3,19 @@ import { config } from "../../config";
 import prisma from "../../lib/prisma";
 import { AppError } from "../../errors/ApiError";
 import { sendEmail } from "../../lib/nodemailer";
+import { generatePasswordResetToken, verifyToken } from "../../utils/jwt";
 import {
-  generatePasswordResetToken,
-  verifyToken,
-} from "../../utils/jwt";
-import { UserCreateInput, UserUpdateInput } from "../../generated/prisma/models";
+  UserCreateInput,
+  UserUpdateInput,
+} from "../../generated/prisma/models";
 import { buildTokens, safeUser } from "../../utils/authUtils";
 import { Role } from "../../generated/prisma/enums";
 
-
-
-
-
-
 export const registerUser = async (payload: UserCreateInput) => {
-  const hashedPassword = await bcrypt.hash(payload.password, config.bcrypt.saltRounds);
+  const hashedPassword = await bcrypt.hash(
+    payload.password,
+    config.bcrypt.saltRounds,
+  );
 
   const user = await prisma.user.create({
     data: {
@@ -103,7 +101,10 @@ export const updateUserPassword = async (
     throw new AppError("Current password is incorrect", 401);
   }
 
-  const hashedPassword = await bcrypt.hash(newPassword, config.bcrypt.saltRounds);
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    config.bcrypt.saltRounds,
+  );
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },
@@ -142,7 +143,10 @@ export const sendForgotPasswordEmail = async (email: string) => {
 };
 
 export const resetPassword = async (token: string, newPassword: string) => {
-  const payload = verifyToken(token, config.jwt.refreshSecret) as { id: string; email: string };
+  const payload = verifyToken(token, config.jwt.refreshSecret) as {
+    id: string;
+    email: string;
+  };
 
   if (!payload?.id) {
     throw new AppError("Invalid or expired reset token", 400);
@@ -154,7 +158,10 @@ export const resetPassword = async (token: string, newPassword: string) => {
     throw new AppError("User not found", 404);
   }
 
-  const hashedPassword = await bcrypt.hash(newPassword, config.bcrypt.saltRounds);
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    config.bcrypt.saltRounds,
+  );
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
     data: { password: hashedPassword },
