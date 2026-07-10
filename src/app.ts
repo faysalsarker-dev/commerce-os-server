@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import morgan from "morgan";
 import { globalErrorHandler } from "./app/errors/globalErrorHandler";
-import { AppError } from "./app/errors/ApiError";
+import { AppError } from "./app/errors/AppError";
 import { router } from "./app/routes/index";
 import { globalRateLimiter } from "./app/middleware/rateLimiter";
 

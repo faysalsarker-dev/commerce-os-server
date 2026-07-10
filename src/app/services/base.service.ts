@@ -2,7 +2,7 @@
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-import { AppError } from "../errors/ApiError";
+import { AppError } from "../errors/AppError";
 import { buildPrismaQuery } from "../utils/QueryBuilder";
 
 type PrismaModel = {

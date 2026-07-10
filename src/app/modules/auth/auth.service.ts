@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { config } from "../../config";
 import prisma from "../../lib/prisma";
-import { AppError } from "../../errors/ApiError";
+import { AppError } from "../../errors/AppError";
 import { sendEmail } from "../../lib/nodemailer";
 import { generatePasswordResetToken, verifyToken } from "../../utils/jwt";
 import {

@@ -15,3 +15,12 @@ enum SalaryStatus {
   PENDING
   PAID
 }
+
+
+
+enum StockMovementType {
+  PURCHASE_IN    // new stock added by admin
+  SALE_OUT       // stock reduced by a sale
+  RETURN_IN      // stock returned by customer
+  ADJUSTMENT     // manual correction (damage, loss, recount)
+}

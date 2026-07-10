@@ -2,7 +2,7 @@
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import stream from "stream";
 import { config } from ".";
-import { AppError } from "../errors/ApiError";
+import { AppError } from "../errors/AppError";
 
 
 
