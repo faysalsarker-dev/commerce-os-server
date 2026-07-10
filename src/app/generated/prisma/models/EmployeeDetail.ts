@@ -498,14 +498,6 @@ export type EmployeeDetailUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.EmployeeDetailUpdateToOneWithWhereWithoutUserInput, Prisma.EmployeeDetailUpdateWithoutUserInput>, Prisma.EmployeeDetailUncheckedUpdateWithoutUserInput>
 }
 
-export type DecimalFieldUpdateOperationsInput = {
-  set?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
-}
-
 export type EmployeeDetailCreateWithoutUserInput = {
   id?: string
   designation?: string | null

@@ -1,5 +1,5 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
-import { AppError } from "./ApiError";
+import { AppError } from "./AppError";
 
 export const handlePrismaError = (err: PrismaClientKnownRequestError) => {
   switch (err.code) {

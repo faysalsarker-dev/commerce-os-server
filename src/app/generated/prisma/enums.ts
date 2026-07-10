@@ -34,3 +34,13 @@ export const SalaryStatus = {
 } as const
 
 export type SalaryStatus = (typeof SalaryStatus)[keyof typeof SalaryStatus]
+
+
+export const StockMovementType = {
+  PURCHASE_IN: 'PURCHASE_IN',
+  SALE_OUT: 'SALE_OUT',
+  RETURN_IN: 'RETURN_IN',
+  ADJUSTMENT: 'ADJUSTMENT'
+} as const
+
+export type StockMovementType = (typeof StockMovementType)[keyof typeof StockMovementType]

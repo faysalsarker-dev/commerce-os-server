@@ -1,5 +1,5 @@
 import { ZodError } from "zod";
-import { AppError } from "./ApiError";
+import { AppError } from "./AppError";
 
 export const handleZodError = (err: ZodError): AppError => {
   const message = err.issues

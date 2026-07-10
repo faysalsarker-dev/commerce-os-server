@@ -3,7 +3,7 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyToken } from "../utils/jwt";
 import { JwtPayload } from "jsonwebtoken";
-import { AppError } from "../errors/ApiError";
+import { AppError } from "../errors/AppError";
 
 export const checkAuth =
   (authRoles?: string[]) =>

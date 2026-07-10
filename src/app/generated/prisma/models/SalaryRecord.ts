@@ -616,14 +616,6 @@ export type SalaryRecordUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.SalaryRecordScalarWhereInput | Prisma.SalaryRecordScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type EnumSalaryStatusFieldUpdateOperationsInput = {
   set?: $Enums.SalaryStatus
 }

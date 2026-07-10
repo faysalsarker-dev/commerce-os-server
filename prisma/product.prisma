@@ -1,0 +1,74 @@
+
+model Product {
+  id           String    @id @default(cuid())
+  name         String
+  description  String?
+  categoryId   String?
+  category     Category? @relation(fields: [categoryId], references: [id])
+
+  costPrice    Decimal   @db.Decimal(10, 2)   // default cost, can be overridden per variant if needed
+  sellingPrice Decimal   @db.Decimal(10, 2)   // default price, can be overridden per variant if needed
+
+  colors       ProductColor[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+}
+
+
+
+model ProductColor {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  colorName  String     
+  colorHex   String?    
+  images     String[]   
+
+  variants   ProductVariant[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([productId, colorName])
+}
+
+
+model ProductVariant {
+  id             String   @id @default(cuid())
+  productColorId String
+  productColor   ProductColor @relation(fields: [productColorId], references: [id], onDelete: Cascade)
+
+  size           String     // e.g. "M", "L", "XL", "Free Size"
+  sku            String     @unique   // e.g. PJB-MAROON-M
+  stockQty       Int        @default(0)
+
+  
+  costPriceOverride    Decimal? @db.Decimal(10, 2)
+  sellingPriceOverride Decimal? @db.Decimal(10, 2)
+
+  qrCode         String   @unique @default(cuid())
+
+  stockMovements StockMovement[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productColorId, size])
+  @@index([qrCode])
+}
+
+
+model StockMovement {
+  id         String            @id @default(cuid())
+  variantId  String
+  variant    ProductVariant    @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  type       StockMovementType
+  quantity   Int               // always positive; type determines +/- effect on stockQty
+  reason     String?
+  createdAt DateTime @default(now())
+
+  @@index([variantId])
+}
