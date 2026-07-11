@@ -2,6 +2,7 @@ import { Router } from "express"
 import authRoute from "../modules/auth/auth.route"
 import userRoute from "../modules/user/user.route"
 import categoryRoute from "../modules/catagory/category.route"
+import productRoute from "../modules/product/product.route"
 
 export const router = Router()
 
@@ -23,6 +24,10 @@ const moduleRoutes: ModuleRoute[] = [
     {
         path: "/category",
         route: categoryRoute
+    },
+    {
+        path: "/product",
+        route: productRoute
     }
 ]
 
