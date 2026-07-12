@@ -7,15 +7,14 @@ import { globalErrorHandler } from "./app/errors/globalErrorHandler";
 import { AppError } from "./app/errors/AppError";
 import { router } from "./app/routes/index";
 import { globalRateLimiter } from "./app/middleware/rateLimiter";
+import { corsOrigin } from "./app/utils/corsOrigin";
 
 const app: Application = express();
 
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL
-      ? [process.env.FRONTEND_URL, "http://localhost:3000", "http://localhost:5173"]
-      : ["http://localhost:3000", "http://localhost:5173", "http://192.168.0.127:3000"],
+    origin: corsOrigin,
     credentials: true,
   })
 );

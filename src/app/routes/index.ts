@@ -3,6 +3,7 @@ import authRoute from "../modules/auth/auth.route"
 import userRoute from "../modules/user/user.route"
 import categoryRoute from "../modules/catagory/category.route"
 import productRoute from "../modules/product/product.route"
+import salesRoute from "../modules/sales/sales.route"
 
 export const router = Router()
 
@@ -28,6 +29,10 @@ const moduleRoutes: ModuleRoute[] = [
     {
         path: "/product",
         route: productRoute
+    },
+    {
+        path: "/sales",
+        route: salesRoute
     }
 ]
 

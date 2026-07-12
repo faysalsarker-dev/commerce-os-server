@@ -33,7 +33,8 @@ export const login = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const logout = catchAsync(async (_req: Request, res: Response) => {
+export const logout = catchAsync(async (req: Request, res: Response) => {
+  await AuthService.logoutUser(req.user.id);
   clearAuthCookies(res);
 
   sendResponse(res, {

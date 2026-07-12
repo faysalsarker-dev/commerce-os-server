@@ -1,6 +1,7 @@
 import { Server } from "http";
 import app from './app';
 import { config } from "./app/config";
+import { initializeSocket } from "./app/config/socket";
 
 let server: Server;
 
@@ -10,6 +11,8 @@ async function bootstrap() {
     server = app.listen(PORT, () => {
       console.log(`🚀 Server is humming along on http://localhost:${PORT}`);
     });
+
+    initializeSocket(server);
   } catch (error) {
     console.error("❌ Failed to start server:", error);
     process.exit(1);

@@ -620,10 +620,6 @@ export type EnumSalaryStatusFieldUpdateOperationsInput = {
   set?: $Enums.SalaryStatus
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type SalaryRecordCreateWithoutUserInput = {
   id?: string
   month: number
