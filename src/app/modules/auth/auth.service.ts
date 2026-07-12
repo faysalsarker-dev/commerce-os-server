@@ -68,6 +68,18 @@ export const getUserProfile = async (userId: string) => {
   return safeUser(user);
 };
 
+export const logoutUser = async (userId: string) => {
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      isOnline: false,
+      lastSeenAt: new Date(),
+    },
+  });
+
+  return safeUser(user);
+};
+
 export const updateUserProfile = async (
   userId: string,
   payload: UserUpdateInput,

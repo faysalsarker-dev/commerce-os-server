@@ -6,10 +6,12 @@ model User {
   name         String
   email        String         @unique
   phone        String?        @unique
-  password String
+  password     String
   role         Role
   status       EmployeeStatus @default(ACTIVE)
-  image    String?
+  image        String?
+  isOnline     Boolean        @default(false)
+  lastSeenAt   DateTime?
 
   employeeDetail EmployeeDetail?
   salaryRecords  SalaryRecord[]
@@ -18,6 +20,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@index([role])
+  @@index([isOnline])
 }
 
 
