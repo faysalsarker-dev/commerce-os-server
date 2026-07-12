@@ -9,6 +9,17 @@ export let io: SocketIOServer | null = null;
 
 const activeUserSockets = new Map<string, Set<string>>();
 
+export type StockUpdatePayload = {
+  variantId: string;
+  productId?: string;
+  productName?: string;
+  colorName?: string;
+  size?: string;
+  stockQty: number;
+  movementType: "SALE_OUT" | "RETURN_IN";
+  updatedAt: Date;
+};
+
 const extractAccessToken = (socket: Socket) => {
   const tokenFromAuth = socket.handshake.auth?.token;
 
@@ -23,6 +34,10 @@ const extractAccessToken = (socket: Socket) => {
     .find((value) => value.startsWith("accessToken="));
 
   return cookieValue?.replace("accessToken=", "") ?? "";
+};
+
+export const broadcastStockUpdate = (payload: StockUpdatePayload) => {
+  io?.emit("stock:update", payload);
 };
 
 const broadcastPresence = async (userId: string) => {
