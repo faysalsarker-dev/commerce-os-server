@@ -10,6 +10,7 @@ import {
 } from "../../generated/prisma/models";
 import { buildTokens, safeUser } from "../../utils/authUtils";
 import { Role } from "../../generated/prisma/enums";
+import { setUserOfflineInRedis } from "../../services/presence.service";
 
 export const registerUser = async (payload: UserCreateInput) => {
   const hashedPassword = await bcrypt.hash(
@@ -69,13 +70,15 @@ export const getUserProfile = async (userId: string) => {
 };
 
 export const logoutUser = async (userId: string) => {
-  const user = await prisma.user.update({
+  await setUserOfflineInRedis(userId);
+
+  const user = await prisma.user.findUnique({
     where: { id: userId },
-    data: {
-      isOnline: false,
-      lastSeenAt: new Date(),
-    },
   });
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
 
   return safeUser(user);
 };

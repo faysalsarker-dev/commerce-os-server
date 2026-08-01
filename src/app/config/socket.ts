@@ -4,6 +4,13 @@ import { Server as SocketIOServer, Socket } from "socket.io";
 import prisma from "../lib/prisma";
 import { corsOrigin } from "../utils/corsOrigin";
 import { verifyToken } from "../utils/jwt";
+import {
+  setUserOnlineInRedis,
+  setUserOfflineInRedis,
+  touchUserHeartbeatInRedis,
+  isUserOnlineInRedis,
+  getUserLastSeenFromRedis,
+} from "../services/presence.service";
 
 export let io: SocketIOServer | null = null;
 
@@ -51,14 +58,15 @@ const broadcastPresence = async (userId: string) => {
       role: true,
       status: true,
       image: true,
-      isOnline: true,
-      lastSeenAt: true,
     },
   });
 
   if (!user) {
     return;
   }
+
+  const isOnline = await isUserOnlineInRedis(userId);
+  const lastSeenAt = await getUserLastSeenFromRedis(userId);
 
   io?.emit("presence:status", {
     userId: user.id,
@@ -68,32 +76,18 @@ const broadcastPresence = async (userId: string) => {
     role: user.role,
     status: user.status,
     image: user.image,
-    isOnline: user.isOnline,
-    lastSeenAt: user.lastSeenAt,
+    isOnline,
+    lastSeenAt: lastSeenAt ?? null,
   });
 };
 
 const setUserOnline = async (userId: string) => {
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      isOnline: true,
-      lastSeenAt: new Date(),
-    },
-  });
-
+  await setUserOnlineInRedis(userId);
   await broadcastPresence(userId);
 };
 
 const setUserOffline = async (userId: string) => {
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      isOnline: false,
-      lastSeenAt: new Date(),
-    },
-  });
-
+  await setUserOfflineInRedis(userId);
   await broadcastPresence(userId);
 };
 
@@ -167,14 +161,7 @@ export const initializeSocket = (server: HttpServer) => {
     void addSocketForUser(userId, socket.id);
 
     socket.on("presence:heartbeat", async () => {
-      await prisma.user.update({
-        where: { id: userId },
-        data: {
-          isOnline: true,
-          lastSeenAt: new Date(),
-        },
-      });
-
+      await touchUserHeartbeatInRedis(userId);
       await broadcastPresence(userId);
     });
 

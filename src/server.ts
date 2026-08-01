@@ -2,6 +2,7 @@ import { Server } from "http";
 import app from './app';
 import { config } from "./app/config";
 import { initializeSocket } from "./app/config/socket";
+import { redisClient } from "./app/config/redis";
 
 let server: Server;
 
@@ -13,6 +14,7 @@ async function bootstrap() {
     });
 
     initializeSocket(server);
+     await redisClient.connect();
   } catch (error) {
     console.error("❌ Failed to start server:", error);
     process.exit(1);

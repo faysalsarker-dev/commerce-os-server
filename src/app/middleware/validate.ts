@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { ZodObject, ZodRawShape } from "zod";
+import { ZodTypeAny } from "zod";
 
 export const validate =
-  <T extends ZodRawShape>(schema: ZodObject<T>) =>
+  (schema: ZodTypeAny) =>
   async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      req.body = await schema.parseAsync(req.body);
+      req.body = await schema.parseAsync(req.body ?? {});
       next();
     } catch (err) {
       next(err);

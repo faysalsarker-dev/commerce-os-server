@@ -78,6 +78,7 @@ export const config = buildConfig({
   },
   db: {
     url:            str("DATABASE_URL"),
+    redisUrl:       str("REDIS_URL"),
   },
   jwt: {
     secret:           str("JWT_SECRET"),

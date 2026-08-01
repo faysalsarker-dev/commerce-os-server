@@ -48,17 +48,35 @@ export const scanProduct = async (code: string) => {
   };
 };
 
-export const checkoutSale = async (payload: {
+export type CheckoutSalePayload = {
   items: Array<{
     variantId: string;
     quantity: number;
     reason?: string;
   }>;
-}) => {
+  discount?: number;
+  paymentMethod?: "CASH" | "BKASH" | "NAGAD" | "BANK" | "CARD" | "OTHER";
+  isFullPayment?: boolean;
+  paidAmount?: number;
+  dueAmount?: number;
+  dueDate?: string;
+  customerName?: string;
+  customerPhone?: string;
+};
+
+export const checkoutSale = async (payload: CheckoutSalePayload) => {
+  const discount = payload.discount ?? 0;
+  const isFullPayment = payload.isFullPayment ?? true;
+  const paymentMethod = payload.paymentMethod ?? "CASH";
+
   const transactionResult = await prisma.$transaction(async (tx) => {
     const results: Array<{
       variantId: string;
+      productName?: string;
+      colorName?: string;
+      size?: string;
       quantity: number;
+      unitPrice: number;
       total: number;
     }> = [];
     const stockUpdates: StockUpdatePayload[] = [];
@@ -75,7 +93,7 @@ export const checkoutSale = async (payload: {
 
       if (variant.stockQty < item.quantity) {
         throw new AppError(
-          `Insufficient stock for ${variant.productColor?.product?.name} ${variant.size}`,
+          `Insufficient stock for ${variant.productColor?.product?.name ?? "Product"} (${variant.size})`,
           400,
         );
       }
@@ -96,13 +114,19 @@ export const checkoutSale = async (payload: {
         },
       });
 
-      const unitPrice =
-        variant.sellingPriceOverride ?? variant.productColor?.product?.sellingPrice ?? 0;
+      const unitPrice = Number(
+        variant.sellingPriceOverride ?? variant.productColor?.product?.sellingPrice ?? 0,
+      );
+      const lineTotal = unitPrice * item.quantity;
 
       results.push({
         variantId: item.variantId,
+        productName: variant.productColor?.product?.name,
+        colorName: variant.productColor?.colorName,
+        size: variant.size,
         quantity: item.quantity,
-        total: Number(unitPrice) * item.quantity,
+        unitPrice,
+        total: lineTotal,
       });
 
       stockUpdates.push({
@@ -117,9 +141,34 @@ export const checkoutSale = async (payload: {
       });
     }
 
+    const subtotal = results.reduce((sum, item) => sum + item.total, 0);
+    const grandTotal = Math.max(0, subtotal - discount);
+
+    let paidAmount = grandTotal;
+    let dueAmount = 0;
+
+    if (!isFullPayment) {
+      paidAmount = payload.paidAmount ?? 0;
+      dueAmount = payload.dueAmount ?? Math.max(0, grandTotal - paidAmount);
+    }
+
     return {
       results,
       stockUpdates,
+      summary: {
+        subtotal,
+        discount,
+        grandTotal,
+        paymentMethod,
+        isFullPayment,
+        paidAmount,
+        dueAmount,
+        dueDate: payload.dueDate ?? null,
+        customer: {
+          name: payload.customerName ?? null,
+          phone: payload.customerPhone ?? null,
+        },
+      },
     };
   });
 
@@ -129,7 +178,7 @@ export const checkoutSale = async (payload: {
 
   return {
     items: transactionResult.results,
-    totalAmount: transactionResult.results.reduce((sum, item) => sum + item.total, 0),
+    ...transactionResult.summary,
   };
 };
 

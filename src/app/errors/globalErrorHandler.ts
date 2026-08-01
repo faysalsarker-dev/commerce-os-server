@@ -2,11 +2,9 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 import { handlePrismaError } from "./prismaErrorHandler";
-import { handleZodError } from "./handleZodError";
+import { handleZodError, TErrorSource } from "./handleZodError";
 import { handleSyntaxError } from "./handleSyntaxError";
 import { deleteImageFromCLoudinary } from "../config/cloudinary.config";
-
-// ─────────────────────────────────────────────────────────────────────────────
 
 export const globalErrorHandler = async (
   err: any,
@@ -14,13 +12,13 @@ export const globalErrorHandler = async (
   res: Response,
   _next: NextFunction,
 ) => {
-  let error = { ...err };
-  error.message = err.message;
+  let statusCode = err.statusCode || 500;
+  let message = err.message || "Internal Server Error";
+  let errorSources: TErrorSource[] | undefined = undefined;
 
-
-  // 1. image 
+  // 1. Image cleanup on error
   if (req.file) {
-    console.log(`Image delete from Cloudninary public id ${req.file.path}`);
+    console.log(`Image delete from Cloudinary public id ${req.file.path}`);
     await deleteImageFromCLoudinary(req.file.path);
   }
 
@@ -28,31 +26,34 @@ export const globalErrorHandler = async (
     const imageUrls = (req.files as Express.Multer.File[]).map(
       (file) => file.path,
     );
-
     await Promise.all(imageUrls.map((url) => deleteImageFromCLoudinary(url)));
   }
 
-  // 2. Prisma
+  // 2. Prisma Errors
   if (err instanceof PrismaClientKnownRequestError) {
-    error = handlePrismaError(err);
+    const prismaErr = handlePrismaError(err);
+    statusCode = prismaErr.statusCode;
+    message = prismaErr.message;
   }
-
-  // 3. Zod
+  // 3. Zod Validation Errors
   else if (err instanceof ZodError) {
-    error = handleZodError(err);
+    const zodErr = handleZodError(err);
+    statusCode = zodErr.statusCode;
+    message = zodErr.message;
+    errorSources = zodErr.errorSources;
   }
-
-  // 4. Bad JSON body
+  // 4. Bad JSON Syntax Error
   else if (err instanceof SyntaxError && "body" in err) {
-    error = handleSyntaxError();
+    const syntaxErr = handleSyntaxError();
+    statusCode = syntaxErr.statusCode;
+    message = syntaxErr.message;
   }
-
-  const statusCode = error.statusCode || 500;
-  const status = statusCode >= 400 && statusCode < 500 ? "fail" : "error";
 
   res.status(statusCode).json({
-    status,
-    message: error.message || "Internal Server Error",
+    success: false,
+    statusCode,
+    message,
+    ...(errorSources && { errorSources }),
     ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
   });
 };
