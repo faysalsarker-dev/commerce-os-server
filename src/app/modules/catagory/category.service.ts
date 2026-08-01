@@ -19,29 +19,30 @@ export const createCategory = async (
 ): Promise<Category> => {
   if (!payload.name) throw new AppError("Category name is required", 400);
 
-  const slug = await generateSlug(
-    String(payload.name),
-    prisma.category,
-    "slug",
-  );
+ const { name, slug, description, isActive, displayOrder ,image} = payload;
 
-  const category = await createOne<Category>(prisma.category, {
-    name: payload.name,
+  const data = {
+    name,
     slug,
-    description: payload.description,
-    image: payload.image,
-    isActive: payload.isActive,
-    displayOrder: payload.displayOrder,
-  } as Partial<Category>);
+    description,
+    isActive: (isActive as unknown as string) === "true" || isActive === true,
+    displayOrder: Number(displayOrder),
+    image
+  };
+
+
+ 
+  const category = await createOne<Category>(prisma.category,data  as Partial<Category>);
 
   return category;
 };
 
 export const getCategories = async (query: Record<string, any>) => {
+    if (query.isActive !== undefined) {
+    query.isActive = query.isActive === "true";
+  }
   const result = await getAll<Category>(prisma.category, query, [
     "name",
-    "slug",
-    "description",
   ]);
 
   return {

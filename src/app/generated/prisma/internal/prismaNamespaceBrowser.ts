@@ -52,10 +52,16 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Category: 'Category',
+  Customer: 'Customer',
   Product: 'Product',
   ProductColor: 'ProductColor',
   ProductVariant: 'ProductVariant',
   StockMovement: 'StockMovement',
+  Sale: 'Sale',
+  SaleItem: 'SaleItem',
+  Payment: 'Payment',
+  Refund: 'Refund',
+  RefundItem: 'RefundItem',
   User: 'User',
   EmployeeDetail: 'EmployeeDetail',
   SalaryRecord: 'SalaryRecord'
@@ -92,6 +98,23 @@ export const CategoryScalarFieldEnum = {
 export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
 
 
+export const CustomerScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  address: 'address',
+  totalOrders: 'totalOrders',
+  totalSpent: 'totalSpent',
+  totalDue: 'totalDue',
+  lastPurchaseAt: 'lastPurchaseAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
+
+
 export const ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -99,6 +122,7 @@ export const ProductScalarFieldEnum = {
   categoryId: 'categoryId',
   costPrice: 'costPrice',
   sellingPrice: 'sellingPrice',
+  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -144,6 +168,86 @@ export const StockMovementScalarFieldEnum = {
 } as const
 
 export type StockMovementScalarFieldEnum = (typeof StockMovementScalarFieldEnum)[keyof typeof StockMovementScalarFieldEnum]
+
+
+export const SaleScalarFieldEnum = {
+  id: 'id',
+  invoiceNo: 'invoiceNo',
+  customerId: 'customerId',
+  soldById: 'soldById',
+  channel: 'channel',
+  status: 'status',
+  subtotal: 'subtotal',
+  discount: 'discount',
+  shippingFee: 'shippingFee',
+  total: 'total',
+  paidAmount: 'paidAmount',
+  dueAmount: 'dueAmount',
+  paymentStatus: 'paymentStatus',
+  refundedAmount: 'refundedAmount',
+  shippingAddress: 'shippingAddress',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SaleScalarFieldEnum = (typeof SaleScalarFieldEnum)[keyof typeof SaleScalarFieldEnum]
+
+
+export const SaleItemScalarFieldEnum = {
+  id: 'id',
+  saleId: 'saleId',
+  variantId: 'variantId',
+  productName: 'productName',
+  sku: 'sku',
+  unitPrice: 'unitPrice',
+  quantity: 'quantity',
+  discount: 'discount',
+  subtotal: 'subtotal',
+  createdAt: 'createdAt'
+} as const
+
+export type SaleItemScalarFieldEnum = (typeof SaleItemScalarFieldEnum)[keyof typeof SaleItemScalarFieldEnum]
+
+
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  saleId: 'saleId',
+  method: 'method',
+  amount: 'amount',
+  reference: 'reference',
+  receivedById: 'receivedById',
+  paidAt: 'paidAt',
+  notes: 'notes',
+  createdAt: 'createdAt'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const RefundScalarFieldEnum = {
+  id: 'id',
+  saleId: 'saleId',
+  amount: 'amount',
+  method: 'method',
+  reason: 'reason',
+  processedById: 'processedById',
+  refundedAt: 'refundedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type RefundScalarFieldEnum = (typeof RefundScalarFieldEnum)[keyof typeof RefundScalarFieldEnum]
+
+
+export const RefundItemScalarFieldEnum = {
+  id: 'id',
+  refundId: 'refundId',
+  saleItemId: 'saleItemId',
+  quantity: 'quantity',
+  amount: 'amount'
+} as const
+
+export type RefundItemScalarFieldEnum = (typeof RefundItemScalarFieldEnum)[keyof typeof RefundItemScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {

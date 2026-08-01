@@ -21,6 +21,9 @@ const storage = new CloudinaryStorage({
 
 export const multerUpload = multer({ storage: storage })
 
+// Product-color images are uploaded to Cloudinary by the service from buffers.
+export const memoryMulterUpload = multer({ storage: multer.memoryStorage() });
+
 
 
 

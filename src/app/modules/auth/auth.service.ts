@@ -10,6 +10,9 @@ import {
 } from "../../generated/prisma/models";
 import { buildTokens, safeUser } from "../../utils/authUtils";
 import { Role } from "../../generated/prisma/enums";
+import { getById } from "../../services/base.service";
+import { SafeUser } from "../user/user.service";
+import { User } from "../../generated/prisma/client";
 
 export const registerUser = async (payload: UserCreateInput) => {
   const hashedPassword = await bcrypt.hash(
@@ -78,6 +81,13 @@ export const logoutUser = async (userId: string) => {
   });
 
   return safeUser(user);
+};
+
+
+export const getMe = async (userId: string): Promise<SafeUser> => {
+  const result = await getById<User>(prisma.user, userId);
+
+  return safeUser(result);
 };
 
 export const updateUserProfile = async (

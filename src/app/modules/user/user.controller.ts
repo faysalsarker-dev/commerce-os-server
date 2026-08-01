@@ -27,6 +27,17 @@ export const getUsers = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const getMe = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getMe(req.user.id);
+
+  sendResponse(res, {
+    statusCode: HttpStatus.OK,
+    success: true,
+    message: "User fetched successfully",
+    data: result,
+  });
+});
+
 export const getUser = catchAsync(async (req: Request, res: Response) => {
   const user = await UserService.getUserById(req.params.id as string);
 

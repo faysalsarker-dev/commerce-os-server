@@ -3,6 +3,7 @@ import catchAsync from "../../common/catchAsync";
 import sendResponse from "../../common/sendResponse";
 import * as AuthService from "./auth.service";
 import { clearAuthCookies, setAuthCookies } from "../../utils/authCookies";
+import { HttpStatus } from "../../utils/httpStatus";
 
 export const register = catchAsync(async (req: Request, res: Response) => {
   const { user, tokens } = await AuthService.registerUser(req.body);
@@ -42,6 +43,18 @@ export const logout = catchAsync(async (req: Request, res: Response) => {
     success: true,
     message: "Logged out successfully",
     data: null,
+  });
+});
+
+
+export const getMe = catchAsync(async (req: Request, res: Response) => {
+  const result = await AuthService.getMe(req.user.id);
+
+  sendResponse(res, {
+    statusCode: HttpStatus.OK,
+    success: true,
+    message: "User fetched successfully",
+    data: result,
   });
 });
 
