@@ -240,6 +240,9 @@ export type UserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   employeeDetail?: Prisma.XOR<Prisma.EmployeeDetailNullableScalarRelationFilter, Prisma.EmployeeDetailWhereInput> | null
   salaryRecords?: Prisma.SalaryRecordListRelationFilter
+  salesMade?: Prisma.SaleListRelationFilter
+  paymentsTaken?: Prisma.PaymentListRelationFilter
+  refundsHandled?: Prisma.RefundListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -257,6 +260,9 @@ export type UserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   employeeDetail?: Prisma.EmployeeDetailOrderByWithRelationInput
   salaryRecords?: Prisma.SalaryRecordOrderByRelationAggregateInput
+  salesMade?: Prisma.SaleOrderByRelationAggregateInput
+  paymentsTaken?: Prisma.PaymentOrderByRelationAggregateInput
+  refundsHandled?: Prisma.RefundOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -277,6 +283,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   employeeDetail?: Prisma.XOR<Prisma.EmployeeDetailNullableScalarRelationFilter, Prisma.EmployeeDetailWhereInput> | null
   salaryRecords?: Prisma.SalaryRecordListRelationFilter
+  salesMade?: Prisma.SaleListRelationFilter
+  paymentsTaken?: Prisma.PaymentListRelationFilter
+  refundsHandled?: Prisma.RefundListRelationFilter
 }, "id" | "email" | "phone">
 
 export type UserOrderByWithAggregationInput = {
@@ -330,6 +339,9 @@ export type UserCreateInput = {
   updatedAt?: Date | string
   employeeDetail?: Prisma.EmployeeDetailCreateNestedOneWithoutUserInput
   salaryRecords?: Prisma.SalaryRecordCreateNestedManyWithoutUserInput
+  salesMade?: Prisma.SaleCreateNestedManyWithoutSoldByInput
+  paymentsTaken?: Prisma.PaymentCreateNestedManyWithoutReceivedByInput
+  refundsHandled?: Prisma.RefundCreateNestedManyWithoutProcessedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -347,6 +359,9 @@ export type UserUncheckedCreateInput = {
   updatedAt?: Date | string
   employeeDetail?: Prisma.EmployeeDetailUncheckedCreateNestedOneWithoutUserInput
   salaryRecords?: Prisma.SalaryRecordUncheckedCreateNestedManyWithoutUserInput
+  salesMade?: Prisma.SaleUncheckedCreateNestedManyWithoutSoldByInput
+  paymentsTaken?: Prisma.PaymentUncheckedCreateNestedManyWithoutReceivedByInput
+  refundsHandled?: Prisma.RefundUncheckedCreateNestedManyWithoutProcessedByInput
 }
 
 export type UserUpdateInput = {
@@ -364,6 +379,9 @@ export type UserUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeDetail?: Prisma.EmployeeDetailUpdateOneWithoutUserNestedInput
   salaryRecords?: Prisma.SalaryRecordUpdateManyWithoutUserNestedInput
+  salesMade?: Prisma.SaleUpdateManyWithoutSoldByNestedInput
+  paymentsTaken?: Prisma.PaymentUpdateManyWithoutReceivedByNestedInput
+  refundsHandled?: Prisma.RefundUpdateManyWithoutProcessedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -381,6 +399,9 @@ export type UserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeDetail?: Prisma.EmployeeDetailUncheckedUpdateOneWithoutUserNestedInput
   salaryRecords?: Prisma.SalaryRecordUncheckedUpdateManyWithoutUserNestedInput
+  salesMade?: Prisma.SaleUncheckedUpdateManyWithoutSoldByNestedInput
+  paymentsTaken?: Prisma.PaymentUncheckedUpdateManyWithoutReceivedByNestedInput
+  refundsHandled?: Prisma.RefundUncheckedUpdateManyWithoutProcessedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -428,6 +449,16 @@ export type UserUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
+}
+
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
+}
+
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -473,9 +504,48 @@ export type UserMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type UserScalarRelationFilter = {
-  is?: Prisma.UserWhereInput
-  isNot?: Prisma.UserWhereInput
+export type UserCreateNestedOneWithoutSalesMadeInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSalesMadeInput, Prisma.UserUncheckedCreateWithoutSalesMadeInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSalesMadeInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSalesMadeNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSalesMadeInput, Prisma.UserUncheckedCreateWithoutSalesMadeInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSalesMadeInput
+  upsert?: Prisma.UserUpsertWithoutSalesMadeInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSalesMadeInput, Prisma.UserUpdateWithoutSalesMadeInput>, Prisma.UserUncheckedUpdateWithoutSalesMadeInput>
+}
+
+export type UserCreateNestedOneWithoutPaymentsTakenInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPaymentsTakenInput, Prisma.UserUncheckedCreateWithoutPaymentsTakenInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPaymentsTakenInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutPaymentsTakenNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPaymentsTakenInput, Prisma.UserUncheckedCreateWithoutPaymentsTakenInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPaymentsTakenInput
+  upsert?: Prisma.UserUpsertWithoutPaymentsTakenInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPaymentsTakenInput, Prisma.UserUpdateWithoutPaymentsTakenInput>, Prisma.UserUncheckedUpdateWithoutPaymentsTakenInput>
+}
+
+export type UserCreateNestedOneWithoutRefundsHandledInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRefundsHandledInput, Prisma.UserUncheckedCreateWithoutRefundsHandledInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRefundsHandledInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutRefundsHandledNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRefundsHandledInput, Prisma.UserUncheckedCreateWithoutRefundsHandledInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRefundsHandledInput
+  upsert?: Prisma.UserUpsertWithoutRefundsHandledInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRefundsHandledInput, Prisma.UserUpdateWithoutRefundsHandledInput>, Prisma.UserUncheckedUpdateWithoutRefundsHandledInput>
 }
 
 export type EnumRoleFieldUpdateOperationsInput = {
@@ -484,10 +554,6 @@ export type EnumRoleFieldUpdateOperationsInput = {
 
 export type EnumEmployeeStatusFieldUpdateOperationsInput = {
   set?: $Enums.EmployeeStatus
-}
-
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
 }
 
 export type UserCreateNestedOneWithoutEmployeeDetailInput = {
@@ -518,6 +584,282 @@ export type UserUpdateOneRequiredWithoutSalaryRecordsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSalaryRecordsInput, Prisma.UserUpdateWithoutSalaryRecordsInput>, Prisma.UserUncheckedUpdateWithoutSalaryRecordsInput>
 }
 
+export type UserCreateWithoutSalesMadeInput = {
+  id?: string
+  name: string
+  email: string
+  phone?: string | null
+  password: string
+  role: $Enums.Role
+  status?: $Enums.EmployeeStatus
+  image?: string | null
+  isOnline?: boolean
+  lastSeenAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeDetail?: Prisma.EmployeeDetailCreateNestedOneWithoutUserInput
+  salaryRecords?: Prisma.SalaryRecordCreateNestedManyWithoutUserInput
+  paymentsTaken?: Prisma.PaymentCreateNestedManyWithoutReceivedByInput
+  refundsHandled?: Prisma.RefundCreateNestedManyWithoutProcessedByInput
+}
+
+export type UserUncheckedCreateWithoutSalesMadeInput = {
+  id?: string
+  name: string
+  email: string
+  phone?: string | null
+  password: string
+  role: $Enums.Role
+  status?: $Enums.EmployeeStatus
+  image?: string | null
+  isOnline?: boolean
+  lastSeenAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeDetail?: Prisma.EmployeeDetailUncheckedCreateNestedOneWithoutUserInput
+  salaryRecords?: Prisma.SalaryRecordUncheckedCreateNestedManyWithoutUserInput
+  paymentsTaken?: Prisma.PaymentUncheckedCreateNestedManyWithoutReceivedByInput
+  refundsHandled?: Prisma.RefundUncheckedCreateNestedManyWithoutProcessedByInput
+}
+
+export type UserCreateOrConnectWithoutSalesMadeInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSalesMadeInput, Prisma.UserUncheckedCreateWithoutSalesMadeInput>
+}
+
+export type UserUpsertWithoutSalesMadeInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSalesMadeInput, Prisma.UserUncheckedUpdateWithoutSalesMadeInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSalesMadeInput, Prisma.UserUncheckedCreateWithoutSalesMadeInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSalesMadeInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSalesMadeInput, Prisma.UserUncheckedUpdateWithoutSalesMadeInput>
+}
+
+export type UserUpdateWithoutSalesMadeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeDetail?: Prisma.EmployeeDetailUpdateOneWithoutUserNestedInput
+  salaryRecords?: Prisma.SalaryRecordUpdateManyWithoutUserNestedInput
+  paymentsTaken?: Prisma.PaymentUpdateManyWithoutReceivedByNestedInput
+  refundsHandled?: Prisma.RefundUpdateManyWithoutProcessedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSalesMadeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeDetail?: Prisma.EmployeeDetailUncheckedUpdateOneWithoutUserNestedInput
+  salaryRecords?: Prisma.SalaryRecordUncheckedUpdateManyWithoutUserNestedInput
+  paymentsTaken?: Prisma.PaymentUncheckedUpdateManyWithoutReceivedByNestedInput
+  refundsHandled?: Prisma.RefundUncheckedUpdateManyWithoutProcessedByNestedInput
+}
+
+export type UserCreateWithoutPaymentsTakenInput = {
+  id?: string
+  name: string
+  email: string
+  phone?: string | null
+  password: string
+  role: $Enums.Role
+  status?: $Enums.EmployeeStatus
+  image?: string | null
+  isOnline?: boolean
+  lastSeenAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeDetail?: Prisma.EmployeeDetailCreateNestedOneWithoutUserInput
+  salaryRecords?: Prisma.SalaryRecordCreateNestedManyWithoutUserInput
+  salesMade?: Prisma.SaleCreateNestedManyWithoutSoldByInput
+  refundsHandled?: Prisma.RefundCreateNestedManyWithoutProcessedByInput
+}
+
+export type UserUncheckedCreateWithoutPaymentsTakenInput = {
+  id?: string
+  name: string
+  email: string
+  phone?: string | null
+  password: string
+  role: $Enums.Role
+  status?: $Enums.EmployeeStatus
+  image?: string | null
+  isOnline?: boolean
+  lastSeenAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeDetail?: Prisma.EmployeeDetailUncheckedCreateNestedOneWithoutUserInput
+  salaryRecords?: Prisma.SalaryRecordUncheckedCreateNestedManyWithoutUserInput
+  salesMade?: Prisma.SaleUncheckedCreateNestedManyWithoutSoldByInput
+  refundsHandled?: Prisma.RefundUncheckedCreateNestedManyWithoutProcessedByInput
+}
+
+export type UserCreateOrConnectWithoutPaymentsTakenInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPaymentsTakenInput, Prisma.UserUncheckedCreateWithoutPaymentsTakenInput>
+}
+
+export type UserUpsertWithoutPaymentsTakenInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPaymentsTakenInput, Prisma.UserUncheckedUpdateWithoutPaymentsTakenInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPaymentsTakenInput, Prisma.UserUncheckedCreateWithoutPaymentsTakenInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPaymentsTakenInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPaymentsTakenInput, Prisma.UserUncheckedUpdateWithoutPaymentsTakenInput>
+}
+
+export type UserUpdateWithoutPaymentsTakenInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeDetail?: Prisma.EmployeeDetailUpdateOneWithoutUserNestedInput
+  salaryRecords?: Prisma.SalaryRecordUpdateManyWithoutUserNestedInput
+  salesMade?: Prisma.SaleUpdateManyWithoutSoldByNestedInput
+  refundsHandled?: Prisma.RefundUpdateManyWithoutProcessedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPaymentsTakenInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeDetail?: Prisma.EmployeeDetailUncheckedUpdateOneWithoutUserNestedInput
+  salaryRecords?: Prisma.SalaryRecordUncheckedUpdateManyWithoutUserNestedInput
+  salesMade?: Prisma.SaleUncheckedUpdateManyWithoutSoldByNestedInput
+  refundsHandled?: Prisma.RefundUncheckedUpdateManyWithoutProcessedByNestedInput
+}
+
+export type UserCreateWithoutRefundsHandledInput = {
+  id?: string
+  name: string
+  email: string
+  phone?: string | null
+  password: string
+  role: $Enums.Role
+  status?: $Enums.EmployeeStatus
+  image?: string | null
+  isOnline?: boolean
+  lastSeenAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeDetail?: Prisma.EmployeeDetailCreateNestedOneWithoutUserInput
+  salaryRecords?: Prisma.SalaryRecordCreateNestedManyWithoutUserInput
+  salesMade?: Prisma.SaleCreateNestedManyWithoutSoldByInput
+  paymentsTaken?: Prisma.PaymentCreateNestedManyWithoutReceivedByInput
+}
+
+export type UserUncheckedCreateWithoutRefundsHandledInput = {
+  id?: string
+  name: string
+  email: string
+  phone?: string | null
+  password: string
+  role: $Enums.Role
+  status?: $Enums.EmployeeStatus
+  image?: string | null
+  isOnline?: boolean
+  lastSeenAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employeeDetail?: Prisma.EmployeeDetailUncheckedCreateNestedOneWithoutUserInput
+  salaryRecords?: Prisma.SalaryRecordUncheckedCreateNestedManyWithoutUserInput
+  salesMade?: Prisma.SaleUncheckedCreateNestedManyWithoutSoldByInput
+  paymentsTaken?: Prisma.PaymentUncheckedCreateNestedManyWithoutReceivedByInput
+}
+
+export type UserCreateOrConnectWithoutRefundsHandledInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutRefundsHandledInput, Prisma.UserUncheckedCreateWithoutRefundsHandledInput>
+}
+
+export type UserUpsertWithoutRefundsHandledInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutRefundsHandledInput, Prisma.UserUncheckedUpdateWithoutRefundsHandledInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutRefundsHandledInput, Prisma.UserUncheckedCreateWithoutRefundsHandledInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutRefundsHandledInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutRefundsHandledInput, Prisma.UserUncheckedUpdateWithoutRefundsHandledInput>
+}
+
+export type UserUpdateWithoutRefundsHandledInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeDetail?: Prisma.EmployeeDetailUpdateOneWithoutUserNestedInput
+  salaryRecords?: Prisma.SalaryRecordUpdateManyWithoutUserNestedInput
+  salesMade?: Prisma.SaleUpdateManyWithoutSoldByNestedInput
+  paymentsTaken?: Prisma.PaymentUpdateManyWithoutReceivedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutRefundsHandledInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employeeDetail?: Prisma.EmployeeDetailUncheckedUpdateOneWithoutUserNestedInput
+  salaryRecords?: Prisma.SalaryRecordUncheckedUpdateManyWithoutUserNestedInput
+  salesMade?: Prisma.SaleUncheckedUpdateManyWithoutSoldByNestedInput
+  paymentsTaken?: Prisma.PaymentUncheckedUpdateManyWithoutReceivedByNestedInput
+}
+
 export type UserCreateWithoutEmployeeDetailInput = {
   id?: string
   name: string
@@ -532,6 +874,9 @@ export type UserCreateWithoutEmployeeDetailInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   salaryRecords?: Prisma.SalaryRecordCreateNestedManyWithoutUserInput
+  salesMade?: Prisma.SaleCreateNestedManyWithoutSoldByInput
+  paymentsTaken?: Prisma.PaymentCreateNestedManyWithoutReceivedByInput
+  refundsHandled?: Prisma.RefundCreateNestedManyWithoutProcessedByInput
 }
 
 export type UserUncheckedCreateWithoutEmployeeDetailInput = {
@@ -548,6 +893,9 @@ export type UserUncheckedCreateWithoutEmployeeDetailInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   salaryRecords?: Prisma.SalaryRecordUncheckedCreateNestedManyWithoutUserInput
+  salesMade?: Prisma.SaleUncheckedCreateNestedManyWithoutSoldByInput
+  paymentsTaken?: Prisma.PaymentUncheckedCreateNestedManyWithoutReceivedByInput
+  refundsHandled?: Prisma.RefundUncheckedCreateNestedManyWithoutProcessedByInput
 }
 
 export type UserCreateOrConnectWithoutEmployeeDetailInput = {
@@ -580,6 +928,9 @@ export type UserUpdateWithoutEmployeeDetailInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   salaryRecords?: Prisma.SalaryRecordUpdateManyWithoutUserNestedInput
+  salesMade?: Prisma.SaleUpdateManyWithoutSoldByNestedInput
+  paymentsTaken?: Prisma.PaymentUpdateManyWithoutReceivedByNestedInput
+  refundsHandled?: Prisma.RefundUpdateManyWithoutProcessedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmployeeDetailInput = {
@@ -596,6 +947,9 @@ export type UserUncheckedUpdateWithoutEmployeeDetailInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   salaryRecords?: Prisma.SalaryRecordUncheckedUpdateManyWithoutUserNestedInput
+  salesMade?: Prisma.SaleUncheckedUpdateManyWithoutSoldByNestedInput
+  paymentsTaken?: Prisma.PaymentUncheckedUpdateManyWithoutReceivedByNestedInput
+  refundsHandled?: Prisma.RefundUncheckedUpdateManyWithoutProcessedByNestedInput
 }
 
 export type UserCreateWithoutSalaryRecordsInput = {
@@ -612,6 +966,9 @@ export type UserCreateWithoutSalaryRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeDetail?: Prisma.EmployeeDetailCreateNestedOneWithoutUserInput
+  salesMade?: Prisma.SaleCreateNestedManyWithoutSoldByInput
+  paymentsTaken?: Prisma.PaymentCreateNestedManyWithoutReceivedByInput
+  refundsHandled?: Prisma.RefundCreateNestedManyWithoutProcessedByInput
 }
 
 export type UserUncheckedCreateWithoutSalaryRecordsInput = {
@@ -628,6 +985,9 @@ export type UserUncheckedCreateWithoutSalaryRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   employeeDetail?: Prisma.EmployeeDetailUncheckedCreateNestedOneWithoutUserInput
+  salesMade?: Prisma.SaleUncheckedCreateNestedManyWithoutSoldByInput
+  paymentsTaken?: Prisma.PaymentUncheckedCreateNestedManyWithoutReceivedByInput
+  refundsHandled?: Prisma.RefundUncheckedCreateNestedManyWithoutProcessedByInput
 }
 
 export type UserCreateOrConnectWithoutSalaryRecordsInput = {
@@ -660,6 +1020,9 @@ export type UserUpdateWithoutSalaryRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeDetail?: Prisma.EmployeeDetailUpdateOneWithoutUserNestedInput
+  salesMade?: Prisma.SaleUpdateManyWithoutSoldByNestedInput
+  paymentsTaken?: Prisma.PaymentUpdateManyWithoutReceivedByNestedInput
+  refundsHandled?: Prisma.RefundUpdateManyWithoutProcessedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSalaryRecordsInput = {
@@ -676,6 +1039,9 @@ export type UserUncheckedUpdateWithoutSalaryRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   employeeDetail?: Prisma.EmployeeDetailUncheckedUpdateOneWithoutUserNestedInput
+  salesMade?: Prisma.SaleUncheckedUpdateManyWithoutSoldByNestedInput
+  paymentsTaken?: Prisma.PaymentUncheckedUpdateManyWithoutReceivedByNestedInput
+  refundsHandled?: Prisma.RefundUncheckedUpdateManyWithoutProcessedByNestedInput
 }
 
 
@@ -685,10 +1051,16 @@ export type UserUncheckedUpdateWithoutSalaryRecordsInput = {
 
 export type UserCountOutputType = {
   salaryRecords: number
+  salesMade: number
+  paymentsTaken: number
+  refundsHandled: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   salaryRecords?: boolean | UserCountOutputTypeCountSalaryRecordsArgs
+  salesMade?: boolean | UserCountOutputTypeCountSalesMadeArgs
+  paymentsTaken?: boolean | UserCountOutputTypeCountPaymentsTakenArgs
+  refundsHandled?: boolean | UserCountOutputTypeCountRefundsHandledArgs
 }
 
 /**
@@ -708,6 +1080,27 @@ export type UserCountOutputTypeCountSalaryRecordsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.SalaryRecordWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSalesMadeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SaleWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPaymentsTakenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PaymentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountRefundsHandledArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RefundWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -724,6 +1117,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   employeeDetail?: boolean | Prisma.User$employeeDetailArgs<ExtArgs>
   salaryRecords?: boolean | Prisma.User$salaryRecordsArgs<ExtArgs>
+  salesMade?: boolean | Prisma.User$salesMadeArgs<ExtArgs>
+  paymentsTaken?: boolean | Prisma.User$paymentsTakenArgs<ExtArgs>
+  refundsHandled?: boolean | Prisma.User$refundsHandledArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -776,6 +1172,9 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employeeDetail?: boolean | Prisma.User$employeeDetailArgs<ExtArgs>
   salaryRecords?: boolean | Prisma.User$salaryRecordsArgs<ExtArgs>
+  salesMade?: boolean | Prisma.User$salesMadeArgs<ExtArgs>
+  paymentsTaken?: boolean | Prisma.User$paymentsTakenArgs<ExtArgs>
+  refundsHandled?: boolean | Prisma.User$refundsHandledArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -786,6 +1185,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     employeeDetail: Prisma.$EmployeeDetailPayload<ExtArgs> | null
     salaryRecords: Prisma.$SalaryRecordPayload<ExtArgs>[]
+    salesMade: Prisma.$SalePayload<ExtArgs>[]
+    paymentsTaken: Prisma.$PaymentPayload<ExtArgs>[]
+    refundsHandled: Prisma.$RefundPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1196,6 +1598,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   employeeDetail<T extends Prisma.User$employeeDetailArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$employeeDetailArgs<ExtArgs>>): Prisma.Prisma__EmployeeDetailClient<runtime.Types.Result.GetResult<Prisma.$EmployeeDetailPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   salaryRecords<T extends Prisma.User$salaryRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$salaryRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SalaryRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  salesMade<T extends Prisma.User$salesMadeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$salesMadeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SalePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  paymentsTaken<T extends Prisma.User$paymentsTakenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsTakenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  refundsHandled<T extends Prisma.User$refundsHandledArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refundsHandledArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1670,6 +2075,78 @@ export type User$salaryRecordsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.SalaryRecordScalarFieldEnum | Prisma.SalaryRecordScalarFieldEnum[]
+}
+
+/**
+ * User.salesMade
+ */
+export type User$salesMadeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Sale
+   */
+  select?: Prisma.SaleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Sale
+   */
+  omit?: Prisma.SaleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SaleInclude<ExtArgs> | null
+  where?: Prisma.SaleWhereInput
+  orderBy?: Prisma.SaleOrderByWithRelationInput | Prisma.SaleOrderByWithRelationInput[]
+  cursor?: Prisma.SaleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SaleScalarFieldEnum | Prisma.SaleScalarFieldEnum[]
+}
+
+/**
+ * User.paymentsTaken
+ */
+export type User$paymentsTakenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Payment
+   */
+  select?: Prisma.PaymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Payment
+   */
+  omit?: Prisma.PaymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentInclude<ExtArgs> | null
+  where?: Prisma.PaymentWhereInput
+  orderBy?: Prisma.PaymentOrderByWithRelationInput | Prisma.PaymentOrderByWithRelationInput[]
+  cursor?: Prisma.PaymentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
+}
+
+/**
+ * User.refundsHandled
+ */
+export type User$refundsHandledArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Refund
+   */
+  select?: Prisma.RefundSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Refund
+   */
+  omit?: Prisma.RefundOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RefundInclude<ExtArgs> | null
+  where?: Prisma.RefundWhereInput
+  orderBy?: Prisma.RefundOrderByWithRelationInput | Prisma.RefundOrderByWithRelationInput[]
+  cursor?: Prisma.RefundWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RefundScalarFieldEnum | Prisma.RefundScalarFieldEnum[]
 }
 
 /**

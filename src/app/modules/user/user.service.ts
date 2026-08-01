@@ -63,6 +63,12 @@ export const getUsers = async (query: Record<string, any>) => {
   };
 };
 
+export const getMe = async (userId: string): Promise<SafeUser> => {
+  const result = await getById<User>(prisma.user, userId);
+
+  return safeUser(result);
+};
+
 export const getUserById = async (userId: string): Promise<SafeUser> => {
   const user = await getById<User>(prisma.user, userId);
   return safeUser(user);

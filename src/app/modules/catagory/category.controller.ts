@@ -6,7 +6,16 @@ import { HttpStatus } from "../../utils/httpStatus";
 
 export const createCategory = catchAsync(
   async (req: Request, res: Response) => {
-    const category = await CategoryService.createCategory(req.body);
+
+
+const payload ={
+  ...req.body,
+  image:req.file?.path ?? req.file?.filename ?? undefined,
+}
+
+console.log(payload,"dataa")
+
+    const category = await CategoryService.createCategory(payload);
 
     sendResponse(res, {
       statusCode: HttpStatus.CREATED,

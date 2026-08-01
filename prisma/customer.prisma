@@ -1,0 +1,21 @@
+model Customer {
+  id      String  @id @default(cuid())
+  name    String
+  phone   String? @unique   // primary lookup key in-store
+  email   String? @unique
+  address String?
+
+  sales Sale[]
+
+  // cached stats — recompute-able from Sale rows, updated in-app on every sale/payment/refund
+  totalOrders      Int      @default(0)
+  totalSpent       Decimal  @default(0) @db.Decimal(10, 2)   // sum of paidAmount across all sales
+  totalDue         Decimal  @default(0) @db.Decimal(10, 2)   // sum of dueAmount across open sales
+  lastPurchaseAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([phone])
+  @@index([totalDue])
+}

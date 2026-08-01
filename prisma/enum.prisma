@@ -24,3 +24,42 @@ enum StockMovementType {
   RETURN_IN      // stock returned by customer
   ADJUSTMENT     // manual correction (damage, loss, recount)
 }
+
+
+
+enum ProductStatus {
+  ACTIVE
+  DISCONTINUED   // soft-deleted / archived, hidden from catalog pickers, history stays intact
+}
+
+enum SaleChannel {
+  ONLINE
+  OFFLINE
+}
+
+enum SaleStatus {
+  DRAFT                // online cart saved before checkout, not yet a real order
+  PENDING              // created, not yet confirmed/paid
+  CONFIRMED            // confirmed, stock deducted
+  COMPLETED            // fulfilled/delivered
+  CANCELLED            // cancelled before fulfillment, stock restored
+  PARTIALLY_RETURNED   // some line items returned, rest stands
+  RETURNED             // fully returned, stock restored via RETURN_IN
+}
+
+enum PaymentMethod {
+  CASH
+  BKASH
+  NAGAD
+  ROCKET
+  CARD
+  BANK_TRANSFER
+}
+
+enum PaymentStatus {
+  UNPAID
+  PARTIAL
+  PAID
+  REFUNDED
+  PARTIALLY_REFUNDED
+}

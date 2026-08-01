@@ -5,7 +5,7 @@ export const createCategorySchema = z.object({
   slug: z.string().min(2, "Slug must be at least 2 characters"),
   description: z.string().optional(),
   image: z.string().url("Image must be a valid URL").optional(),
-  isActive: z.boolean().optional(),
+  isActive: z.string().optional,
   displayOrder: z.number().int().optional(),
 });
 
