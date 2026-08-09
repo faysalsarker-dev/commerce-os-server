@@ -5,14 +5,17 @@ import {
   createCategorySchema,
   updateCategorySchema,
 } from "./category.validation";
+import { uploadHandler } from "../../utils/upload-handler";
 
 const router = Router();
 
 router.post(
   "/",
+  ...uploadHandler(),
   validate(createCategorySchema),
   CategoryController.createCategory,
 );
+
 router.get("/", CategoryController.getCategories);
 router.get("/:id", CategoryController.getCategory);
 router.patch(

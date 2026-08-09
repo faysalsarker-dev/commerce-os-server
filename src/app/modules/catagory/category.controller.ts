@@ -6,6 +6,8 @@ import { HttpStatus } from "../../utils/httpStatus";
 
 export const createCategory = catchAsync(
   async (req: Request, res: Response) => {
+
+    console.log(req.body)
     const category = await CategoryService.createCategory(req.body);
 
     sendResponse(res, {

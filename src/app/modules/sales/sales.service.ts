@@ -26,27 +26,41 @@ const stockMovementInclude = {
 export const scanProduct = async (code: string) => {
   const variant = await prisma.productVariant.findFirst({
     where: {
-      OR: [
-        { sku: code },
-        { qrCode: code },
-      ],
+      OR: [{ sku: code }, { qrCode: code }],
     },
     include: variantInclude,
   });
 
   if (!variant) {
-    throw new AppError("Product not found for the provided scan code", 404);
+    throw new AppError("VARIANT_NOT_FOUND", 404);
   }
 
+  const product = variant.productColor?.product;
+
+  if (!product) {
+    throw new AppError("VARIANT_DATA_CORRUPT", 500);
+  }
+
+  const sellingPriceOverride = variant.sellingPriceOverride
+    ? Number(variant.sellingPriceOverride)
+    : null;
+  const sellingPrice = sellingPriceOverride ?? Number(product.sellingPrice);
+
   return {
-    ...variant,
-    productName: variant.productColor?.product?.name,
-    colorName: variant.productColor?.colorName,
-    sellingPrice:
-      variant.sellingPriceOverride ?? variant.productColor?.product?.sellingPrice,
+    variantId: variant.id,
+    sku: variant.sku,
+    size: variant.size,
+    productName: product.name,
+    colorName: variant.productColor.colorName,
+    colorHex: variant.productColor.colorHex,
+    thumbnailUrl: variant.productColor.images[0] ?? null,
+    sellingPrice,
+    isOverridden: sellingPriceOverride !== null,
     stockQty: variant.stockQty,
+    inStock: variant.stockQty > 0,
   };
 };
+
 
 export type CheckoutSalePayload = {
   items: Array<{

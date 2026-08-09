@@ -186,7 +186,7 @@ export const updateProductColor = async (
     data: {
       ...(payload.colorName && { colorName: payload.colorName }),
       ...(payload.colorHex !== undefined && { colorHex: payload.colorHex }),
-      ...(payload.images && { images: payload.images }),
+      ...(payload.images !== undefined && { images: payload.images }),
     },
     include: {
       variants: true,

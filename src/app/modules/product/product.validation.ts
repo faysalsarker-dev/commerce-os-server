@@ -26,12 +26,26 @@ export const updateProductSchema = z
     message: "At least one field must be provided to update product",
   });
 
+const stringOrArrayToArray = (val: unknown) => {
+  if (typeof val === "string") {
+    if (!val.trim()) return [];
+    try {
+      const parsed = JSON.parse(val);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // not json
+    }
+    return [val];
+  }
+  return val;
+};
+
 // Step 2: Product Color Schema
 export const createProductColorSchema = z.object({
   productId: z.string().min(1, "Product ID is required"),
   colorName: z.string().min(1, "Color name is required"),
   colorHex: z.preprocess(emptyToUndefined, z.string().optional()),
-  images: z.array(z.string()).default([]),
+  images: z.preprocess(stringOrArrayToArray, z.array(z.string()).default([])),
 });
 
 export const updateProductColorSchema = z
@@ -41,7 +55,7 @@ export const updateProductColorSchema = z
       z.string().min(1, "Color name cannot be empty").optional(),
     ),
     colorHex: z.preprocess(emptyToUndefined, z.string().optional()),
-    images: z.array(z.string()).optional(),
+    images: z.preprocess(stringOrArrayToArray, z.array(z.string()).optional()),
   })
   .refine((data) => Boolean(Object.keys(data).length), {
     message: "At least one field must be provided to update product color",

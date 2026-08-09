@@ -20,7 +20,9 @@ router.post("/refresh-token", AuthController.refreshToken);
 router.post("/forgot-password", validate(forgotPasswordSchema), AuthController.forgotPassword);
 router.patch("/reset-password", validate(resetPasswordSchema), AuthController.resetPassword);
 
+
 router.get("/profile", checkAuth(), AuthController.getProfile);
+router.get("/me", checkAuth(), AuthController.getProfile);
 router.patch("/profile", checkAuth(), validate(updateProfileSchema), AuthController.updateProfile);
 router.patch("/password", checkAuth(), validate(updatePasswordSchema), AuthController.updatePassword);
 

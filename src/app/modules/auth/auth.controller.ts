@@ -52,7 +52,18 @@ export const getProfile = catchAsync(async (req: Request, res: Response) => {
     statusCode: 200,
     success: true,
     message: "Profile fetched successfully",
-    data: { user },
+    data: user ,
+  });
+});
+
+export const getMe = catchAsync(async (req: Request, res: Response) => {
+  const data = await AuthService.getMe(req.user.id);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Profile fetched successfully",
+    data,
   });
 });
 

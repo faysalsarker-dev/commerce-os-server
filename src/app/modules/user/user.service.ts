@@ -16,6 +16,7 @@ import {
 } from "../../generated/prisma/models";
 import { safeUser } from "../../utils/authUtils";
 import { User } from "../../generated/prisma/client";
+import { clearUserCache } from "../auth/auth.service";
 
 export type SafeUser = Omit<User, "password">;
 
@@ -80,10 +81,13 @@ export const updateUserById = async (
     status: payload.status,
   } as Partial<User>);
 
+  await clearUserCache(userId);
+
   return safeUser(user);
 };
 
 export const deleteUserById = async (userId: string): Promise<SafeUser> => {
   const user = await deleteOne<User>(prisma.user, userId);
+  await clearUserCache(userId);
   return safeUser(user);
 };

@@ -9,17 +9,20 @@ import {
   createProductVariantSchema,
   updateProductVariantSchema,
 } from "./product.validation";
+import { uploadHandler } from "../../utils/upload-handler";
 
 const router = Router();
 
 // ==================== STEP 2: PRODUCT COLORS ====================
 router.post(
   "/color",
+  ...uploadHandler("images", { multiple: true, maxCount: 10 }),
   validate(createProductColorSchema),
   ProductController.addProductColor,
 );
 router.patch(
   "/color/:id",
+  ...uploadHandler("images", { multiple: true, maxCount: 10 }),
   validate(updateProductColorSchema),
   ProductController.updateProductColor,
 );
@@ -28,7 +31,7 @@ router.delete("/color/:id", ProductController.deleteProductColor);
 // ==================== STEP 3: PRODUCT VARIANTS ====================
 router.post(
   "/variant",
-  validate(createProductVariantSchema),
+  // validate(createProductVariantSchema),
   ProductController.addProductVariant,
 );
 router.patch(

@@ -11,6 +11,18 @@ import {
 import { buildTokens, safeUser } from "../../utils/authUtils";
 import { Role } from "../../generated/prisma/enums";
 import { setUserOfflineInRedis } from "../../services/presence.service";
+import { redisClient } from "../../config/redis";
+
+const USER_CACHE_TTL = 300; // 5 minutes in seconds
+const getUserCacheKey = (userId: string) => `user:me:${userId}`;
+
+export const clearUserCache = async (userId: string) => {
+  try {
+    await redisClient.del(getUserCacheKey(userId));
+  } catch (err) {
+    console.error("🔴 Error clearing user cache from Redis:", err);
+  }
+};
 
 export const registerUser = async (payload: UserCreateInput) => {
   const hashedPassword = await bcrypt.hash(
@@ -69,6 +81,40 @@ export const getUserProfile = async (userId: string) => {
   return safeUser(user);
 };
 
+
+export const getMe = async (userId: string) => {
+  const cacheKey = getUserCacheKey(userId);
+
+  try {
+    const cachedUser = await redisClient.get(cacheKey);
+    if (cachedUser) {
+      return JSON.parse(cachedUser);
+    }
+  } catch (err) {
+    console.error("🔴 Error reading user from Redis cache:", err);
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  const result = safeUser(user);
+
+  try {
+    await redisClient.set(cacheKey, JSON.stringify(result), {
+      EX: USER_CACHE_TTL,
+    });
+  } catch (err) {
+    console.error("🔴 Error saving user to Redis cache:", err);
+  }
+
+  return result;
+};
+
 export const logoutUser = async (userId: string) => {
   await setUserOfflineInRedis(userId);
 
@@ -95,6 +141,8 @@ export const updateUserProfile = async (
       image: payload.image,
     },
   });
+
+  await clearUserCache(userId);
 
   return safeUser(user);
 };
@@ -125,6 +173,8 @@ export const updateUserPassword = async (
     where: { id: userId },
     data: { password: hashedPassword },
   });
+
+  await clearUserCache(userId);
 
   return safeUser(updatedUser);
 };
@@ -181,6 +231,8 @@ export const resetPassword = async (token: string, newPassword: string) => {
     where: { id: user.id },
     data: { password: hashedPassword },
   });
+
+  await clearUserCache(user.id);
 
   return {
     user: safeUser(updatedUser),
