@@ -16,6 +16,11 @@ model User {
   employeeDetail EmployeeDetail?
   salaryRecords  SalaryRecord[]
 
+
+ sales    Sale[] @relation("SaleSoldBy")
+ payments Payment[] @relation("PaymentReceivedBy")
+ refunds  Refund[]  @relation("RefundProcessedBy")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

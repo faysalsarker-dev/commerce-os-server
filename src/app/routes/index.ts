@@ -4,6 +4,8 @@ import userRoute from "../modules/user/user.route"
 import categoryRoute from "../modules/catagory/category.route"
 import productRoute from "../modules/product/product.route"
 import salesRoute from "../modules/sales/sales.route"
+import customerRoute from "../modules/customer/customer.route"
+import refundRoute from "../modules/refund/refund.route"
 
 export const router = Router()
 
@@ -20,8 +22,7 @@ const moduleRoutes: ModuleRoute[] = [
     {
         path: "/user",
         route: userRoute
-    }
-    ,
+    },
     {
         path: "/category",
         route: categoryRoute
@@ -33,6 +34,14 @@ const moduleRoutes: ModuleRoute[] = [
     {
         path: "/sales",
         route: salesRoute
+    },
+    {
+        path: "/customer",
+        route: customerRoute
+    },
+    {
+        path: "/refund",
+        route: refundRoute
     }
 ]
 

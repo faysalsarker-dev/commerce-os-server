@@ -1,0 +1,74 @@
+model Sale {
+  id        String @id @default(cuid())
+  invoiceNo String @unique   // human-facing, e.g. INV-2026-000123 (generate in app layer)
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+
+  soldById String                       // staff who made the sale
+  soldBy   User   @relation("SaleSoldBy", fields: [soldById], references: [id], onDelete: Restrict)   // never let staff deletion wipe sales history
+
+  channel SaleChannel
+  status  SaleStatus @default(PENDING)
+
+  items    SaleItem[]
+  payments Payment[]
+  refunds  Refund[]
+
+  // money — all snapshotted at time of sale, never recalculated from live product prices
+  subtotal    Decimal @db.Decimal(10, 2)   // sum of SaleItem.subtotal before order-level discount
+  discount    Decimal @default(0) @db.Decimal(10, 2)
+  shippingFee Decimal @default(0) @db.Decimal(10, 2)
+  total       Decimal @db.Decimal(10, 2)   // subtotal - discount + shippingFee
+
+  // RULE: paidAmount / dueAmount / paymentStatus / refundedAmount are cached fields.
+  // They must ONLY be written inside the same prisma.$transaction([...]) that writes
+  // the related Payment/Refund row — never as a separate update() call afterward.
+  // That single rule is what keeps them trustworthy at MVP scale (no reconciliation
+  // job needed yet — add one later if you ever see drift at bigger scale).
+  paidAmount    Decimal       @default(0) @db.Decimal(10, 2)   // sum of Payment.amount
+  dueAmount     Decimal       @default(0) @db.Decimal(10, 2)   // total - paidAmount (the "khatha" balance)
+  paymentStatus PaymentStatus @default(UNPAID)
+
+  refundedAmount Decimal @default(0) @db.Decimal(10, 2)   // sum of Refund.amount
+
+  shippingAddress String?      // snapshot, in case customer address changes later
+  notes           String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([soldById])
+  @@index([status])
+  @@index([channel])
+  @@index([paymentStatus])
+  @@index([createdAt])
+}
+
+model SaleItem {
+  id     String @id @default(cuid())
+  saleId String
+  sale   Sale   @relation(fields: [saleId], references: [id], onDelete: Cascade)   // line items die with their sale, that's fine — the Sale row itself is never deleted in practice
+
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)   // never let a variant delete wipe sales history
+
+  // snapshots — never read live Product/Variant price after sale is made
+  productName String    // e.g. "Premium Jersey - Maroon - M"
+  sku         String
+  unitPrice   Decimal   @db.Decimal(10, 2)   // price per unit at time of sale
+  quantity    Int
+  discount    Decimal   @default(0) @db.Decimal(10, 2)   // per-line discount
+  subtotal    Decimal   @db.Decimal(10, 2)   // (unitPrice * quantity) - discount
+
+  refundItems RefundItem[]
+
+  createdAt DateTime @default(now())
+
+  // NOTE: creating a SaleItem should trigger a StockMovement(type: SALE_OUT, quantity)
+  // against this variant in the app layer — not enforced at the schema level.
+
+  @@index([saleId])
+  @@index([variantId])
+}

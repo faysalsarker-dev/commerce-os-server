@@ -13,6 +13,7 @@ import {
 } from "../../generated/prisma/models";
 import { Category } from "../../generated/prisma/client";
 import generateSlug from "../../utils/slugify";
+import { deleteEntityImages, handleImageUpdate } from "../../utils/imageUtils";
 
 export const createCategory = async (
   payload: CategoryCreateInput,
@@ -61,6 +62,14 @@ export const updateCategoryById = async (
   categoryId: string,
   payload: CategoryUpdateInput,
 ): Promise<Category> => {
+  const existingCategory = await prisma.category.findUnique({
+    where: { id: categoryId },
+  });
+
+  if (!existingCategory) {
+    throw new AppError("Category not found", 404);
+  }
+
   let slug: string | undefined = undefined;
 
   if (payload.name) {
@@ -71,6 +80,9 @@ export const updateCategoryById = async (
       categoryId,
     );
   }
+
+  // Delete removed old image from Cloudinary
+  await handleImageUpdate(existingCategory, payload, "image");
 
   const category = await updateOne<Category>(prisma.category, categoryId, {
     name: payload.name,
@@ -87,6 +99,9 @@ export const updateCategoryById = async (
 export const deleteCategoryById = async (
   categoryId: string,
 ): Promise<Category> => {
+  const existingCategory = await getById<Category>(prisma.category, categoryId);
+  await deleteEntityImages(existingCategory, "image");
+
   const category = await deleteOne<Category>(prisma.category, categoryId);
   return category;
 };

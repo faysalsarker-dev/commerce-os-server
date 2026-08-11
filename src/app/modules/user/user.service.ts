@@ -17,6 +17,7 @@ import {
 import { safeUser } from "../../utils/authUtils";
 import { User } from "../../generated/prisma/client";
 import { clearUserCache } from "../auth/auth.service";
+import { deleteEntityImages, handleImageUpdate } from "../../utils/imageUtils";
 
 export type SafeUser = Omit<User, "password">;
 
@@ -73,6 +74,17 @@ export const updateUserById = async (
   userId: string,
   payload: UserUpdateInput,
 ): Promise<SafeUser> => {
+  const existingUser = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!existingUser) {
+    throw new AppError("User not found", 404);
+  }
+
+  // Delete old user image if replaced or removed
+  await handleImageUpdate(existingUser, payload, "image");
+
   const user = await updateOne<User>(prisma.user, userId, {
     name: payload.name,
     phone: payload.phone,
@@ -87,6 +99,9 @@ export const updateUserById = async (
 };
 
 export const deleteUserById = async (userId: string): Promise<SafeUser> => {
+  const existingUser = await getById<User>(prisma.user, userId);
+  await deleteEntityImages(existingUser, "image");
+
   const user = await deleteOne<User>(prisma.user, userId);
   await clearUserCache(userId);
   return safeUser(user);

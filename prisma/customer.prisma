@@ -1,0 +1,18 @@
+model Customer {
+  id      String  @id @default(cuid())
+  name    String
+  phone   String? @unique   // primary lookup key in-store
+  sales Sale[]
+
+  // cached, fast-read stats — see rule below
+  totalOrders    Int       @default(0)
+  totalSpent     Decimal   @default(0) @db.Decimal(10, 2)
+  totalDue       Decimal   @default(0) @db.Decimal(10, 2)
+  lastPurchaseAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([phone])
+  @@index([totalDue])
+}

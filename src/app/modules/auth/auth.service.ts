@@ -12,6 +12,7 @@ import { buildTokens, safeUser } from "../../utils/authUtils";
 import { Role } from "../../generated/prisma/enums";
 import { setUserOfflineInRedis } from "../../services/presence.service";
 import { redisClient } from "../../config/redis";
+import { handleImageUpdate } from "../../utils/imageUtils";
 
 const USER_CACHE_TTL = 300; // 5 minutes in seconds
 const getUserCacheKey = (userId: string) => `user:me:${userId}`;
@@ -133,6 +134,16 @@ export const updateUserProfile = async (
   userId: string,
   payload: UserUpdateInput,
 ) => {
+  const existingUser = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!existingUser) {
+    throw new AppError("User not found", 404);
+  }
+
+  await handleImageUpdate(existingUser, payload, "image");
+
   const user = await prisma.user.update({
     where: { id: userId },
     data: {

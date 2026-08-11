@@ -16,7 +16,10 @@ export const scanProduct = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const checkoutSale = catchAsync(async (req: Request, res: Response) => {
-  const result = await SalesService.checkoutSale(req.body);
+  const result = await SalesService.checkoutSale({
+    ...req.body,
+    soldById: req.user?.id || req.body.soldById,
+  });
 
   sendResponse(res, {
     statusCode: HttpStatus.OK,

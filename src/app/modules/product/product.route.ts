@@ -31,7 +31,7 @@ router.delete("/color/:id", ProductController.deleteProductColor);
 // ==================== STEP 3: PRODUCT VARIANTS ====================
 router.post(
   "/variant",
-  // validate(createProductVariantSchema),
+  validate(createProductVariantSchema),
   ProductController.addProductVariant,
 );
 router.patch(

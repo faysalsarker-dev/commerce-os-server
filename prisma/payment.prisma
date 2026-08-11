@@ -1,0 +1,30 @@
+model Payment {
+  id     String @id @default(cuid())
+  saleId String
+  sale   Sale   @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  method    PaymentMethod
+  amount    Decimal       @db.Decimal(10, 2)
+  reference String?       // txn id / bKash ref / bank slip no.
+
+  receivedById String?    // staff who collected this specific payment (may differ from soldBy, e.g. due collected later)
+  receivedBy   User?      @relation("PaymentReceivedBy", fields: [receivedById], references: [id])
+
+  paidAt DateTime @default(now())
+  notes  String?
+
+  createdAt DateTime @default(now())
+
+  // Multiple Payment rows per Sale is how "pay X now, Y later" (due/khatha) works —
+  // never overwrite Sale.paidAmount directly, always append a new Payment row and recompute
+  // (see RULE on Sale above).
+  //
+  // Income summary reports (daily/monthly, by method, by staff) are just a groupBy
+  // on paidAt + method + receivedById — no extra schema needed for that.
+
+  @@index([saleId])
+  @@index([method])
+  @@index([receivedById])
+  @@index([paidAt])   // powers daily/monthly income summary queries
+}
+

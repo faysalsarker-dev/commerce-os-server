@@ -1,0 +1,46 @@
+model Refund {
+  id     String @id @default(cuid())
+  saleId String
+  sale   Sale   @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  items RefundItem[]
+
+  amount Decimal       @db.Decimal(10, 2)   // sum of RefundItem.amount
+  method PaymentMethod                       // payout method — may differ from how they originally paid
+  reason String?
+
+  processedById String
+  processedBy   User   @relation("RefundProcessedBy", fields: [processedById], references: [id], onDelete: Restrict)
+
+  refundedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@index([saleId])
+  @@index([processedById])
+  @@index([refundedAt])   // powers "how much / how many refunded this month" reports
+}
+
+
+model RefundItem {
+  id       String @id @default(cuid())
+  refundId String
+  refund   Refund @relation(fields: [refundId], references: [id], onDelete: Cascade)
+
+  saleItemId String
+  saleItem   SaleItem @relation(fields: [saleItemId], references: [id], onDelete: Restrict)
+
+  // Denormalized from saleItem.variantId at creation time — same snapshot philosophy
+  // as SaleItem.productName/sku. Avoids a 2-hop join (RefundItem -> SaleItem -> variantId)
+  // for "which variant, how many units, refunded this month" reports, which you'll run often.
+  variantId String
+
+  quantity Int       // supports partial-quantity returns (e.g. 1 of 3 shirts)
+  amount   Decimal   @db.Decimal(10, 2)
+
+  // NOTE: creating a RefundItem should trigger a StockMovement(type: RETURN_IN, quantity)
+  // against variantId in the app layer.
+
+  @@index([refundId])
+  @@index([saleItemId])
+  @@index([variantId])   // powers per-product refund quantity reports
+}

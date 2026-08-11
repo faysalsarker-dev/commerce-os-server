@@ -6,9 +6,10 @@ import {
   returnProductSchema,
   scanProductSchema,
 } from "./sales.validation";
+import { checkAuth } from "../../middleware/authenticate";
 
 const router = Router();
-
+router.use(checkAuth())
 router.post("/scan", validate(scanProductSchema), SalesController.scanProduct);
 router.post("/checkout", validate(checkoutSaleSchema), SalesController.checkoutSale);
 router.post("/return", validate(returnProductSchema), SalesController.returnProduct);

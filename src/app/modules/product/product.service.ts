@@ -13,6 +13,7 @@ import {
 } from "../../generated/prisma/models";
 import { Product, Prisma, $Enums } from "../../generated/prisma/client";
 import { broadcastStockUpdate } from "../../config/socket";
+import { deleteEntityImages, handleImageUpdate } from "../../utils/imageUtils";
 
 const productInclude = {
   category: true,
@@ -181,6 +182,9 @@ export const updateProductColor = async (
     }
   }
 
+  // Delete removed old images from Cloudinary
+  await handleImageUpdate(existingColor, payload, "images");
+
   const color = await prisma.productColor.update({
     where: { id: colorId },
     data: {
@@ -204,6 +208,8 @@ export const deleteProductColor = async (colorId: string) => {
   if (!color) {
     throw new AppError("Product color not found", 404);
   }
+
+  await deleteEntityImages(color, "images");
 
   await prisma.productColor.delete({
     where: { id: colorId },
