@@ -14,17 +14,24 @@ import {
 import { Category } from "../../generated/prisma/client";
 import generateSlug from "../../utils/slugify";
 import { deleteEntityImages, handleImageUpdate } from "../../utils/imageUtils";
+import { getNextDisplayOrder } from "../../utils/nextDisplayOrder";
 
 export const createCategory = async (
   payload: CategoryCreateInput,
 ): Promise<Category> => {
   if (!payload.name) throw new AppError("Category name is required", 400);
 
+  console.log("Creating category with payload:", payload);
   const slug = await generateSlug(
     String(payload.name),
     prisma.category,
     "slug",
   );
+
+ const displayOrder =
+  payload.displayOrder === 0 || payload.displayOrder == null
+    ? await getNextDisplayOrder(prisma.category)
+    : payload.displayOrder;
 
   const category = await createOne<Category>(prisma.category, {
     name: payload.name,
@@ -32,7 +39,7 @@ export const createCategory = async (
     description: payload.description,
     image: payload.image,
     isActive: payload.isActive,
-    displayOrder: payload.displayOrder,
+    displayOrder,
   } as Partial<Category>);
 
   return category;
@@ -66,27 +73,21 @@ export const updateCategoryById = async (
     where: { id: categoryId },
   });
 
+
+
+
   if (!existingCategory) {
     throw new AppError("Category not found", 404);
   }
 
-  let slug: string | undefined = undefined;
 
-  if (payload.name) {
-    slug = await generateSlug(
-      String(payload.name),
-      prisma.category,
-      "slug",
-      categoryId,
-    );
-  }
 
   // Delete removed old image from Cloudinary
   await handleImageUpdate(existingCategory, payload, "image");
 
   const category = await updateOne<Category>(prisma.category, categoryId, {
     name: payload.name,
-    ...(slug && { slug }),
+    slug: payload.slug,
     description: payload.description,
     image: payload.image,
     isActive: payload.isActive,
@@ -104,4 +105,14 @@ export const deleteCategoryById = async (
 
   const category = await deleteOne<Category>(prisma.category, categoryId);
   return category;
+};
+
+
+export const getCategoryForSelect = async (): Promise<{ id: string; name: string }[]> => {
+  const categories = await prisma.category.findMany({
+    where: { isActive: true },
+    select: { id: true, name: true },
+    orderBy: { displayOrder: "asc" },
+  });
+  return categories;
 };

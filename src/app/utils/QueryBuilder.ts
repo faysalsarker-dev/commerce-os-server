@@ -1,4 +1,21 @@
 
+const normalizeFilterValue = (key: string, value: any) => {
+  if (typeof value !== "string") return value;
+
+  const lowerValue = value.trim().toLowerCase();
+
+  if (key === "isActive") {
+    if (lowerValue === "true") return true;
+    if (lowerValue === "false") return false;
+  }
+
+  if (/[\d.]+/.test(lowerValue) && !Number.isNaN(Number(value))) {
+    return Number(value);
+  }
+
+  return value;
+};
+
 export const buildPrismaQuery = <T>(
   query: Record<string, any>,
   searchableFields: string[]
@@ -20,7 +37,7 @@ export const buildPrismaQuery = <T>(
   // 2. Filtering (Exact matches for everything else)
   if (Object.keys(filterData).length > 0) {
     queryObj.where.AND = Object.keys(filterData).map((key) => ({
-      [key]: filterData[key],
+      [key]: normalizeFilterValue(key, filterData[key]),
     }));
   }
 

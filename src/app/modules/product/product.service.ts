@@ -97,8 +97,94 @@ export const updateProductById = async (
 };
 
 export const deleteProductById = async (productId: string): Promise<ProductWithRelations> => {
-  const product = await deleteOne<ProductWithRelations>(prisma.product, productId, productInclude);
-  return product;
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    include: {
+      category: true,
+      colors: {
+        include: {
+          variants: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!product) {
+    throw new AppError("Product not found", 404);
+  }
+
+  const colorIds = product.colors.map((color) => color.id);
+  const variantIds = product.colors.flatMap((color) =>
+    color.variants.map((variant) => variant.id),
+  );
+
+  await Promise.all(
+    product.colors.map((color) => deleteEntityImages(color, "images")),
+  );
+
+  const deletedProduct = await prisma.$transaction(async (tx) => {
+    if (variantIds.length > 0) {
+      const saleItems = await tx.saleItem.findMany({
+        where: {
+          variantId: {
+            in: variantIds,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      const saleItemIds = saleItems.map((item) => item.id);
+
+      if (saleItemIds.length > 0) {
+        await tx.refundItem.deleteMany({
+          where: {
+            saleItemId: {
+              in: saleItemIds,
+            },
+          },
+        });
+
+        await tx.saleItem.deleteMany({
+          where: {
+            id: {
+              in: saleItemIds,
+            },
+          },
+        });
+      }
+
+      await tx.productVariant.deleteMany({
+        where: {
+          id: {
+            in: variantIds,
+          },
+        },
+      });
+    }
+
+    if (colorIds.length > 0) {
+      await tx.productColor.deleteMany({
+        where: {
+          id: {
+            in: colorIds,
+          },
+        },
+      });
+    }
+
+    return tx.product.delete({
+      where: { id: productId },
+      include: productInclude,
+    });
+  });
+
+  return deletedProduct;
 };
 
 // ==================== STEP 2: PRODUCT COLOR ====================
@@ -203,6 +289,13 @@ export const updateProductColor = async (
 export const deleteProductColor = async (colorId: string) => {
   const color = await prisma.productColor.findUnique({
     where: { id: colorId },
+    include: {
+      variants: {
+        select: {
+          id: true,
+        },
+      },
+    },
   });
 
   if (!color) {
@@ -211,8 +304,51 @@ export const deleteProductColor = async (colorId: string) => {
 
   await deleteEntityImages(color, "images");
 
-  await prisma.productColor.delete({
-    where: { id: colorId },
+  const variantIds = color.variants.map((variant) => variant.id);
+
+  await prisma.$transaction(async (tx) => {
+    if (variantIds.length > 0) {
+      const saleItems = await tx.saleItem.findMany({
+        where: {
+          variantId: {
+            in: variantIds,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      const saleItemIds = saleItems.map((item) => item.id);
+
+      if (saleItemIds.length > 0) {
+        await tx.refundItem.deleteMany({
+          where: {
+            saleItemId: {
+              in: saleItemIds,
+            },
+          },
+        });
+
+        await tx.saleItem.deleteMany({
+          where: {
+            id: {
+              in: saleItemIds,
+            },
+          },
+        });
+      }
+
+      await tx.productVariant.deleteMany({
+        where: {
+          productColorId: colorId,
+        },
+      });
+    }
+
+    await tx.productColor.delete({
+      where: { id: colorId },
+    });
   });
 
   return { message: "Product color deleted successfully", colorId };

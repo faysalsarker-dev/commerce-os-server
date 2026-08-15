@@ -17,9 +17,11 @@ router.post(
 );
 
 router.get("/", CategoryController.getCategories);
+router.get("/select", CategoryController.getCategoryForSelect);
 router.get("/:id", CategoryController.getCategory);
 router.patch(
   "/:id",
+    ...uploadHandler(),
   validate(updateCategorySchema),
   CategoryController.updateCategory,
 );

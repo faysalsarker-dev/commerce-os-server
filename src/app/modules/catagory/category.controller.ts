@@ -74,3 +74,15 @@ export const deleteCategory = catchAsync(
     });
   },
 );
+
+
+export const getCategoryForSelect = catchAsync(
+  async (req: Request, res: Response) => {
+    const categories = await CategoryService.getCategoryForSelect();  
+    sendResponse(res, {
+      statusCode: HttpStatus.OK,
+      success: true,
+      message: "Categories fetched successfully",
+      data: categories,
+    });
+  })
