@@ -14,5 +14,6 @@ router.post("/scan", validate(scanProductSchema), SalesController.scanProduct);
 router.post("/checkout", validate(checkoutSaleSchema), SalesController.checkoutSale);
 router.post("/return", validate(returnProductSchema), SalesController.returnProduct);
 router.get("/history", SalesController.getSalesHistory);
+router.get("/invoice/:invoiceNo", SalesController.getSaleByInvoiceNumber);
 
 export default router;

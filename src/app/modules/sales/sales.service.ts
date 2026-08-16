@@ -504,3 +504,33 @@ export const getSalesHistory = async () => {
 
   return sales;
 };
+
+
+export const getSaleByInvoiceNumber = async (invoiceNo: string) => {
+  const sale = await prisma.sale.findUnique({
+    where: {
+      invoiceNo,
+    },
+    include: {
+      items: {
+        include: {
+          variant: {
+            include: variantInclude,
+          },
+        },
+      },
+      soldBy: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  if (!sale) {
+    throw new AppError("Sale not found", 404);
+  }
+
+  return sale;
+};

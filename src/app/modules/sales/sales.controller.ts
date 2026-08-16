@@ -50,3 +50,15 @@ export const getSalesHistory = catchAsync(async (_req: Request, res: Response) =
     data: result,
   });
 });
+
+
+export const getSaleByInvoiceNumber = catchAsync(async (req: Request, res: Response) => {
+  const result = await SalesService.getSaleByInvoiceNumber(req.params.invoiceNo as string);
+
+  sendResponse(res, {
+    statusCode: HttpStatus.OK,
+    success: true,
+    message: "Sale fetched successfully",
+    data: result,
+  });
+});
