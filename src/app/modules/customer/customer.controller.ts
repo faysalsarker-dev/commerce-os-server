@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import catchAsync from "../../common/catchAsync";
 import sendResponse from "../../common/sendResponse";
-import { HttpStatus } from "../../utils/httpStatus";
+import { HttpStatus } from "../../utils/network/httpStatus";
 import * as CustomerService from "./customer.service";
 
 export const createCustomer = catchAsync(async (req: Request, res: Response) => {

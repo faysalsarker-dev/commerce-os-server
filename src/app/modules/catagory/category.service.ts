@@ -12,9 +12,9 @@ import {
   CategoryUpdateInput,
 } from "../../generated/prisma/models";
 import { Category } from "../../generated/prisma/client";
-import generateSlug from "../../utils/slugify";
-import { deleteEntityImages, handleImageUpdate } from "../../utils/imageUtils";
-import { getNextDisplayOrder } from "../../utils/nextDisplayOrder";
+import generateSlug from "../../utils/helper/slugify";
+import { deleteEntityImages, handleImageUpdate } from "../../utils/helper/imageUtils";
+import { getNextDisplayOrder } from "../../utils/helper/nextDisplayOrder";
 
 export const createCategory = async (
   payload: CategoryCreateInput,

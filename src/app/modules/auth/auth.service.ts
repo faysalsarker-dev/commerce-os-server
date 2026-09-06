@@ -3,16 +3,16 @@ import { config } from "../../config";
 import prisma from "../../lib/prisma";
 import { AppError } from "../../errors/AppError";
 import { sendEmail } from "../../lib/nodemailer";
-import { generatePasswordResetToken, verifyToken } from "../../utils/jwt";
+import { generatePasswordResetToken, verifyToken } from "../../utils/auth/jwt";
 import {
   UserCreateInput,
   UserUpdateInput,
 } from "../../generated/prisma/models";
-import { buildTokens, safeUser } from "../../utils/authUtils";
+import { buildTokens, safeUser } from "../../utils/auth/authUtils";
 import { Role } from "../../generated/prisma/enums";
 import { setUserOfflineInRedis } from "../../services/presence.service";
 import { redisClient } from "../../config/redis";
-import { handleImageUpdate } from "../../utils/imageUtils";
+import { handleImageUpdate } from "../../utils/helper/imageUtils";
 
 const USER_CACHE_TTL = 300; // 5 minutes in seconds
 const getUserCacheKey = (userId: string) => `user:me:${userId}`;
@@ -73,13 +73,101 @@ export const loginUser = async (email: string, password: string) => {
 export const getUserProfile = async (userId: string) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
+    include: {
+      employeeDetail: true,
+      salaryRecords: {
+        orderBy: [{ year: "desc" }, { month: "desc" }],
+        take: 12,
+      },
+      sales: {
+        orderBy: { createdAt: "desc" },
+        include: {
+          items: {
+            select: {
+              quantity: true,
+            },
+          },
+          refunds: {
+            include: {
+              items: {
+                select: {
+                  quantity: true,
+                  amount: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!user) {
     throw new AppError("User not found", 404);
   }
 
-  return safeUser(user);
+  const profile = safeUser(user) as any;
+
+  const totalSales = user.sales.reduce(
+    (sum, sale) => sum + Number(sale.total || 0),
+    0,
+  );
+  const totalPaid = user.sales.reduce(
+    (sum, sale) => sum + Number(sale.paidAmount || 0),
+    0,
+  );
+  const totalDue = user.sales.reduce(
+    (sum, sale) => sum + Number(sale.dueAmount || 0),
+    0,
+  );
+  const totalItemsSold = user.sales.reduce(
+    (sum, sale) => sum + sale.items.reduce((itemSum, item) => itemSum + Number(item.quantity || 0), 0),
+    0,
+  );
+  const totalRefundAmount = user.sales.reduce(
+    (sum, sale) =>
+      sum + sale.refunds.reduce((refundSum, refund) => refundSum + Number(refund.amount || 0), 0),
+    0,
+  );
+  const totalRefundItems = user.sales.reduce(
+    (sum, sale) =>
+      sum + sale.refunds.reduce(
+        (refundSum, refund) =>
+          refundSum + refund.items.reduce((itemSum, item) => itemSum + Number(item.quantity || 0), 0),
+        0,
+      ),
+    0,
+  );
+
+  const salary = user.salaryRecords
+    .slice(0, 12)
+    .map((record) => ({
+      id: record.id,
+      month: record.month,
+      year: record.year,
+      baseSalary: Number(record.baseSalary || 0),
+      bonus: Number(record.bonus || 0),
+      deduction: Number(record.deduction || 0),
+      netPay: Number(record.netPay || 0),
+      status: record.status,
+      paidAt: record.paidAt,
+    }));
+
+  delete profile.sales;
+  delete profile.password;
+
+  profile.salary = salary;
+  profile.salesSummary = {
+    totalSalesCount: user.sales.length,
+    totalSales,
+    totalPaid,
+    totalDue,
+    totalItemsSold,
+    totalRefundAmount,
+    totalRefundItems,
+  };
+
+  return profile;
 };
 
 
@@ -117,7 +205,7 @@ export const getMe = async (userId: string) => {
 };
 
 export const logoutUser = async (userId: string) => {
-  await setUserOfflineInRedis(userId);
+  // await setUserOfflineInRedis(userId);
 
   const user = await prisma.user.findUnique({
     where: { id: userId },

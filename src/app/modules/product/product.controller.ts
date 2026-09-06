@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import catchAsync from "../../common/catchAsync";
 import sendResponse from "../../common/sendResponse";
 import * as ProductService from "./product.service";
-import { HttpStatus } from "../../utils/httpStatus";
+import { HttpStatus } from "../../utils/network/httpStatus";
 
 // ==================== STEP 1: BASE PRODUCT CONTAINER ====================
 

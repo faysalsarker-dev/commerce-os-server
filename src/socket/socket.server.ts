@@ -1,6 +1,6 @@
 import { Server as HttpServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
-import { corsOrigin } from "../app/utils/corsOrigin";
+import { corsOrigin } from "../app/utils/network/corsOrigin";
 import { socketAuthMiddleware } from "./socket.middleware";
 import { registerUserSocketHandler } from "../app/modules/user/user.socket";
 import {

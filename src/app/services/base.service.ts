@@ -3,7 +3,7 @@
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 import { AppError } from "../errors/AppError";
-import { buildPrismaQuery } from "../utils/QueryBuilder";
+import { buildPrismaQuery } from "../utils/businessLogic/QueryBuilder";
 
 type PrismaModel = {
   create: (args: any) => Promise<any>;

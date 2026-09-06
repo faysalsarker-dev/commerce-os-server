@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import catchAsync from "../../common/catchAsync";
 import sendResponse from "../../common/sendResponse";
 import * as UserService from "./user.service";
-import { HttpStatus } from "../../utils/httpStatus";
+import { HttpStatus } from "../../utils/network/httpStatus";
 
 export const createUser = catchAsync(async (req: Request, res: Response) => {
+
   const user = await UserService.createUser(req.body);
 
   sendResponse(res, {
@@ -56,6 +57,17 @@ export const deleteUser = catchAsync(async (req: Request, res: Response) => {
     statusCode: HttpStatus.OK,
     success: true,
     message: "User deleted successfully",
+    data: user,
+  });
+});
+
+export const getUserProfile = catchAsync(async (req: Request, res: Response) => {
+  const user = await UserService.getUserProfile(req.user.id as string);
+
+  sendResponse(res, {
+    statusCode: HttpStatus.OK,
+    success: true,
+    message: "User profile fetched successfully",
     data: user,
   });
 });

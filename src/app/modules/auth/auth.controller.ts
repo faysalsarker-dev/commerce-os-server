@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import catchAsync from "../../common/catchAsync";
 import sendResponse from "../../common/sendResponse";
 import * as AuthService from "./auth.service";
-import { clearAuthCookies, setAuthCookies } from "../../utils/authCookies";
+import { clearAuthCookies, setAuthCookies } from "../../utils/auth/authCookies";
 
 export const register = catchAsync(async (req: Request, res: Response) => {
   const { user, tokens } = await AuthService.registerUser(req.body);

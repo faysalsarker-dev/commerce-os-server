@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import catchAsync from "../../common/catchAsync";
 import sendResponse from "../../common/sendResponse";
 import * as CategoryService from "./category.service";
-import { HttpStatus } from "../../utils/httpStatus";
+import { HttpStatus } from "../../utils/network/httpStatus";
 
 export const createCategory = catchAsync(
   async (req: Request, res: Response) => {

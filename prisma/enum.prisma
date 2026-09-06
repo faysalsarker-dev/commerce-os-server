@@ -1,8 +1,9 @@
 enum Role {
-  SUPER_ADMIN       
+  SUPER_ADMIN  
+  ADMIN
+  MANAGER     
   MARKETER         
-  ONLINE_SALESMAN   
-  OFFLINE_SALESMAN  
+  SALESMAN    
 }
 
 enum EmployeeStatus {

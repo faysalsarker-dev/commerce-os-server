@@ -1,4 +1,3 @@
-import { deleteImageFromCLoudinary } from "../config/cloudinary.config";
 
 /**
  * =========================================================================================
@@ -28,6 +27,8 @@ import { deleteImageFromCLoudinary } from "../config/cloudinary.config";
  * - Record deletion (e.g., deleting a ProductColor or Category record and purging all attached images).
  * =========================================================================================
  */
+
+import { deleteImageFromCLoudinary } from "../../config/cloudinary.config";
 
 export type ImageFieldName =
   | "images"

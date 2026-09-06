@@ -13,7 +13,7 @@ import {
 } from "../../generated/prisma/models";
 import { Product, Prisma, $Enums } from "../../generated/prisma/client";
 import { broadcastStockUpdate } from "../../config/socket";
-import { deleteEntityImages, handleImageUpdate } from "../../utils/imageUtils";
+import { deleteEntityImages, handleImageUpdate } from "../../utils/helper/imageUtils";
 
 const productInclude = {
   category: true,

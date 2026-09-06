@@ -1,5 +1,6 @@
-import { User } from "../generated/prisma/client";
+import { User } from "../../generated/prisma/client";
 import { generateAccessToken, generateRefreshToken } from "./jwt";
+
 
 
 export type AuthTokens = {

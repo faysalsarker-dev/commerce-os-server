@@ -9,7 +9,7 @@ const statusEnum = z.nativeEnum(EmployeeStatus);
 export const createUserSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Valid email is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.coerce.string().min(6, "Password must be at least 6 characters"),
   phone: z.preprocess(
     emptyToUndefined,
     z.string().min(6, "Phone must be at least 6 characters").optional(),
@@ -20,6 +20,23 @@ export const createUserSchema = z.object({
     emptyToUndefined,
     z.string().url("Image must be a valid URL").optional(),
   ),
+  employeeDetail: z
+    .object({
+      designation: z.preprocess(emptyToUndefined, z.string().optional()),
+      joinDate: z.coerce.date(),
+      baseSalary: z.coerce.number().nonnegative(),
+      nidNumber: z.preprocess(emptyToUndefined, z.string().optional()),
+      birthCertificateNumber: z.preprocess(
+        emptyToUndefined,
+        z.string().optional(),
+      ),
+      address: z.preprocess(emptyToUndefined, z.string().optional()),
+      emergencyContact: z.preprocess(
+        emptyToUndefined,
+        z.string().optional(),
+      ),
+    })
+    .optional(),
 });
 
 export const updateUserSchema = z

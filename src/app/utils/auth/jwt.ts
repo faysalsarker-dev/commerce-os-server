@@ -1,5 +1,5 @@
 ﻿import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
-import { config } from "../config";
+import { config } from "../../config";
 
 type TokenPayload = Record<string, unknown>;
 

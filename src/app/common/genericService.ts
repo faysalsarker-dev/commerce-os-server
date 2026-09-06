@@ -1,4 +1,4 @@
-import { buildPrismaQuery } from "../utils/QueryBuilder";
+import { buildPrismaQuery } from "../utils/businessLogic/QueryBuilder";
 import prisma  from "../lib/prisma"
 
 export const getAllFromDB = async (

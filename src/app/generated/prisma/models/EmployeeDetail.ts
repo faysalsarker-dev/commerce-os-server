@@ -41,6 +41,7 @@ export type EmployeeDetailMinAggregateOutputType = {
   joinDate: Date | null
   baseSalary: runtime.Decimal | null
   nidNumber: string | null
+  birthCertificateNumber: string | null
   address: string | null
   emergencyContact: string | null
   createdAt: Date | null
@@ -54,6 +55,7 @@ export type EmployeeDetailMaxAggregateOutputType = {
   joinDate: Date | null
   baseSalary: runtime.Decimal | null
   nidNumber: string | null
+  birthCertificateNumber: string | null
   address: string | null
   emergencyContact: string | null
   createdAt: Date | null
@@ -67,6 +69,7 @@ export type EmployeeDetailCountAggregateOutputType = {
   joinDate: number
   baseSalary: number
   nidNumber: number
+  birthCertificateNumber: number
   address: number
   emergencyContact: number
   createdAt: number
@@ -90,6 +93,7 @@ export type EmployeeDetailMinAggregateInputType = {
   joinDate?: true
   baseSalary?: true
   nidNumber?: true
+  birthCertificateNumber?: true
   address?: true
   emergencyContact?: true
   createdAt?: true
@@ -103,6 +107,7 @@ export type EmployeeDetailMaxAggregateInputType = {
   joinDate?: true
   baseSalary?: true
   nidNumber?: true
+  birthCertificateNumber?: true
   address?: true
   emergencyContact?: true
   createdAt?: true
@@ -116,6 +121,7 @@ export type EmployeeDetailCountAggregateInputType = {
   joinDate?: true
   baseSalary?: true
   nidNumber?: true
+  birthCertificateNumber?: true
   address?: true
   emergencyContact?: true
   createdAt?: true
@@ -216,6 +222,7 @@ export type EmployeeDetailGroupByOutputType = {
   joinDate: Date
   baseSalary: runtime.Decimal
   nidNumber: string | null
+  birthCertificateNumber: string | null
   address: string | null
   emergencyContact: string | null
   createdAt: Date
@@ -252,6 +259,7 @@ export type EmployeeDetailWhereInput = {
   joinDate?: Prisma.DateTimeFilter<"EmployeeDetail"> | Date | string
   baseSalary?: Prisma.DecimalFilter<"EmployeeDetail"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: Prisma.StringNullableFilter<"EmployeeDetail"> | string | null
+  birthCertificateNumber?: Prisma.StringNullableFilter<"EmployeeDetail"> | string | null
   address?: Prisma.StringNullableFilter<"EmployeeDetail"> | string | null
   emergencyContact?: Prisma.StringNullableFilter<"EmployeeDetail"> | string | null
   createdAt?: Prisma.DateTimeFilter<"EmployeeDetail"> | Date | string
@@ -266,6 +274,7 @@ export type EmployeeDetailOrderByWithRelationInput = {
   joinDate?: Prisma.SortOrder
   baseSalary?: Prisma.SortOrder
   nidNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  birthCertificateNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   emergencyContact?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -283,6 +292,7 @@ export type EmployeeDetailWhereUniqueInput = Prisma.AtLeast<{
   joinDate?: Prisma.DateTimeFilter<"EmployeeDetail"> | Date | string
   baseSalary?: Prisma.DecimalFilter<"EmployeeDetail"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: Prisma.StringNullableFilter<"EmployeeDetail"> | string | null
+  birthCertificateNumber?: Prisma.StringNullableFilter<"EmployeeDetail"> | string | null
   address?: Prisma.StringNullableFilter<"EmployeeDetail"> | string | null
   emergencyContact?: Prisma.StringNullableFilter<"EmployeeDetail"> | string | null
   createdAt?: Prisma.DateTimeFilter<"EmployeeDetail"> | Date | string
@@ -297,6 +307,7 @@ export type EmployeeDetailOrderByWithAggregationInput = {
   joinDate?: Prisma.SortOrder
   baseSalary?: Prisma.SortOrder
   nidNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  birthCertificateNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   emergencyContact?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -318,6 +329,7 @@ export type EmployeeDetailScalarWhereWithAggregatesInput = {
   joinDate?: Prisma.DateTimeWithAggregatesFilter<"EmployeeDetail"> | Date | string
   baseSalary?: Prisma.DecimalWithAggregatesFilter<"EmployeeDetail"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: Prisma.StringNullableWithAggregatesFilter<"EmployeeDetail"> | string | null
+  birthCertificateNumber?: Prisma.StringNullableWithAggregatesFilter<"EmployeeDetail"> | string | null
   address?: Prisma.StringNullableWithAggregatesFilter<"EmployeeDetail"> | string | null
   emergencyContact?: Prisma.StringNullableWithAggregatesFilter<"EmployeeDetail"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"EmployeeDetail"> | Date | string
@@ -330,6 +342,7 @@ export type EmployeeDetailCreateInput = {
   joinDate: Date | string
   baseSalary: runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: string | null
+  birthCertificateNumber?: string | null
   address?: string | null
   emergencyContact?: string | null
   createdAt?: Date | string
@@ -344,6 +357,7 @@ export type EmployeeDetailUncheckedCreateInput = {
   joinDate: Date | string
   baseSalary: runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: string | null
+  birthCertificateNumber?: string | null
   address?: string | null
   emergencyContact?: string | null
   createdAt?: Date | string
@@ -356,6 +370,7 @@ export type EmployeeDetailUpdateInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   baseSalary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthCertificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -370,6 +385,7 @@ export type EmployeeDetailUncheckedUpdateInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   baseSalary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthCertificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -383,6 +399,7 @@ export type EmployeeDetailCreateManyInput = {
   joinDate: Date | string
   baseSalary: runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: string | null
+  birthCertificateNumber?: string | null
   address?: string | null
   emergencyContact?: string | null
   createdAt?: Date | string
@@ -395,6 +412,7 @@ export type EmployeeDetailUpdateManyMutationInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   baseSalary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthCertificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -408,6 +426,7 @@ export type EmployeeDetailUncheckedUpdateManyInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   baseSalary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthCertificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -426,6 +445,7 @@ export type EmployeeDetailCountOrderByAggregateInput = {
   joinDate?: Prisma.SortOrder
   baseSalary?: Prisma.SortOrder
   nidNumber?: Prisma.SortOrder
+  birthCertificateNumber?: Prisma.SortOrder
   address?: Prisma.SortOrder
   emergencyContact?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -443,6 +463,7 @@ export type EmployeeDetailMaxOrderByAggregateInput = {
   joinDate?: Prisma.SortOrder
   baseSalary?: Prisma.SortOrder
   nidNumber?: Prisma.SortOrder
+  birthCertificateNumber?: Prisma.SortOrder
   address?: Prisma.SortOrder
   emergencyContact?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -456,6 +477,7 @@ export type EmployeeDetailMinOrderByAggregateInput = {
   joinDate?: Prisma.SortOrder
   baseSalary?: Prisma.SortOrder
   nidNumber?: Prisma.SortOrder
+  birthCertificateNumber?: Prisma.SortOrder
   address?: Prisma.SortOrder
   emergencyContact?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -504,6 +526,7 @@ export type EmployeeDetailCreateWithoutUserInput = {
   joinDate: Date | string
   baseSalary: runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: string | null
+  birthCertificateNumber?: string | null
   address?: string | null
   emergencyContact?: string | null
   createdAt?: Date | string
@@ -516,6 +539,7 @@ export type EmployeeDetailUncheckedCreateWithoutUserInput = {
   joinDate: Date | string
   baseSalary: runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: string | null
+  birthCertificateNumber?: string | null
   address?: string | null
   emergencyContact?: string | null
   createdAt?: Date | string
@@ -544,6 +568,7 @@ export type EmployeeDetailUpdateWithoutUserInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   baseSalary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthCertificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -556,6 +581,7 @@ export type EmployeeDetailUncheckedUpdateWithoutUserInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   baseSalary?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthCertificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -571,6 +597,7 @@ export type EmployeeDetailSelect<ExtArgs extends runtime.Types.Extensions.Intern
   joinDate?: boolean
   baseSalary?: boolean
   nidNumber?: boolean
+  birthCertificateNumber?: boolean
   address?: boolean
   emergencyContact?: boolean
   createdAt?: boolean
@@ -585,6 +612,7 @@ export type EmployeeDetailSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   joinDate?: boolean
   baseSalary?: boolean
   nidNumber?: boolean
+  birthCertificateNumber?: boolean
   address?: boolean
   emergencyContact?: boolean
   createdAt?: boolean
@@ -599,6 +627,7 @@ export type EmployeeDetailSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   joinDate?: boolean
   baseSalary?: boolean
   nidNumber?: boolean
+  birthCertificateNumber?: boolean
   address?: boolean
   emergencyContact?: boolean
   createdAt?: boolean
@@ -613,13 +642,14 @@ export type EmployeeDetailSelectScalar = {
   joinDate?: boolean
   baseSalary?: boolean
   nidNumber?: boolean
+  birthCertificateNumber?: boolean
   address?: boolean
   emergencyContact?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type EmployeeDetailOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "designation" | "joinDate" | "baseSalary" | "nidNumber" | "address" | "emergencyContact" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeDetail"]>
+export type EmployeeDetailOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "designation" | "joinDate" | "baseSalary" | "nidNumber" | "birthCertificateNumber" | "address" | "emergencyContact" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeDetail"]>
 export type EmployeeDetailInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -642,6 +672,7 @@ export type $EmployeeDetailPayload<ExtArgs extends runtime.Types.Extensions.Inte
     joinDate: Date
     baseSalary: runtime.Decimal
     nidNumber: string | null
+    birthCertificateNumber: string | null
     address: string | null
     emergencyContact: string | null
     createdAt: Date
@@ -1076,6 +1107,7 @@ export interface EmployeeDetailFieldRefs {
   readonly joinDate: Prisma.FieldRef<"EmployeeDetail", 'DateTime'>
   readonly baseSalary: Prisma.FieldRef<"EmployeeDetail", 'Decimal'>
   readonly nidNumber: Prisma.FieldRef<"EmployeeDetail", 'String'>
+  readonly birthCertificateNumber: Prisma.FieldRef<"EmployeeDetail", 'String'>
   readonly address: Prisma.FieldRef<"EmployeeDetail", 'String'>
   readonly emergencyContact: Prisma.FieldRef<"EmployeeDetail", 'String'>
   readonly createdAt: Prisma.FieldRef<"EmployeeDetail", 'DateTime'>

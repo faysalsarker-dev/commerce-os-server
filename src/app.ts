@@ -7,7 +7,7 @@ import { globalErrorHandler } from "./app/errors/globalErrorHandler";
 import { AppError } from "./app/errors/AppError";
 import { router } from "./app/routes/index";
 import { globalRateLimiter } from "./app/middleware/rateLimiter";
-import { corsOrigin } from "./app/utils/corsOrigin";
+import { corsOrigin } from "./app/utils/network/corsOrigin";
 
 const app: Application = express();
 

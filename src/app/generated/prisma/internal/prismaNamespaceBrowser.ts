@@ -273,6 +273,7 @@ export const EmployeeDetailScalarFieldEnum = {
   joinDate: 'joinDate',
   baseSalary: 'baseSalary',
   nidNumber: 'nidNumber',
+  birthCertificateNumber: 'birthCertificateNumber',
   address: 'address',
   emergencyContact: 'emergencyContact',
   createdAt: 'createdAt',

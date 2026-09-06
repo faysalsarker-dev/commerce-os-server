@@ -5,7 +5,7 @@ import {
   createCategorySchema,
   updateCategorySchema,
 } from "./category.validation";
-import { uploadHandler } from "../../utils/upload-handler";
+import { uploadHandler } from "../../utils/helper/upload-handler";
 
 const router = Router();
 

@@ -12,7 +12,7 @@ const roleEnum = z.enum([
 export const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Valid email is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.coerce.string().min(6, "Password must be at least 6 characters"),
   phone: z.preprocess(
     emptyToUndefined,
     z.string().min(6, "Phone must be at least 6 characters").optional(),
@@ -22,7 +22,7 @@ export const registerSchema = z.object({
 
 export const loginSchema = z.object({
   email: z.string().email("Valid email is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.coerce.string().min(6, "Password must be at least 6 characters"),
 });
 
 export const updateProfileSchema = z
@@ -45,8 +45,8 @@ export const updateProfileSchema = z
   });
 
 export const updatePasswordSchema = z.object({
-  currentPassword: z.string().min(6, "Current password is required"),
-  newPassword: z.string().min(6, "New password must be at least 6 characters"),
+  currentPassword: z.coerce.string().min(6, "Current password is required"),
+  newPassword: z.coerce.string().min(6, "New password must be at least 6 characters"),
 });
 
 export const forgotPasswordSchema = z.object({
@@ -55,5 +55,5 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z.object({
   token: z.string().min(20, "Reset token is required"),
-  newPassword: z.string().min(6, "New password must be at least 6 characters"),
+  newPassword: z.coerce.string().min(6, "New password must be at least 6 characters"),
 });

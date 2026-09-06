@@ -1,6 +1,7 @@
-import { multerUpload } from "../config/multer.config"
-import { mapUploadedFiles } from "../middleware/map-uploaded-files"
-import { normalizeMultipart } from "../middleware/normalize-multipart"
+import { multerUpload } from "../../config/multer.config"
+import { mapUploadedFiles } from "../../middleware/map-uploaded-files"
+import { normalizeMultipart } from "../../middleware/normalize-multipart"
+
 
 
 type UploadField = {

@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { JwtPayload } from "jsonwebtoken";
-import { verifyToken } from "../app/utils/jwt";
+import { verifyToken } from "../app/utils/auth/jwt";
 
 export const extractAccessToken = (socket: Socket): string => {
   const tokenFromAuth = socket.handshake.auth?.token;

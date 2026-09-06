@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import catchAsync from "../../common/catchAsync";
 import sendResponse from "../../common/sendResponse";
-import { HttpStatus } from "../../utils/httpStatus";
+import { HttpStatus } from "../../utils/network/httpStatus";
 import * as SalesService from "./sales.service";
 
 export const scanProduct = catchAsync(async (req: Request, res: Response) => {

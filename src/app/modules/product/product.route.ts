@@ -9,7 +9,7 @@ import {
   createProductVariantSchema,
   updateProductVariantSchema,
 } from "./product.validation";
-import { uploadHandler } from "../../utils/upload-handler";
+import { uploadHandler } from "../../utils/helper/upload-handler";
 
 const router = Router();
 

@@ -39,6 +39,7 @@ model EmployeeDetail {
   joinDate         DateTime
   baseSalary       Decimal           @db.Decimal(10, 2)
   nidNumber        String?
+  birthCertificateNumber String?
   address          String?
   emergencyContact String?
 
