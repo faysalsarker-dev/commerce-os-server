@@ -36,7 +36,7 @@ export const registerUser = async (payload: UserCreateInput) => {
       name: payload.name,
       email: payload.email.toLowerCase(),
       password: hashedPassword,
-      role: payload.role ?? Role.ONLINE_SALESMAN,
+      role: payload.role ?? Role.SALESMAN,
       phone: payload.phone,
     },
   });

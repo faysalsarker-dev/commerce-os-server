@@ -23,6 +23,7 @@ export const registerSchema = z.object({
 export const loginSchema = z.object({
   email: z.string().email("Valid email is required"),
   password: z.coerce.string().min(6, "Password must be at least 6 characters"),
+  remember: z.boolean().default(false),
 });
 
 export const updateProfileSchema = z

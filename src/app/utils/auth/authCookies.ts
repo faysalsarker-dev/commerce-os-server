@@ -10,21 +10,29 @@ const baseCookieOptions: CookieOptions = {
   path: "/",
 };
 
+
 export const setAuthCookies = (
   res: Response,
   accessToken: string,
   refreshToken: string,
+  remember = true,
 ) => {
   res.cookie("accessToken", accessToken, {
     ...baseCookieOptions,
-    maxAge: 1000 * 60 * 15,
+    ...(remember && {
+      maxAge: 1000 * 60 * 15,
+    }),
   });
 
   res.cookie("refreshToken", refreshToken, {
     ...baseCookieOptions,
-    maxAge: 1000 * 60 * 60 * 24 * 30,
+    ...(remember && {
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+    }),
   });
 };
+
+
 
 export const clearAuthCookies = (res: Response) => {
   res.clearCookie("accessToken", baseCookieOptions);

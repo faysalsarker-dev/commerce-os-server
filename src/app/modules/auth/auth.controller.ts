@@ -23,7 +23,12 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     req.body.password,
   );
 
-  setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+  setAuthCookies(
+    res,
+    tokens.accessToken,
+    tokens.refreshToken,
+    req.body.remember,
+  );
 
   sendResponse(res, {
     statusCode: 200,
