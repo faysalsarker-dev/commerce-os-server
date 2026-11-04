@@ -62,6 +62,7 @@ export const ModelName = {
   RefundItem: 'RefundItem',
   Sale: 'Sale',
   SaleItem: 'SaleItem',
+  Size: 'Size',
   User: 'User',
   EmployeeDetail: 'EmployeeDetail',
   SalaryRecord: 'SalaryRecord'
@@ -136,7 +137,8 @@ export const ProductScalarFieldEnum = {
   costPrice: 'costPrice',
   sellingPrice: 'sellingPrice',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  isWebsiteVisible: 'isWebsiteVisible'
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -157,7 +159,7 @@ export type ProductColorScalarFieldEnum = (typeof ProductColorScalarFieldEnum)[k
 export const ProductVariantScalarFieldEnum = {
   id: 'id',
   productColorId: 'productColorId',
-  size: 'size',
+  sizeId: 'sizeId',
   sku: 'sku',
   stockQty: 'stockQty',
   costPriceOverride: 'costPriceOverride',
@@ -246,6 +248,16 @@ export const SaleItemScalarFieldEnum = {
 } as const
 
 export type SaleItemScalarFieldEnum = (typeof SaleItemScalarFieldEnum)[keyof typeof SaleItemScalarFieldEnum]
+
+
+export const SizeScalarFieldEnum = {
+  id: 'id',
+  size: 'size',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SizeScalarFieldEnum = (typeof SizeScalarFieldEnum)[keyof typeof SizeScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {

@@ -9,7 +9,7 @@ CommerceOS: TypeScript/Express API for POS inventory, sales, customers, users, a
 - Zod, Socket.IO, Redis, Cloudinary, JWT, Nodemailer
 
 ## Commands
-- Dev: `npm run dev`
+- Dev: `npm run dev` 
 - Build: `npm run build`
 - Typecheck: `npm run typecheck` (`tsc --noEmit`)
 - Prisma generate (after any schema change): `npx prisma generate`

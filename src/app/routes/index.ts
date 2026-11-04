@@ -6,6 +6,7 @@ import productRoute from "../modules/product/product.route"
 import salesRoute from "../modules/sales/sales.route"
 import customerRoute from "../modules/customer/customer.route"
 import refundRoute from "../modules/refund/refund.route"
+import sizeRoute from "../modules/size/size.route"
 
 export const router = Router()
 
@@ -42,6 +43,10 @@ const moduleRoutes: ModuleRoute[] = [
     {
         path: "/refund",
         route: refundRoute
+    },
+    {
+        path: "/size",
+        route: sizeRoute
     }
 ]
 

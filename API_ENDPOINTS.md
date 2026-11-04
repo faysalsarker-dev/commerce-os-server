@@ -37,7 +37,17 @@ Base URL: `/api/v1`
 
 ---
 
-## 3. Product Endpoints
+## 3. Size Endpoints
+
+| Method | Endpoint | Auth | Use Case |
+|---|---|---|---|
+| POST | `/size` | No | Create a size option for product variants. |
+| GET | `/size` | No | List sizes with pagination and search support. |
+| GET | `/size/:id` | No | Fetch one size by its ID. |
+| PATCH | `/size/:id` | No | Rename a size option. |
+| DELETE | `/size/:id` | No | Delete a size that is not used by any product variant. |
+
+## 4. Product Endpoints
 
 ### Product Base Routes
 
@@ -67,7 +77,7 @@ Base URL: `/api/v1`
 
 ---
 
-## 4. Sales Endpoints
+## 5. Sales Endpoints
 
 | Method | Endpoint | Auth | Use Case |
 |---|---|---|---|
@@ -78,7 +88,7 @@ Base URL: `/api/v1`
 
 ---
 
-## 5. User Endpoints
+## 6. User Endpoints
 
 | Method | Endpoint | Auth | Use Case |
 |---|---|---|---|
@@ -92,6 +102,6 @@ Base URL: `/api/v1`
 
 ## Quick Summary
 - Use the auth routes for account access and session management.
-- Use category and product routes to manage the inventory catalog.
+- Use category, size, and product routes to manage the inventory catalog.
 - Use sales routes for POS and return operations.
 - Use user routes for administrative user management.

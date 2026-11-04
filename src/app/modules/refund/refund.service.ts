@@ -136,6 +136,7 @@ export const createRefund = async (payload: CreateRefundPayload) => {
           stockQty: { increment: itemInput.quantity },
         },
         include: {
+          size: true,
           productColor: {
             include: {
               product: true,
@@ -166,7 +167,7 @@ export const createRefund = async (payload: CreateRefundPayload) => {
         productId: updatedVariant.productColor?.product?.id,
         productName: updatedVariant.productColor?.product?.name,
         colorName: updatedVariant.productColor?.colorName,
-        size: updatedVariant.size,
+        size: updatedVariant.size.size,
         stockQty: updatedVariant.stockQty,
         movementType: "RETURN_IN",
         updatedAt: new Date(),

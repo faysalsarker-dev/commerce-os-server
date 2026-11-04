@@ -73,6 +73,11 @@ export type Sale = Prisma.SaleModel
  */
 export type SaleItem = Prisma.SaleItemModel
 /**
+ * Model Size
+ * 
+ */
+export type Size = Prisma.SizeModel
+/**
  * Model User
  * 
  */

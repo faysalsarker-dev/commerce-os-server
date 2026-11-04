@@ -19,7 +19,11 @@ const productInclude = {
   category: true,
   colors: {
     include: {
-      variants: true,
+      variants: {
+        include: {
+          size: true,
+        },
+      },
     },
   },
 };
@@ -384,11 +388,18 @@ export const addProductVariant = async (payload: {
     throw new AppError("Product color not found", 404);
   }
 
+  const size = await prisma.size.findUnique({
+    where: { size: payload.size },
+  });
+  if (!size) {
+    throw new AppError(`Size "${payload.size}" not found`, 404);
+  }
+
   const existingVariant = await prisma.productVariant.findUnique({
     where: {
-      productColorId_size: {
+      productColorId_sizeId: {
         productColorId: targetColorId,
-        size: payload.size,
+        sizeId: size.id,
       },
     },
   });
@@ -423,13 +434,14 @@ export const addProductVariant = async (payload: {
     const variant = await tx.productVariant.create({
       data: {
         productColorId: targetColorId,
-        size: payload.size,
+        sizeId: size.id,
         sku: payload.sku,
         stockQty,
         costPriceOverride: payload.costPriceOverride,
         sellingPriceOverride: payload.sellingPriceOverride,
         ...(payload.qrCode && { qrCode: payload.qrCode }),
       },
+      include: { size: true },
     });
 
     if (stockQty > 0) {
@@ -452,7 +464,7 @@ export const addProductVariant = async (payload: {
       productId: productColor.product?.id,
       productName: productColor.product?.name,
       colorName: productColor.colorName,
-      size: result.size,
+      size: result.size.size,
       stockQty: result.stockQty,
       movementType: "RETURN_IN",
       updatedAt: new Date(),
@@ -476,6 +488,7 @@ export const updateProductVariant = async (
   const existingVariant = await prisma.productVariant.findUnique({
     where: { id: variantId },
     include: {
+      size: true,
       productColor: {
         include: {
           product: true,
@@ -497,17 +510,42 @@ export const updateProductVariant = async (
     }
   }
 
+  const newSize = payload.size
+    ? await prisma.size.findUnique({ where: { size: payload.size } })
+    : null;
+  if (payload.size && !newSize) {
+    throw new AppError(`Size "${payload.size}" not found`, 404);
+  }
+
+  if (newSize && newSize.id !== existingVariant.sizeId) {
+    const duplicateVariant = await prisma.productVariant.findUnique({
+      where: {
+        productColorId_sizeId: {
+          productColorId: existingVariant.productColorId,
+          sizeId: newSize.id,
+        },
+      },
+    });
+    if (duplicateVariant) {
+      throw new AppError(
+        `Variant size "${payload.size}" already exists for this color`,
+        400,
+      );
+    }
+  }
+
   const updated = await prisma.$transaction(async (tx) => {
     const updatedVariant = await tx.productVariant.update({
       where: { id: variantId },
       data: {
-        ...(payload.size && { size: payload.size }),
+        ...(newSize && { sizeId: newSize.id }),
         ...(payload.sku && { sku: payload.sku }),
         ...(payload.stockQty !== undefined && { stockQty: payload.stockQty }),
         ...(payload.costPriceOverride !== undefined && { costPriceOverride: payload.costPriceOverride }),
         ...(payload.sellingPriceOverride !== undefined && { sellingPriceOverride: payload.sellingPriceOverride }),
         ...(payload.qrCode && { qrCode: payload.qrCode }),
       },
+      include: { size: true },
     });
 
     if (
@@ -537,7 +575,7 @@ export const updateProductVariant = async (
       productId: existingVariant.productColor?.product?.id,
       productName: existingVariant.productColor?.product?.name,
       colorName: existingVariant.productColor?.colorName,
-      size: updated.size,
+      size: updated.size.size,
       stockQty: updated.stockQty,
       movementType: payload.stockQty > existingVariant.stockQty ? "RETURN_IN" : "SALE_OUT",
       updatedAt: new Date(),

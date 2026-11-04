@@ -1,0 +1,7 @@
+model Size {
+  id         String   @id @default(cuid())
+  size       String   @unique 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  variants  ProductVariant[]
+}

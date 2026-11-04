@@ -13,6 +13,8 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  isWebsiteVisible Boolean @default(true)
+  @@index([isWebsiteVisible])
   @@index([categoryId])
 }
 
@@ -40,7 +42,8 @@ model ProductVariant {
   productColorId String
   productColor   ProductColor @relation(fields: [productColorId], references: [id], onDelete: Cascade)
 
-  size           String     // e.g. "M", "L", "XL", "Free Size"
+  sizeId         String
+  size           Size     @relation(fields: [sizeId], references: [id]) // e.g. "M", "L", "XL", "Free Size"
   sku            String     @unique   // e.g. PJB-MAROON-M
   stockQty       Int        @default(0)
 
@@ -57,7 +60,7 @@ model ProductVariant {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([productColorId, size])
+  @@unique([productColorId, sizeId])
   @@index([qrCode])
 }
 

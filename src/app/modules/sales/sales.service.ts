@@ -4,6 +4,7 @@ import { $Enums, Prisma } from "../../generated/prisma/client";
 import { broadcastStockUpdate, type StockUpdatePayload } from "../../config/socket";
 
 const variantInclude = {
+  size: true,
   productColor: {
     include: {
       product: true,
@@ -14,6 +15,7 @@ const variantInclude = {
 const stockMovementInclude = {
   variant: {
     include: {
+      size: true,
       productColor: {
         include: {
           product: true,
@@ -49,7 +51,7 @@ export const scanProduct = async (code: string) => {
   return {
     variantId: variant.id,
     sku: variant.sku,
-    size: variant.size,
+    size: variant.size.size,
     productName: product.name,
     colorName: variant.productColor.colorName,
     colorHex: variant.productColor.colorHex,
@@ -221,7 +223,7 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
  
       if (stockResult.count === 0) {
         throw new AppError(
-          `Insufficient stock for ${variant.productColor?.product?.name ?? "Product"} (${variant.size}). It may have just sold out.`,
+          `Insufficient stock for ${variant.productColor?.product?.name ?? "Product"} (${variant.size.size}). It may have just sold out.`,
           400,
         );
       }
@@ -238,7 +240,7 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
       const fullProductName = [
         variant.productColor?.product?.name,
         variant.productColor?.colorName,
-        variant.size,
+        variant.size.size,
       ]
         .filter(Boolean)
         .join(" - ");
@@ -270,7 +272,7 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
         productId: variant.productColor?.product?.id,
         productName: variant.productColor?.product?.name,
         colorName: variant.productColor?.colorName,
-        size: variant.size,
+        size: variant.size.size,
         stockQty: Math.max(0, variant.stockQty - item.quantity),
         movementType: "SALE_OUT",
         updatedAt: new Date(),
@@ -459,7 +461,7 @@ export const returnProduct = async (payload: {
         productId: variant.productColor?.product?.id,
         productName: variant.productColor?.product?.name,
         colorName: variant.productColor?.colorName,
-        size: variant.size,
+        size: variant.size.size,
         stockQty: updatedVariant.stockQty,
         movementType: "RETURN_IN" as const,
         updatedAt: new Date(),

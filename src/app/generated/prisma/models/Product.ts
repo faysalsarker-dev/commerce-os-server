@@ -45,6 +45,7 @@ export type ProductMinAggregateOutputType = {
   sellingPrice: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
+  isWebsiteVisible: boolean | null
 }
 
 export type ProductMaxAggregateOutputType = {
@@ -56,6 +57,7 @@ export type ProductMaxAggregateOutputType = {
   sellingPrice: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
+  isWebsiteVisible: boolean | null
 }
 
 export type ProductCountAggregateOutputType = {
@@ -67,6 +69,7 @@ export type ProductCountAggregateOutputType = {
   sellingPrice: number
   createdAt: number
   updatedAt: number
+  isWebsiteVisible: number
   _all: number
 }
 
@@ -90,6 +93,7 @@ export type ProductMinAggregateInputType = {
   sellingPrice?: true
   createdAt?: true
   updatedAt?: true
+  isWebsiteVisible?: true
 }
 
 export type ProductMaxAggregateInputType = {
@@ -101,6 +105,7 @@ export type ProductMaxAggregateInputType = {
   sellingPrice?: true
   createdAt?: true
   updatedAt?: true
+  isWebsiteVisible?: true
 }
 
 export type ProductCountAggregateInputType = {
@@ -112,6 +117,7 @@ export type ProductCountAggregateInputType = {
   sellingPrice?: true
   createdAt?: true
   updatedAt?: true
+  isWebsiteVisible?: true
   _all?: true
 }
 
@@ -210,6 +216,7 @@ export type ProductGroupByOutputType = {
   sellingPrice: runtime.Decimal
   createdAt: Date
   updatedAt: Date
+  isWebsiteVisible: boolean
   _count: ProductCountAggregateOutputType | null
   _avg: ProductAvgAggregateOutputType | null
   _sum: ProductSumAggregateOutputType | null
@@ -244,6 +251,7 @@ export type ProductWhereInput = {
   sellingPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
+  isWebsiteVisible?: Prisma.BoolFilter<"Product"> | boolean
   category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
   colors?: Prisma.ProductColorListRelationFilter
 }
@@ -257,6 +265,7 @@ export type ProductOrderByWithRelationInput = {
   sellingPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isWebsiteVisible?: Prisma.SortOrder
   category?: Prisma.CategoryOrderByWithRelationInput
   colors?: Prisma.ProductColorOrderByRelationAggregateInput
 }
@@ -273,6 +282,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   sellingPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
+  isWebsiteVisible?: Prisma.BoolFilter<"Product"> | boolean
   category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
   colors?: Prisma.ProductColorListRelationFilter
 }, "id">
@@ -286,6 +296,7 @@ export type ProductOrderByWithAggregationInput = {
   sellingPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isWebsiteVisible?: Prisma.SortOrder
   _count?: Prisma.ProductCountOrderByAggregateInput
   _avg?: Prisma.ProductAvgOrderByAggregateInput
   _max?: Prisma.ProductMaxOrderByAggregateInput
@@ -305,6 +316,7 @@ export type ProductScalarWhereWithAggregatesInput = {
   sellingPrice?: Prisma.DecimalWithAggregatesFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
+  isWebsiteVisible?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
 }
 
 export type ProductCreateInput = {
@@ -315,6 +327,7 @@ export type ProductCreateInput = {
   sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  isWebsiteVisible?: boolean
   category?: Prisma.CategoryCreateNestedOneWithoutProductsInput
   colors?: Prisma.ProductColorCreateNestedManyWithoutProductInput
 }
@@ -328,6 +341,7 @@ export type ProductUncheckedCreateInput = {
   sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  isWebsiteVisible?: boolean
   colors?: Prisma.ProductColorUncheckedCreateNestedManyWithoutProductInput
 }
 
@@ -339,6 +353,7 @@ export type ProductUpdateInput = {
   sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isWebsiteVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   category?: Prisma.CategoryUpdateOneWithoutProductsNestedInput
   colors?: Prisma.ProductColorUpdateManyWithoutProductNestedInput
 }
@@ -352,6 +367,7 @@ export type ProductUncheckedUpdateInput = {
   sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isWebsiteVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   colors?: Prisma.ProductColorUncheckedUpdateManyWithoutProductNestedInput
 }
 
@@ -364,6 +380,7 @@ export type ProductCreateManyInput = {
   sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  isWebsiteVisible?: boolean
 }
 
 export type ProductUpdateManyMutationInput = {
@@ -374,6 +391,7 @@ export type ProductUpdateManyMutationInput = {
   sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isWebsiteVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ProductUncheckedUpdateManyInput = {
@@ -385,6 +403,7 @@ export type ProductUncheckedUpdateManyInput = {
   sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isWebsiteVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ProductListRelationFilter = {
@@ -406,6 +425,7 @@ export type ProductCountOrderByAggregateInput = {
   sellingPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isWebsiteVisible?: Prisma.SortOrder
 }
 
 export type ProductAvgOrderByAggregateInput = {
@@ -422,6 +442,7 @@ export type ProductMaxOrderByAggregateInput = {
   sellingPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isWebsiteVisible?: Prisma.SortOrder
 }
 
 export type ProductMinOrderByAggregateInput = {
@@ -433,6 +454,7 @@ export type ProductMinOrderByAggregateInput = {
   sellingPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isWebsiteVisible?: Prisma.SortOrder
 }
 
 export type ProductSumOrderByAggregateInput = {
@@ -509,6 +531,7 @@ export type ProductCreateWithoutCategoryInput = {
   sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  isWebsiteVisible?: boolean
   colors?: Prisma.ProductColorCreateNestedManyWithoutProductInput
 }
 
@@ -520,6 +543,7 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  isWebsiteVisible?: boolean
   colors?: Prisma.ProductColorUncheckedCreateNestedManyWithoutProductInput
 }
 
@@ -561,6 +585,7 @@ export type ProductScalarWhereInput = {
   sellingPrice?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
+  isWebsiteVisible?: Prisma.BoolFilter<"Product"> | boolean
 }
 
 export type ProductCreateWithoutColorsInput = {
@@ -571,6 +596,7 @@ export type ProductCreateWithoutColorsInput = {
   sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  isWebsiteVisible?: boolean
   category?: Prisma.CategoryCreateNestedOneWithoutProductsInput
 }
 
@@ -583,6 +609,7 @@ export type ProductUncheckedCreateWithoutColorsInput = {
   sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  isWebsiteVisible?: boolean
 }
 
 export type ProductCreateOrConnectWithoutColorsInput = {
@@ -609,6 +636,7 @@ export type ProductUpdateWithoutColorsInput = {
   sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isWebsiteVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   category?: Prisma.CategoryUpdateOneWithoutProductsNestedInput
 }
 
@@ -621,6 +649,7 @@ export type ProductUncheckedUpdateWithoutColorsInput = {
   sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isWebsiteVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ProductCreateManyCategoryInput = {
@@ -631,6 +660,7 @@ export type ProductCreateManyCategoryInput = {
   sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  isWebsiteVisible?: boolean
 }
 
 export type ProductUpdateWithoutCategoryInput = {
@@ -641,6 +671,7 @@ export type ProductUpdateWithoutCategoryInput = {
   sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isWebsiteVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   colors?: Prisma.ProductColorUpdateManyWithoutProductNestedInput
 }
 
@@ -652,6 +683,7 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isWebsiteVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   colors?: Prisma.ProductColorUncheckedUpdateManyWithoutProductNestedInput
 }
 
@@ -663,6 +695,7 @@ export type ProductUncheckedUpdateManyWithoutCategoryInput = {
   sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isWebsiteVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -705,6 +738,7 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   sellingPrice?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isWebsiteVisible?: boolean
   category?: boolean | Prisma.Product$categoryArgs<ExtArgs>
   colors?: boolean | Prisma.Product$colorsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -719,6 +753,7 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   sellingPrice?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isWebsiteVisible?: boolean
   category?: boolean | Prisma.Product$categoryArgs<ExtArgs>
 }, ExtArgs["result"]["product"]>
 
@@ -731,6 +766,7 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   sellingPrice?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isWebsiteVisible?: boolean
   category?: boolean | Prisma.Product$categoryArgs<ExtArgs>
 }, ExtArgs["result"]["product"]>
 
@@ -743,9 +779,10 @@ export type ProductSelectScalar = {
   sellingPrice?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isWebsiteVisible?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "categoryId" | "costPrice" | "sellingPrice" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "categoryId" | "costPrice" | "sellingPrice" | "createdAt" | "updatedAt" | "isWebsiteVisible", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.Product$categoryArgs<ExtArgs>
   colors?: boolean | Prisma.Product$colorsArgs<ExtArgs>
@@ -773,6 +810,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     sellingPrice: runtime.Decimal
     createdAt: Date
     updatedAt: Date
+    isWebsiteVisible: boolean
   }, ExtArgs["result"]["product"]>
   composites: {}
 }
@@ -1206,6 +1244,7 @@ export interface ProductFieldRefs {
   readonly sellingPrice: Prisma.FieldRef<"Product", 'Decimal'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Product", 'DateTime'>
+  readonly isWebsiteVisible: Prisma.FieldRef<"Product", 'Boolean'>
 }
     
 
