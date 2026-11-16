@@ -2,7 +2,8 @@ model Customer {
   id      String  @id @default(cuid())
   name    String
   phone   String? @unique   // primary lookup key in-store
-  sales Sale[]
+  sales   Sale[]
+  couponUsages CouponUsage[]
 
   // cached, fast-read stats — see rule below
   totalOrders    Int       @default(0)

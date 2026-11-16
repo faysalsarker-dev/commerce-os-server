@@ -1,0 +1,78 @@
+
+
+model CourierAccount {
+  id            String          @id @default(cuid())
+  provider      CourierProvider
+  label         String          // "Main Pathao", "Steadfast Dhaka"
+  credentials   String          // AES-GCM encrypted JSON string
+  config        Json?           // non-secret: storeId, sandbox flag, defaults
+  webhookSecret String?         // encrypted too
+  isDefault     Boolean         @default(false)
+  isActive      Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  shipments     Shipment[]
+
+  @@unique([provider, label])
+  @@index([provider, isActive])
+}
+
+model Shipment {
+  id               String         @id @default(cuid())
+  orderId          String
+  courierAccountId String
+  provider         CourierProvider // denormalized, handy for queries
+
+  consignmentId    String?        // courier's ID
+  trackingCode     String?
+  status           ShipmentStatus @default(PENDING_DISPATCH)
+  courierStatus    String?        // raw status string from courier
+
+  codAmount        Decimal        @db.Decimal(12, 2)
+  deliveryCharge   Decimal?       @db.Decimal(12, 2)
+  attempts         Int            @default(0)
+  lastError        String?
+
+  requestPayload   Json?          // what we sent
+  responsePayload  Json?          // what they returned
+
+  
+  courierAccount   CourierAccount @relation(fields: [courierAccountId], references: [id])
+  events           ShipmentEvent[]
+
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([provider, consignmentId])
+  @@index([orderId])
+  @@index([status])
+}
+
+model ShipmentEvent {       // status history timeline
+  id         String   @id @default(cuid())
+  shipmentId String
+  status     ShipmentStatus
+  rawStatus  String
+  payload    Json?
+  occurredAt DateTime @default(now())
+
+  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  @@index([shipmentId])
+}
+
+model WebhookLog {          // idempotency + debugging
+  id         String          @id @default(cuid())
+  provider   CourierProvider
+  accountId  String?
+  eventKey   String          // e.g. consignmentId + status + timestamp
+  payload    Json
+  valid      Boolean
+  processed  Boolean         @default(false)
+  error      String?
+  receivedAt DateTime        @default(now())
+
+  @@unique([provider, eventKey])
+}
+

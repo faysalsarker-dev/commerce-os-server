@@ -67,7 +67,7 @@ const buildConfig = <S extends Record<string, Record<string, EnvField<FieldType>
 };
 
 
-export const config = buildConfig({
+const resolvedConfig = buildConfig({
   app: {
     port:           num ("PORT",           3000),
     env:            str ("NODE_ENV",       "development"),
@@ -101,4 +101,45 @@ export const config = buildConfig({
     apiKey:    str("CLOUDINARY_API_KEY"),
     apiSecret: str("CLOUDINARY_API_SECRET"),
   },
+  messaging: {
+    tokenEncryptionKey: str("MESSAGING_TOKEN_ENCRYPTION_KEY", ""),
+    retentionDays: num("MESSAGING_RETENTION_DAYS", 7),
+    metaAppId: str("META_APP_ID", ""),
+    metaAppSecret: str("META_APP_SECRET", ""),
+    metaWebhookVerifyToken: str("META_WEBHOOK_VERIFY_TOKEN", ""),
+    tiktokClientKey: str("TIKTOK_CLIENT_KEY", ""),
+    tiktokClientSecret: str("TIKTOK_CLIENT_SECRET", ""),
+  },
+  facebook: {
+    appId: str("FACEBOOK_APP_ID"),
+    appSecret: str("FACEBOOK_APP_SECRET"),
+  },
+  courier: {
+    encryptionKey: str("COURIER_ENC_KEY"),
+    publicApiUrl: str("PUBLIC_API_URL", "http://localhost:3000/api/v1"),
+    pathaoBaseUrl: str("PATHAO_BASE_URL", "https://api-hermes.pathao.com"),
+    pathaoSandboxBaseUrl: str(
+      "PATHAO_SANDBOX_BASE_URL",
+      "https://hermes-sandbox.pathao.com",
+    ),
+    steadfastBaseUrl: str(
+      "STEADFAST_BASE_URL",
+      "https://portal.packzy.com/api/v1",
+    ),
+  },
 });
+
+if (
+  !Number.isInteger(resolvedConfig.messaging.retentionDays) ||
+  resolvedConfig.messaging.retentionDays < 1
+) {
+  throw new Error("[Config] MESSAGING_RETENTION_DAYS must be a positive integer");
+}
+
+if (!/^[0-9a-fA-F]{64}$/.test(resolvedConfig.courier.encryptionKey)) {
+  throw new Error(
+    "[Config] COURIER_ENC_KEY must be exactly 64 hexadecimal characters (32 bytes)",
+  );
+}
+
+export const config = resolvedConfig;

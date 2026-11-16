@@ -45,10 +45,70 @@ export { Prisma }
  */
 export type Category = Prisma.CategoryModel
 /**
+ * Model Coupon
+ * 
+ */
+export type Coupon = Prisma.CouponModel
+/**
+ * Model CouponUsage
+ * 
+ */
+export type CouponUsage = Prisma.CouponUsageModel
+/**
+ * Model CourierAccount
+ * 
+ */
+export type CourierAccount = Prisma.CourierAccountModel
+/**
+ * Model Shipment
+ * 
+ */
+export type Shipment = Prisma.ShipmentModel
+/**
+ * Model ShipmentEvent
+ * 
+ */
+export type ShipmentEvent = Prisma.ShipmentEventModel
+/**
+ * Model WebhookLog
+ * 
+ */
+export type WebhookLog = Prisma.WebhookLogModel
+/**
  * Model Customer
  * 
  */
 export type Customer = Prisma.CustomerModel
+/**
+ * Model ExpenseCategory
+ * 
+ */
+export type ExpenseCategory = Prisma.ExpenseCategoryModel
+/**
+ * Model ExpenseSchedule
+ * 
+ */
+export type ExpenseSchedule = Prisma.ExpenseScheduleModel
+/**
+ * Model Expense
+ * 
+ */
+export type Expense = Prisma.ExpenseModel
+/**
+ * Model MessagingConnection
+ * 
+ */
+export type MessagingConnection = Prisma.MessagingConnectionModel
+/**
+ * Model MessagingConversation
+ * 
+ */
+export type MessagingConversation = Prisma.MessagingConversationModel
+/**
+ * Model Message
+ * 
+ */
+export type Message = Prisma.MessageModel
 /**
  * Model Payment
  * 
@@ -79,6 +139,11 @@ export type StockMovement = Prisma.StockMovementModel
  * 
  */
 export type Refund = Prisma.RefundModel
+/**
+ * Model RefundPayment
+ * 
+ */
+export type RefundPayment = Prisma.RefundPaymentModel
 /**
  * Model RefundItem
  * 

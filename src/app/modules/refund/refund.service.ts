@@ -20,7 +20,13 @@ export type CreateRefundPayload = {
     | "CARD"
     | "BANK_TRANSFER"
     | "BANK"
-    | "OTHER";
+    | "OTHER"
+    | "MIX";
+  payments?: Array<{
+    method: $Enums.PaymentMethod;
+    amount: number;
+    reference?: string;
+  }>;
   reason?: string;
   processedById?: string;
 };
@@ -38,6 +44,8 @@ const mapPaymentMethod = (method?: string): $Enums.PaymentMethod => {
     case "BANK":
     case "BANK_TRANSFER":
       return $Enums.PaymentMethod.BANK_TRANSFER;
+    case "MIX":
+      return $Enums.PaymentMethod.MIX;
     case "CASH":
     case "OTHER":
     default:
@@ -46,6 +54,13 @@ const mapPaymentMethod = (method?: string): $Enums.PaymentMethod => {
 };
 
 export const createRefund = async (payload: CreateRefundPayload) => {
+  if (payload.method?.toUpperCase() === "MIX" && !payload.payments) {
+    throw new AppError(
+      "MIX refund method requires individual refund payment entries.",
+      400,
+    );
+  }
+
   const refundMethod = mapPaymentMethod(payload.method);
 
   const transactionResult = await prisma.$transaction(async (tx) => {
@@ -122,10 +137,11 @@ export const createRefund = async (payload: CreateRefundPayload) => {
 
       // Compute item refund amount if not passed explicitly
       const perUnitSubtotal = Number(saleItem.subtotal) / saleItem.quantity;
-      const calculatedAmount =
-        itemInput.amount !== undefined
+      const calculatedAmount = Math.round(
+        (itemInput.amount !== undefined
           ? itemInput.amount
-          : perUnitSubtotal * itemInput.quantity;
+          : perUnitSubtotal * itemInput.quantity) * 100,
+      ) / 100;
 
       totalRefundAmount += calculatedAmount;
 
@@ -176,19 +192,55 @@ export const createRefund = async (payload: CreateRefundPayload) => {
       refundedQtyMap.set(saleItem.id, alreadyRefundedQty + itemInput.quantity);
     }
 
-    // 4. Create Refund record with nested RefundItems
+    const refundPayments = payload.payments
+      ? payload.payments.map((payment) => ({
+          method: payment.method,
+          amount: Math.round(payment.amount * 100) / 100,
+          reference: payment.reference ?? null,
+        }))
+      : [
+          {
+            method: refundMethod,
+            amount: Math.round(totalRefundAmount * 100) / 100,
+            reference: null,
+          },
+        ];
+    const refundPaymentCents = refundPayments.reduce(
+      (sum, payment) => sum + Math.round(payment.amount * 100),
+      0,
+    );
+    const totalRefundCents = Math.round(totalRefundAmount * 100);
+
+    if (refundPaymentCents !== totalRefundCents) {
+      throw new AppError(
+        "Refund payment amounts must equal the total refund amount.",
+        400,
+      );
+    }
+
+    const refundMethods = new Set(refundPayments.map((payment) => payment.method));
+    const aggregateRefundMethod =
+      refundMethods.size > 1
+        ? $Enums.PaymentMethod.MIX
+        : refundPayments[0].method;
+
+    // 4. Create Refund record with its item and payout ledgers
     const refund = await tx.refund.create({
       data: {
         saleId: sale.id,
         amount: totalRefundAmount,
-        method: refundMethod,
+        method: aggregateRefundMethod,
         reason: payload.reason ?? null,
         processedById,
         items: {
           create: preparedRefundItems,
         },
+        payments: {
+          create: refundPayments,
+        },
       },
       include: {
+        payments: true,
         items: {
           include: {
             saleItem: true,
@@ -262,6 +314,7 @@ export const getRefunds = async (query: Record<string, any>) => {
         saleItem: true,
       },
     },
+    payments: true,
     processedBy: {
       select: {
         id: true,
@@ -289,6 +342,7 @@ export const getRefundById = async (id: string): Promise<Refund> => {
         saleItem: true,
       },
     },
+    payments: true,
     processedBy: {
       select: {
         id: true,
@@ -305,6 +359,7 @@ export const getRefundsBySaleId = async (saleId: string) => {
   const refunds = await prisma.refund.findMany({
     where: { saleId },
     include: {
+      payments: true,
       items: {
         include: {
           saleItem: true,

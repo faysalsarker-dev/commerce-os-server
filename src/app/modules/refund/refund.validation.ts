@@ -1,6 +1,14 @@
 import { z } from "zod";
 
 const emptyToUndefined = (val: unknown) => (val === "" ? undefined : val);
+const paymentMethodSchema = z.enum([
+  "CASH",
+  "BKASH",
+  "NAGAD",
+  "ROCKET",
+  "CARD",
+  "BANK_TRANSFER",
+]);
 
 export const createRefundSchema = z.object({
   saleId: z.string().min(1, "Sale ID is required"),
@@ -23,8 +31,19 @@ export const createRefundSchema = z.object({
       "BANK_TRANSFER",
       "BANK",
       "OTHER",
+      "MIX",
     ])
     .default("CASH"),
+  payments: z
+    .array(
+      z.object({
+        method: paymentMethodSchema,
+        amount: z.coerce.number().positive("Refund payment amount must be greater than 0"),
+        reference: z.preprocess(emptyToUndefined, z.string().optional()),
+      }),
+    )
+    .min(1, "At least one refund payment is required")
+    .optional(),
   reason: z.preprocess(emptyToUndefined, z.string().optional()),
   processedById: z.preprocess(emptyToUndefined, z.string().optional()),
 });

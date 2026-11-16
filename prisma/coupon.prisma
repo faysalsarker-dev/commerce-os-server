@@ -1,0 +1,57 @@
+model Coupon {
+  id                String        @id @default(cuid())
+  code              String        @unique // e.g. "SUMMER20", uppercase unique code
+  title             String?       // descriptive title, e.g. "Summer Flash Sale"
+  description       String?
+
+  discountType      DiscountType  // PERCENTAGE or FIXED_AMOUNT
+  discountValue     Decimal       @db.Decimal(10, 2) // e.g. 15.00 for 15% or 150.00 for 150 BDT
+
+  minOrderAmount    Decimal?      @db.Decimal(10, 2) // minimum subtotal required to apply coupon
+  maxDiscountAmount Decimal?      @db.Decimal(10, 2) // discount cap (especially for percentage discounts)
+
+  startDate         DateTime      @default(now())
+  endDate           DateTime?     // null = no expiration date
+
+  usageLimit        Int?          // total redemption limit across all customers (null = unlimited)
+  usageCount        Int           @default(0) // total times redeemed
+  perCustomerLimit  Int?          @default(1) // redemption limit per individual customer (null = unlimited)
+
+  isActive          Boolean       @default(true) // quick status toggle
+  channel           SaleChannel?  // ONLINE, OFFLINE, or null for ALL channels
+
+  // Relationships
+  usages            CouponUsage[]
+  sales             Sale[]
+
+  createdById       String?
+  createdBy         User?         @relation("CouponCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+  @@index([startDate, endDate])
+  @@index([createdById])
+}
+
+model CouponUsage {
+  id             String    @id @default(cuid())
+  couponId       String
+  coupon         Coupon    @relation(fields: [couponId], references: [id], onDelete: Cascade)
+
+  saleId         String    @unique // one coupon per sale
+  sale           Sale      @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  customerId     String?
+  customer       Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  discountAmount Decimal   @db.Decimal(10, 2) // snapshot of discount amount applied to this sale
+  usedAt         DateTime  @default(now())
+
+  @@index([couponId])
+  @@index([customerId])
+  @@index([couponId, customerId])
+}
+

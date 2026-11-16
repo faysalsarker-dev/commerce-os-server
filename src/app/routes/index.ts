@@ -7,6 +7,10 @@ import salesRoute from "../modules/sales/sales.route"
 import customerRoute from "../modules/customer/customer.route"
 import refundRoute from "../modules/refund/refund.route"
 import sizeRoute from "../modules/size/size.route"
+import expenseRoute from "../modules/expense/expense.route"
+import expenseCategoryRoute from "../modules/expense-category/expense-category.route"
+import couponRoute from "../modules/coupon/coupon.route"
+import courierIntegrationRoute from "../modules/courier-integration/courier-integration.route"
 
 export const router = Router()
 
@@ -47,6 +51,22 @@ const moduleRoutes: ModuleRoute[] = [
     {
         path: "/size",
         route: sizeRoute
+    },
+    {
+        path: "/expense",
+        route: expenseRoute
+    },
+    {
+        path: "/expense-category",
+        route: expenseCategoryRoute
+    },
+    {
+        path: "/coupon",
+        route: couponRoute
+    },
+    {
+        path: "/courier-accounts",
+        route: courierIntegrationRoute
     }
 ]
 

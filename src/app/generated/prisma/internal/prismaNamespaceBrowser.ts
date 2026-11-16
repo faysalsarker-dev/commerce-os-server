@@ -52,13 +52,26 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Category: 'Category',
+  Coupon: 'Coupon',
+  CouponUsage: 'CouponUsage',
+  CourierAccount: 'CourierAccount',
+  Shipment: 'Shipment',
+  ShipmentEvent: 'ShipmentEvent',
+  WebhookLog: 'WebhookLog',
   Customer: 'Customer',
+  ExpenseCategory: 'ExpenseCategory',
+  ExpenseSchedule: 'ExpenseSchedule',
+  Expense: 'Expense',
+  MessagingConnection: 'MessagingConnection',
+  MessagingConversation: 'MessagingConversation',
+  Message: 'Message',
   Payment: 'Payment',
   Product: 'Product',
   ProductColor: 'ProductColor',
   ProductVariant: 'ProductVariant',
   StockMovement: 'StockMovement',
   Refund: 'Refund',
+  RefundPayment: 'RefundPayment',
   RefundItem: 'RefundItem',
   Sale: 'Sale',
   SaleItem: 'SaleItem',
@@ -99,6 +112,108 @@ export const CategoryScalarFieldEnum = {
 export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
 
 
+export const CouponScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  title: 'title',
+  description: 'description',
+  discountType: 'discountType',
+  discountValue: 'discountValue',
+  minOrderAmount: 'minOrderAmount',
+  maxDiscountAmount: 'maxDiscountAmount',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  usageLimit: 'usageLimit',
+  usageCount: 'usageCount',
+  perCustomerLimit: 'perCustomerLimit',
+  isActive: 'isActive',
+  channel: 'channel',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CouponScalarFieldEnum = (typeof CouponScalarFieldEnum)[keyof typeof CouponScalarFieldEnum]
+
+
+export const CouponUsageScalarFieldEnum = {
+  id: 'id',
+  couponId: 'couponId',
+  saleId: 'saleId',
+  customerId: 'customerId',
+  discountAmount: 'discountAmount',
+  usedAt: 'usedAt'
+} as const
+
+export type CouponUsageScalarFieldEnum = (typeof CouponUsageScalarFieldEnum)[keyof typeof CouponUsageScalarFieldEnum]
+
+
+export const CourierAccountScalarFieldEnum = {
+  id: 'id',
+  shopId: 'shopId',
+  provider: 'provider',
+  label: 'label',
+  credentials: 'credentials',
+  config: 'config',
+  webhookSecret: 'webhookSecret',
+  isDefault: 'isDefault',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CourierAccountScalarFieldEnum = (typeof CourierAccountScalarFieldEnum)[keyof typeof CourierAccountScalarFieldEnum]
+
+
+export const ShipmentScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  courierAccountId: 'courierAccountId',
+  provider: 'provider',
+  consignmentId: 'consignmentId',
+  trackingCode: 'trackingCode',
+  status: 'status',
+  courierStatus: 'courierStatus',
+  codAmount: 'codAmount',
+  deliveryCharge: 'deliveryCharge',
+  attempts: 'attempts',
+  lastError: 'lastError',
+  requestPayload: 'requestPayload',
+  responsePayload: 'responsePayload',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShipmentScalarFieldEnum = (typeof ShipmentScalarFieldEnum)[keyof typeof ShipmentScalarFieldEnum]
+
+
+export const ShipmentEventScalarFieldEnum = {
+  id: 'id',
+  shipmentId: 'shipmentId',
+  status: 'status',
+  rawStatus: 'rawStatus',
+  payload: 'payload',
+  occurredAt: 'occurredAt'
+} as const
+
+export type ShipmentEventScalarFieldEnum = (typeof ShipmentEventScalarFieldEnum)[keyof typeof ShipmentEventScalarFieldEnum]
+
+
+export const WebhookLogScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  accountId: 'accountId',
+  eventKey: 'eventKey',
+  payload: 'payload',
+  valid: 'valid',
+  processed: 'processed',
+  error: 'error',
+  receivedAt: 'receivedAt'
+} as const
+
+export type WebhookLogScalarFieldEnum = (typeof WebhookLogScalarFieldEnum)[keyof typeof WebhookLogScalarFieldEnum]
+
+
 export const CustomerScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -112,6 +227,102 @@ export const CustomerScalarFieldEnum = {
 } as const
 
 export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
+
+
+export const ExpenseCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExpenseCategoryScalarFieldEnum = (typeof ExpenseCategoryScalarFieldEnum)[keyof typeof ExpenseCategoryScalarFieldEnum]
+
+
+export const ExpenseScheduleScalarFieldEnum = {
+  id: 'id',
+  categoryId: 'categoryId',
+  frequency: 'frequency',
+  interval: 'interval',
+  dueDateEnabled: 'dueDateEnabled',
+  daysOfWeek: 'daysOfWeek',
+  daysOfMonth: 'daysOfMonth',
+  monthOfYear: 'monthOfYear',
+  expectedAmount: 'expectedAmount',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  reminderEnabled: 'reminderEnabled',
+  reminderDaysBefore: 'reminderDaysBefore',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExpenseScheduleScalarFieldEnum = (typeof ExpenseScheduleScalarFieldEnum)[keyof typeof ExpenseScheduleScalarFieldEnum]
+
+
+export const ExpenseScalarFieldEnum = {
+  id: 'id',
+  categoryId: 'categoryId',
+  scheduleId: 'scheduleId',
+  amount: 'amount',
+  expenseDate: 'expenseDate',
+  description: 'description',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
+
+
+export const MessagingConnectionScalarFieldEnum = {
+  id: 'id',
+  platform: 'platform',
+  providerAccountId: 'providerAccountId',
+  accountName: 'accountName',
+  status: 'status',
+  accessTokenCiphertext: 'accessTokenCiphertext',
+  refreshTokenCiphertext: 'refreshTokenCiphertext',
+  tokenExpiresAt: 'tokenExpiresAt',
+  grantedScopes: 'grantedScopes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MessagingConnectionScalarFieldEnum = (typeof MessagingConnectionScalarFieldEnum)[keyof typeof MessagingConnectionScalarFieldEnum]
+
+
+export const MessagingConversationScalarFieldEnum = {
+  id: 'id',
+  connectionId: 'connectionId',
+  providerConversationId: 'providerConversationId',
+  participantId: 'participantId',
+  participantName: 'participantName',
+  lastMessageAt: 'lastMessageAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MessagingConversationScalarFieldEnum = (typeof MessagingConversationScalarFieldEnum)[keyof typeof MessagingConversationScalarFieldEnum]
+
+
+export const MessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  providerMessageId: 'providerMessageId',
+  direction: 'direction',
+  deliveryStatus: 'deliveryStatus',
+  text: 'text',
+  media: 'media',
+  sentAt: 'sentAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
 
 
 export const PaymentScalarFieldEnum = {
@@ -198,6 +409,18 @@ export const RefundScalarFieldEnum = {
 export type RefundScalarFieldEnum = (typeof RefundScalarFieldEnum)[keyof typeof RefundScalarFieldEnum]
 
 
+export const RefundPaymentScalarFieldEnum = {
+  id: 'id',
+  refundId: 'refundId',
+  method: 'method',
+  amount: 'amount',
+  reference: 'reference',
+  createdAt: 'createdAt'
+} as const
+
+export type RefundPaymentScalarFieldEnum = (typeof RefundPaymentScalarFieldEnum)[keyof typeof RefundPaymentScalarFieldEnum]
+
+
 export const RefundItemScalarFieldEnum = {
   id: 'id',
   refundId: 'refundId',
@@ -217,6 +440,7 @@ export const SaleScalarFieldEnum = {
   soldById: 'soldById',
   channel: 'channel',
   status: 'status',
+  couponId: 'couponId',
   subtotal: 'subtotal',
   discount: 'discount',
   shippingFee: 'shippingFee',
@@ -322,6 +546,21 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -336,4 +575,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

@@ -119,6 +119,11 @@ interface InvoiceReceipt {
   dueAmount: number;
   paymentStatus: $Enums.PaymentStatus;
   paymentMethod: $Enums.PaymentMethod | null; // null if paidAmount was 0 (fully due, nothing collected yet)
+  payments: Array<{
+    method: $Enums.PaymentMethod;
+    amount: number;
+    reference: string | null;
+  }>;
   dueDate: string | null;
 
   notes: string | null;
@@ -131,6 +136,11 @@ export interface CheckoutSalePayload {
   shippingFee?: number;
   isFullPayment?: boolean;
   paidAmount?: number;           // only read when isFullPayment === false
+  payments?: Array<{
+    method: $Enums.PaymentMethod;
+    amount: number;
+    reference?: string;
+  }>;
   dueDate?: string;              // ISO date string, only relevant when there's a due
   paymentMethod?: $Enums.PaymentMethod;
  soldById:string ;           // REQUIRED — comes from the logged-in staff session, never guessed
@@ -141,12 +151,41 @@ export interface CheckoutSalePayload {
   reference?: string;
 }
 
+const mapPaymentMethod = (method?: string): $Enums.PaymentMethod => {
+  switch (method?.toUpperCase()) {
+    case "BKASH":
+      return $Enums.PaymentMethod.BKASH;
+    case "NAGAD":
+      return $Enums.PaymentMethod.NAGAD;
+    case "ROCKET":
+      return $Enums.PaymentMethod.ROCKET;
+    case "CARD":
+      return $Enums.PaymentMethod.CARD;
+    case "BANK":
+    case "BANK_TRANSFER":
+      return $Enums.PaymentMethod.BANK_TRANSFER;
+    case "MIX":
+      return $Enums.PaymentMethod.MIX;
+    case "CASH":
+    case "OTHER":
+    default:
+      return $Enums.PaymentMethod.CASH;
+  }
+};
+
  
 export const checkoutSale = async (payload: CheckoutSalePayload) => {
   const manualDiscount = payload.discount ?? 0;
   const shippingFee = payload.shippingFee ?? 0;
   const isFullPayment = payload.isFullPayment ?? true;
-  const paymentMethod = payload.paymentMethod ?? $Enums.PaymentMethod.CASH;
+  const paymentMethod = mapPaymentMethod(payload.paymentMethod);
+
+  if (paymentMethod === $Enums.PaymentMethod.MIX && !payload.payments) {
+    throw new AppError(
+      "MIX payment method requires individual payment entries.",
+      400,
+    );
+  }
  
   // ---- STEP 0: soldById is mandatory, never fall back to "some random active user" ----
   if (!payload.soldById?.trim()) {
@@ -292,7 +331,37 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
     let paidAmount = grandTotal;
     let dueAmount = 0;
  
-    if (!isFullPayment) {
+    if (payload.payments) {
+      const paidCents = payload.payments.reduce(
+        (sum, payment) => sum + Math.round(payment.amount * 100),
+        0,
+      );
+      const totalCents = Math.round(grandTotal * 100);
+
+      if (paidCents > totalCents) {
+        throw new AppError("Payment amounts cannot exceed the sale total.", 400);
+      }
+
+      if (isFullPayment && paidCents !== totalCents) {
+        throw new AppError(
+          "Payment amounts must equal the sale total for a full payment.",
+          400,
+        );
+      }
+
+      if (
+        payload.paidAmount !== undefined &&
+        Math.round(payload.paidAmount * 100) !== paidCents
+      ) {
+        throw new AppError(
+          "paidAmount must match the sum of payment entries.",
+          400,
+        );
+      }
+
+      paidAmount = paidCents / 100;
+      dueAmount = (totalCents - paidCents) / 100;
+    } else if (!isFullPayment) {
       paidAmount = Math.min(payload.paidAmount ?? 0, grandTotal); // can't "pay" more than the total
       dueAmount = Math.max(0, grandTotal - paidAmount);
     }
@@ -344,18 +413,36 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
       },
     });
  
-    // ---- STEP 7: create the Payment row (append-only ledger, never overwrite) ----
-    let payment = null;
+    // ---- STEP 7: append each tender to the payment ledger ----
+    let payments: Array<{
+      method: $Enums.PaymentMethod;
+      amount: number;
+      reference: string | null;
+    }> = [];
     if (paidAmount > 0) {
-      payment = await tx.payment.create({
-        data: {
+      payments = payload.payments
+        ? payload.payments.map((payment) => ({
+            method: payment.method,
+            amount: Math.round(payment.amount * 100) / 100,
+            reference: payment.reference ?? null,
+          }))
+        : [
+            {
+              method: paymentMethod,
+              amount: paidAmount,
+              reference: payload.reference ?? null,
+            },
+          ];
+
+      await tx.payment.createMany({
+        data: payments.map((payment) => ({
           saleId: sale.id,
-          method: paymentMethod,
-          amount: paidAmount,
-          reference: payload.reference ?? null,
+          method: payment.method,
+          amount: payment.amount,
+          reference: payment.reference,
           receivedById: payload.soldById,
           notes: combinedNotes || null,
-        },
+        })),
       });
     }
  
@@ -372,7 +459,7 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
       });
     }
  
-    return { sale, payment, customer, results: lineResults, stockUpdates };
+    return { sale, payments, customer, results: lineResults, stockUpdates };
     },
     { timeout: 15000, maxWait: 8000 }, // default 5000ms was too tight for multi-item carts on a remote DB
   );
@@ -382,7 +469,7 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
     broadcastStockUpdate(update);
   }
  
-  const { sale, payment, customer } = transactionResult;
+  const { sale, payments, customer } = transactionResult;
  
   // ---- Build the flat receipt shape the frontend actually prints ----
   const invoice: InvoiceReceipt = {
@@ -412,7 +499,13 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
     paidAmount: Number(sale.paidAmount),
     dueAmount: Number(sale.dueAmount),
     paymentStatus: sale.paymentStatus,
-    paymentMethod: payment?.method ?? null,
+    paymentMethod:
+      payments.length === 0
+        ? null
+        : new Set(payments.map((payment) => payment.method)).size > 1
+          ? $Enums.PaymentMethod.MIX
+          : payments[0].method,
+    payments,
     dueDate: payload.dueDate ?? null, // still notes-derived for now — becomes sale.dueDate once that field is added
  
     notes: sale.notes,
@@ -527,6 +620,7 @@ export const getSaleByInvoiceNumber = async (invoiceNo: string) => {
           email: true,
         },
       },
+      payments: true,
     },
   });
 

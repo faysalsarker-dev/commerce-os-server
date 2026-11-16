@@ -20,6 +20,7 @@ model User {
  sales    Sale[] @relation("SaleSoldBy")
  payments Payment[] @relation("PaymentReceivedBy")
  refunds  Refund[]  @relation("RefundProcessedBy")
+ createdCoupons Coupon[] @relation("CouponCreatedBy")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -15,6 +15,10 @@ model Sale {
   payments Payment[]
   refunds  Refund[]
 
+  couponId    String?
+  coupon      Coupon?      @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  couponUsage CouponUsage?
+
   // money — all snapshotted at time of sale, never recalculated from live product prices
   subtotal    Decimal @db.Decimal(10, 2)   // sum of SaleItem.subtotal before order-level discount
   discount    Decimal @default(0) @db.Decimal(10, 2)
@@ -40,6 +44,7 @@ model Sale {
 
   @@index([customerId])
   @@index([soldById])
+  @@index([couponId])
   @@index([status])
   @@index([channel])
   @@index([paymentStatus])

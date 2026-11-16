@@ -65,6 +65,23 @@ export const updateCustomer = catchAsync(async (req: Request, res: Response) => 
   });
 });
 
+export const recordCustomerPayment = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await CustomerService.recordCustomerPayment(
+      req.params.id as string,
+      req.body,
+      req.user.id,
+    );
+
+    sendResponse(res, {
+      statusCode: HttpStatus.CREATED,
+      success: true,
+      message: "Customer payment recorded successfully",
+      data: result,
+    });
+  },
+);
+
 export const deleteCustomer = catchAsync(async (req: Request, res: Response) => {
   const customer = await CustomerService.deleteCustomerById(
     req.params.id as string,

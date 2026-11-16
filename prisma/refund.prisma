@@ -4,6 +4,7 @@ model Refund {
   sale   Sale   @relation(fields: [saleId], references: [id], onDelete: Cascade)
 
   items RefundItem[]
+  payments RefundPayment[]
 
   amount Decimal       @db.Decimal(10, 2)   // sum of RefundItem.amount
   method PaymentMethod                       // payout method — may differ from how they originally paid
@@ -20,6 +21,19 @@ model Refund {
   @@index([refundedAt])   // powers "how much / how many refunded this month" reports
 }
 
+model RefundPayment {
+  id       String @id @default(cuid())
+  refundId String
+  refund   Refund @relation(fields: [refundId], references: [id], onDelete: Cascade)
+
+  method    PaymentMethod
+  amount    Decimal       @db.Decimal(10, 2)
+  reference String?
+  createdAt DateTime      @default(now())
+
+  @@index([refundId])
+  @@index([method])
+}
 
 model RefundItem {
   id       String @id @default(cuid())

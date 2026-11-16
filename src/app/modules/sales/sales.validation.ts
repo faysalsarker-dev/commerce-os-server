@@ -1,6 +1,14 @@
 import { z } from "zod";
 
 const emptyToUndefined = (val: unknown) => (val === "" ? undefined : val);
+const paymentMethodSchema = z.enum([
+  "CASH",
+  "BKASH",
+  "NAGAD",
+  "ROCKET",
+  "CARD",
+  "BANK_TRANSFER",
+]);
 
 export const scanProductSchema = z.object({
   code: z.string().min(1, "Product code is required"),
@@ -29,8 +37,19 @@ export const checkoutSaleSchema = z.object({
       "BANK_TRANSFER",
       "BANK",
       "OTHER",
+      "MIX",
     ])
     .default("CASH"),
+  payments: z
+    .array(
+      z.object({
+        method: paymentMethodSchema,
+        amount: z.coerce.number().positive("Payment amount must be greater than 0"),
+        reference: z.preprocess(emptyToUndefined, z.string().optional()),
+      }),
+    )
+    .min(1, "At least one payment is required")
+    .optional(),
   isFullPayment: z.boolean().default(true),
   paidAmount: z.coerce.number().min(0).optional(),
   dueAmount: z.coerce.number().min(0).optional(),

@@ -82,7 +82,8 @@ export const PaymentMethod = {
   NAGAD: 'NAGAD',
   ROCKET: 'ROCKET',
   CARD: 'CARD',
-  BANK_TRANSFER: 'BANK_TRANSFER'
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  MIX: 'MIX'
 } as const
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
@@ -97,3 +98,84 @@ export const PaymentStatus = {
 } as const
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const MessagingPlatform = {
+  MESSENGER: 'MESSENGER',
+  INSTAGRAM: 'INSTAGRAM',
+  WHATSAPP: 'WHATSAPP',
+  TIKTOK: 'TIKTOK'
+} as const
+
+export type MessagingPlatform = (typeof MessagingPlatform)[keyof typeof MessagingPlatform]
+
+
+export const MessagingConnectionStatus = {
+  ACTIVE: 'ACTIVE',
+  EXPIRED: 'EXPIRED',
+  DISCONNECTED: 'DISCONNECTED',
+  ERROR: 'ERROR'
+} as const
+
+export type MessagingConnectionStatus = (typeof MessagingConnectionStatus)[keyof typeof MessagingConnectionStatus]
+
+
+export const MessagingDirection = {
+  INBOUND: 'INBOUND',
+  OUTBOUND: 'OUTBOUND'
+} as const
+
+export type MessagingDirection = (typeof MessagingDirection)[keyof typeof MessagingDirection]
+
+
+export const MessagingDeliveryStatus = {
+  RECEIVED: 'RECEIVED',
+  QUEUED: 'QUEUED',
+  SENT: 'SENT',
+  DELIVERED: 'DELIVERED',
+  READ: 'READ',
+  FAILED: 'FAILED'
+} as const
+
+export type MessagingDeliveryStatus = (typeof MessagingDeliveryStatus)[keyof typeof MessagingDeliveryStatus]
+
+
+export const DiscountType = {
+  PERCENTAGE: 'PERCENTAGE',
+  FIXED_AMOUNT: 'FIXED_AMOUNT'
+} as const
+
+export type DiscountType = (typeof DiscountType)[keyof typeof DiscountType]
+
+
+export const CourierProvider = {
+  PATHAO: 'PATHAO',
+  STEADFAST: 'STEADFAST'
+} as const
+
+export type CourierProvider = (typeof CourierProvider)[keyof typeof CourierProvider]
+
+
+export const ShipmentStatus = {
+  PENDING_DISPATCH: 'PENDING_DISPATCH',
+  DISPATCH_FAILED: 'DISPATCH_FAILED',
+  CREATED: 'CREATED',
+  PICKED_UP: 'PICKED_UP',
+  IN_TRANSIT: 'IN_TRANSIT',
+  DELIVERED: 'DELIVERED',
+  PARTIAL_DELIVERED: 'PARTIAL_DELIVERED',
+  RETURNED: 'RETURNED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type ShipmentStatus = (typeof ShipmentStatus)[keyof typeof ShipmentStatus]
+
+
+export const ExpenseFrequency = {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY',
+  YEARLY: 'YEARLY'
+} as const
+
+export type ExpenseFrequency = (typeof ExpenseFrequency)[keyof typeof ExpenseFrequency]
