@@ -105,7 +105,7 @@ interface InvoiceReceipt {
   channel: $Enums.SaleChannel;
   status: $Enums.SaleStatus;
 
-  soldBy: { id: string; name: string };
+  soldBy: { id: string; name: string } | null;
   customer: InvoiceReceiptCustomer | null; // null for guest/walk-in sales — frontend should handle this, e.g. print "Walk-in Customer"
 
   items: InvoiceReceiptItem[];
@@ -479,7 +479,9 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
     channel: sale.channel,
     status: sale.status,
  
-    soldBy: { id: sale.soldBy.id, name: sale.soldBy.name },
+    soldBy: sale.soldBy
+      ? { id: sale.soldBy.id, name: sale.soldBy.name }
+      : null,
     customer: customer ? { id: customer.id, name: customer.name, phone: customer.phone } : null,
  
     items: sale.items.map((item) => ({

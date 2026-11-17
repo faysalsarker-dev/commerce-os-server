@@ -11,6 +11,7 @@ import expenseRoute from "../modules/expense/expense.route"
 import expenseCategoryRoute from "../modules/expense-category/expense-category.route"
 import couponRoute from "../modules/coupon/coupon.route"
 import courierIntegrationRoute from "../modules/courier-integration/courier-integration.route"
+import orderRoute from "../modules/order/order.route"
 
 export const router = Router()
 
@@ -67,6 +68,10 @@ const moduleRoutes: ModuleRoute[] = [
     {
         path: "/courier-accounts",
         route: courierIntegrationRoute
+    },
+    {
+        path: "/orders",
+        route: orderRoute
     }
 ]
 

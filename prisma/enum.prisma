@@ -51,6 +51,16 @@ enum SaleStatus {
   RETURNED             // fully returned, stock restored via RETURN_IN
 }
 
+enum OrderStatus {
+  DRAFT
+  PENDING
+  CONFIRMED
+  PROCESSING
+  COMPLETED
+  CANCELLED
+  RETURNED
+}
+
 enum PaymentMethod {
   CASH
   BKASH

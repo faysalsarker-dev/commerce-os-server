@@ -203,6 +203,7 @@ Salary-list query parameters: `month` (1–12; defaults to current month), `year
 - Use expense and expense-category routes for expense management and recurring schedules.
 - Use coupon routes to manage discount campaigns and validate promo codes at checkout.
 - Use courier-account routes to connect and manage Pathao and Steadfast credentials.
+- Use order routes to link customer orders to existing sales and manage fulfillment status.
 - Use sales routes for POS and return operations.
 - Use user routes for administrative user management.
 
@@ -219,3 +220,17 @@ All courier-account endpoints require `ADMIN` or `SUPER_ADMIN`.
 | PATCH | `/courier-accounts/:id` | `ADMIN`, `SUPER_ADMIN` | Update account settings or replace and test credentials. |
 | POST | `/courier-accounts/:id/regenerate-webhook-secret` | `ADMIN`, `SUPER_ADMIN` | Rotate a Pathao webhook secret; the new value is returned once. |
 | DELETE | `/courier-accounts/:id` | `ADMIN`, `SUPER_ADMIN` | Permanently delete a courier account. |
+
+## 12. Order Endpoints
+
+All order endpoints require authentication. An order references a customer and an existing sale; product lines, channel, totals, payments, and refunds are read from that sale.
+
+| Method | Endpoint | Auth | Use Case |
+|---|---|---|---|
+| POST | `/orders` | Yes | Create an order from an existing sale and customer. Requires `customerId` and `saleId`; the sale is linked to the customer if it did not already have one. A sale can belong to only one order. |
+| GET | `/orders` | Yes | List orders with pagination, status/customer/sale/channel filters, and search across customer name/phone and sale invoice number. |
+| GET | `/orders/:id` | Yes | Fetch order details with its customer, sale items, payments, refunds, shipments, and shipment events. |
+| PATCH | `/orders/:id` | Yes | Update the order status. |
+| DELETE | `/orders/:id` | Yes | Delete an order only when it has no shipment history. |
+
+Order-list query parameters: `page`, `limit` (maximum 100), `status`, `customerId`, `saleId`, `channel`, `searchTerm`, `sortBy` (`createdAt` or `updatedAt`), and `sortOrder` (`asc` or `desc`).

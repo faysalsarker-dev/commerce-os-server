@@ -26,7 +26,6 @@ export type AggregateCourierAccount = {
 
 export type CourierAccountMinAggregateOutputType = {
   id: string | null
-  shopId: string | null
   provider: $Enums.CourierProvider | null
   label: string | null
   credentials: string | null
@@ -39,7 +38,6 @@ export type CourierAccountMinAggregateOutputType = {
 
 export type CourierAccountMaxAggregateOutputType = {
   id: string | null
-  shopId: string | null
   provider: $Enums.CourierProvider | null
   label: string | null
   credentials: string | null
@@ -52,7 +50,6 @@ export type CourierAccountMaxAggregateOutputType = {
 
 export type CourierAccountCountAggregateOutputType = {
   id: number
-  shopId: number
   provider: number
   label: number
   credentials: number
@@ -68,7 +65,6 @@ export type CourierAccountCountAggregateOutputType = {
 
 export type CourierAccountMinAggregateInputType = {
   id?: true
-  shopId?: true
   provider?: true
   label?: true
   credentials?: true
@@ -81,7 +77,6 @@ export type CourierAccountMinAggregateInputType = {
 
 export type CourierAccountMaxAggregateInputType = {
   id?: true
-  shopId?: true
   provider?: true
   label?: true
   credentials?: true
@@ -94,7 +89,6 @@ export type CourierAccountMaxAggregateInputType = {
 
 export type CourierAccountCountAggregateInputType = {
   id?: true
-  shopId?: true
   provider?: true
   label?: true
   credentials?: true
@@ -181,7 +175,6 @@ export type CourierAccountGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 
 export type CourierAccountGroupByOutputType = {
   id: string
-  shopId: string
   provider: $Enums.CourierProvider
   label: string
   credentials: string
@@ -216,7 +209,6 @@ export type CourierAccountWhereInput = {
   OR?: Prisma.CourierAccountWhereInput[]
   NOT?: Prisma.CourierAccountWhereInput | Prisma.CourierAccountWhereInput[]
   id?: Prisma.StringFilter<"CourierAccount"> | string
-  shopId?: Prisma.StringFilter<"CourierAccount"> | string
   provider?: Prisma.EnumCourierProviderFilter<"CourierAccount"> | $Enums.CourierProvider
   label?: Prisma.StringFilter<"CourierAccount"> | string
   credentials?: Prisma.StringFilter<"CourierAccount"> | string
@@ -231,7 +223,6 @@ export type CourierAccountWhereInput = {
 
 export type CourierAccountOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  shopId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   label?: Prisma.SortOrder
   credentials?: Prisma.SortOrder
@@ -246,11 +237,10 @@ export type CourierAccountOrderByWithRelationInput = {
 
 export type CourierAccountWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  shopId_provider_label?: Prisma.CourierAccountShopIdProviderLabelCompoundUniqueInput
+  provider_label?: Prisma.CourierAccountProviderLabelCompoundUniqueInput
   AND?: Prisma.CourierAccountWhereInput | Prisma.CourierAccountWhereInput[]
   OR?: Prisma.CourierAccountWhereInput[]
   NOT?: Prisma.CourierAccountWhereInput | Prisma.CourierAccountWhereInput[]
-  shopId?: Prisma.StringFilter<"CourierAccount"> | string
   provider?: Prisma.EnumCourierProviderFilter<"CourierAccount"> | $Enums.CourierProvider
   label?: Prisma.StringFilter<"CourierAccount"> | string
   credentials?: Prisma.StringFilter<"CourierAccount"> | string
@@ -261,11 +251,10 @@ export type CourierAccountWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"CourierAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CourierAccount"> | Date | string
   shipments?: Prisma.ShipmentListRelationFilter
-}, "id" | "shopId_provider_label">
+}, "id" | "provider_label">
 
 export type CourierAccountOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  shopId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   label?: Prisma.SortOrder
   credentials?: Prisma.SortOrder
@@ -285,7 +274,6 @@ export type CourierAccountScalarWhereWithAggregatesInput = {
   OR?: Prisma.CourierAccountScalarWhereWithAggregatesInput[]
   NOT?: Prisma.CourierAccountScalarWhereWithAggregatesInput | Prisma.CourierAccountScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"CourierAccount"> | string
-  shopId?: Prisma.StringWithAggregatesFilter<"CourierAccount"> | string
   provider?: Prisma.EnumCourierProviderWithAggregatesFilter<"CourierAccount"> | $Enums.CourierProvider
   label?: Prisma.StringWithAggregatesFilter<"CourierAccount"> | string
   credentials?: Prisma.StringWithAggregatesFilter<"CourierAccount"> | string
@@ -299,7 +287,6 @@ export type CourierAccountScalarWhereWithAggregatesInput = {
 
 export type CourierAccountCreateInput = {
   id?: string
-  shopId: string
   provider: $Enums.CourierProvider
   label: string
   credentials: string
@@ -314,7 +301,6 @@ export type CourierAccountCreateInput = {
 
 export type CourierAccountUncheckedCreateInput = {
   id?: string
-  shopId: string
   provider: $Enums.CourierProvider
   label: string
   credentials: string
@@ -329,7 +315,6 @@ export type CourierAccountUncheckedCreateInput = {
 
 export type CourierAccountUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  shopId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumCourierProviderFieldUpdateOperationsInput | $Enums.CourierProvider
   label?: Prisma.StringFieldUpdateOperationsInput | string
   credentials?: Prisma.StringFieldUpdateOperationsInput | string
@@ -344,7 +329,6 @@ export type CourierAccountUpdateInput = {
 
 export type CourierAccountUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  shopId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumCourierProviderFieldUpdateOperationsInput | $Enums.CourierProvider
   label?: Prisma.StringFieldUpdateOperationsInput | string
   credentials?: Prisma.StringFieldUpdateOperationsInput | string
@@ -359,7 +343,6 @@ export type CourierAccountUncheckedUpdateInput = {
 
 export type CourierAccountCreateManyInput = {
   id?: string
-  shopId: string
   provider: $Enums.CourierProvider
   label: string
   credentials: string
@@ -373,7 +356,6 @@ export type CourierAccountCreateManyInput = {
 
 export type CourierAccountUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  shopId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumCourierProviderFieldUpdateOperationsInput | $Enums.CourierProvider
   label?: Prisma.StringFieldUpdateOperationsInput | string
   credentials?: Prisma.StringFieldUpdateOperationsInput | string
@@ -387,7 +369,6 @@ export type CourierAccountUpdateManyMutationInput = {
 
 export type CourierAccountUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  shopId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumCourierProviderFieldUpdateOperationsInput | $Enums.CourierProvider
   label?: Prisma.StringFieldUpdateOperationsInput | string
   credentials?: Prisma.StringFieldUpdateOperationsInput | string
@@ -399,15 +380,13 @@ export type CourierAccountUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type CourierAccountShopIdProviderLabelCompoundUniqueInput = {
-  shopId: string
+export type CourierAccountProviderLabelCompoundUniqueInput = {
   provider: $Enums.CourierProvider
   label: string
 }
 
 export type CourierAccountCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  shopId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   label?: Prisma.SortOrder
   credentials?: Prisma.SortOrder
@@ -421,7 +400,6 @@ export type CourierAccountCountOrderByAggregateInput = {
 
 export type CourierAccountMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  shopId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   label?: Prisma.SortOrder
   credentials?: Prisma.SortOrder
@@ -434,7 +412,6 @@ export type CourierAccountMaxOrderByAggregateInput = {
 
 export type CourierAccountMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  shopId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   label?: Prisma.SortOrder
   credentials?: Prisma.SortOrder
@@ -470,7 +447,6 @@ export type CourierAccountUpdateOneRequiredWithoutShipmentsNestedInput = {
 
 export type CourierAccountCreateWithoutShipmentsInput = {
   id?: string
-  shopId: string
   provider: $Enums.CourierProvider
   label: string
   credentials: string
@@ -484,7 +460,6 @@ export type CourierAccountCreateWithoutShipmentsInput = {
 
 export type CourierAccountUncheckedCreateWithoutShipmentsInput = {
   id?: string
-  shopId: string
   provider: $Enums.CourierProvider
   label: string
   credentials: string
@@ -514,7 +489,6 @@ export type CourierAccountUpdateToOneWithWhereWithoutShipmentsInput = {
 
 export type CourierAccountUpdateWithoutShipmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  shopId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumCourierProviderFieldUpdateOperationsInput | $Enums.CourierProvider
   label?: Prisma.StringFieldUpdateOperationsInput | string
   credentials?: Prisma.StringFieldUpdateOperationsInput | string
@@ -528,7 +502,6 @@ export type CourierAccountUpdateWithoutShipmentsInput = {
 
 export type CourierAccountUncheckedUpdateWithoutShipmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  shopId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumCourierProviderFieldUpdateOperationsInput | $Enums.CourierProvider
   label?: Prisma.StringFieldUpdateOperationsInput | string
   credentials?: Prisma.StringFieldUpdateOperationsInput | string
@@ -573,7 +546,6 @@ export type CourierAccountCountOutputTypeCountShipmentsArgs<ExtArgs extends runt
 
 export type CourierAccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  shopId?: boolean
   provider?: boolean
   label?: boolean
   credentials?: boolean
@@ -589,7 +561,6 @@ export type CourierAccountSelect<ExtArgs extends runtime.Types.Extensions.Intern
 
 export type CourierAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  shopId?: boolean
   provider?: boolean
   label?: boolean
   credentials?: boolean
@@ -603,7 +574,6 @@ export type CourierAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Type
 
 export type CourierAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  shopId?: boolean
   provider?: boolean
   label?: boolean
   credentials?: boolean
@@ -617,7 +587,6 @@ export type CourierAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
 
 export type CourierAccountSelectScalar = {
   id?: boolean
-  shopId?: boolean
   provider?: boolean
   label?: boolean
   credentials?: boolean
@@ -629,7 +598,7 @@ export type CourierAccountSelectScalar = {
   updatedAt?: boolean
 }
 
-export type CourierAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "shopId" | "provider" | "label" | "credentials" | "config" | "webhookSecret" | "isDefault" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["courierAccount"]>
+export type CourierAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "provider" | "label" | "credentials" | "config" | "webhookSecret" | "isDefault" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["courierAccount"]>
 export type CourierAccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   shipments?: boolean | Prisma.CourierAccount$shipmentsArgs<ExtArgs>
   _count?: boolean | Prisma.CourierAccountCountOutputTypeDefaultArgs<ExtArgs>
@@ -644,7 +613,6 @@ export type $CourierAccountPayload<ExtArgs extends runtime.Types.Extensions.Inte
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    shopId: string
     provider: $Enums.CourierProvider
     label: string
     credentials: string
@@ -1079,7 +1047,6 @@ export interface Prisma__CourierAccountClient<T, Null = never, ExtArgs extends r
  */
 export interface CourierAccountFieldRefs {
   readonly id: Prisma.FieldRef<"CourierAccount", 'String'>
-  readonly shopId: Prisma.FieldRef<"CourierAccount", 'String'>
   readonly provider: Prisma.FieldRef<"CourierAccount", 'CourierProvider'>
   readonly label: Prisma.FieldRef<"CourierAccount", 'String'>
   readonly credentials: Prisma.FieldRef<"CourierAccount", 'String'>

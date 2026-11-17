@@ -3,6 +3,7 @@ model Customer {
   name    String
   phone   String? @unique   // primary lookup key in-store
   sales   Sale[]
+  orders  Order[]
   couponUsages CouponUsage[]
 
   // cached, fast-read stats — see rule below

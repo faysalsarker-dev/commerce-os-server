@@ -5,8 +5,10 @@ model Sale {
   customerId String?
   customer   Customer? @relation(fields: [customerId], references: [id])
 
-  soldById String                       // staff who made the sale
-  soldBy   User   @relation("SaleSoldBy", fields: [soldById], references: [id], onDelete: Restrict)   // never let staff deletion wipe sales history
+  order   Order?
+
+  soldById String?                      // staff who made the sale; customer orders may not have one
+  soldBy   User?  @relation("SaleSoldBy", fields: [soldById], references: [id], onDelete: Restrict)
 
   channel SaleChannel
   status  SaleStatus @default(PENDING)

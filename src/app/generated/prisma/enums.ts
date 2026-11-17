@@ -76,6 +76,19 @@ export const SaleStatus = {
 export type SaleStatus = (typeof SaleStatus)[keyof typeof SaleStatus]
 
 
+export const OrderStatus = {
+  DRAFT: 'DRAFT',
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  RETURNED: 'RETURNED'
+} as const
+
+export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
+
+
 export const PaymentMethod = {
   CASH: 'CASH',
   BKASH: 'BKASH',

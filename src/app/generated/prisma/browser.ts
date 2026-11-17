@@ -88,6 +88,11 @@ export type MessagingConversation = Prisma.MessagingConversationModel
  */
 export type Message = Prisma.MessageModel
 /**
+ * Model Order
+ * 
+ */
+export type Order = Prisma.OrderModel
+/**
  * Model Payment
  * 
  */

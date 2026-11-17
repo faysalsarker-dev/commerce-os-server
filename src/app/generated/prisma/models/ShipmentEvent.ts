@@ -30,6 +30,7 @@ export type ShipmentEventMinAggregateOutputType = {
   status: $Enums.ShipmentStatus | null
   rawStatus: string | null
   occurredAt: Date | null
+  createdAt: Date | null
 }
 
 export type ShipmentEventMaxAggregateOutputType = {
@@ -38,6 +39,7 @@ export type ShipmentEventMaxAggregateOutputType = {
   status: $Enums.ShipmentStatus | null
   rawStatus: string | null
   occurredAt: Date | null
+  createdAt: Date | null
 }
 
 export type ShipmentEventCountAggregateOutputType = {
@@ -47,6 +49,7 @@ export type ShipmentEventCountAggregateOutputType = {
   rawStatus: number
   payload: number
   occurredAt: number
+  createdAt: number
   _all: number
 }
 
@@ -57,6 +60,7 @@ export type ShipmentEventMinAggregateInputType = {
   status?: true
   rawStatus?: true
   occurredAt?: true
+  createdAt?: true
 }
 
 export type ShipmentEventMaxAggregateInputType = {
@@ -65,6 +69,7 @@ export type ShipmentEventMaxAggregateInputType = {
   status?: true
   rawStatus?: true
   occurredAt?: true
+  createdAt?: true
 }
 
 export type ShipmentEventCountAggregateInputType = {
@@ -74,6 +79,7 @@ export type ShipmentEventCountAggregateInputType = {
   rawStatus?: true
   payload?: true
   occurredAt?: true
+  createdAt?: true
   _all?: true
 }
 
@@ -153,9 +159,10 @@ export type ShipmentEventGroupByOutputType = {
   id: string
   shipmentId: string
   status: $Enums.ShipmentStatus
-  rawStatus: string
+  rawStatus: string | null
   payload: runtime.JsonValue | null
   occurredAt: Date
+  createdAt: Date
   _count: ShipmentEventCountAggregateOutputType | null
   _min: ShipmentEventMinAggregateOutputType | null
   _max: ShipmentEventMaxAggregateOutputType | null
@@ -183,9 +190,10 @@ export type ShipmentEventWhereInput = {
   id?: Prisma.StringFilter<"ShipmentEvent"> | string
   shipmentId?: Prisma.StringFilter<"ShipmentEvent"> | string
   status?: Prisma.EnumShipmentStatusFilter<"ShipmentEvent"> | $Enums.ShipmentStatus
-  rawStatus?: Prisma.StringFilter<"ShipmentEvent"> | string
+  rawStatus?: Prisma.StringNullableFilter<"ShipmentEvent"> | string | null
   payload?: Prisma.JsonNullableFilter<"ShipmentEvent">
   occurredAt?: Prisma.DateTimeFilter<"ShipmentEvent"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"ShipmentEvent"> | Date | string
   shipment?: Prisma.XOR<Prisma.ShipmentScalarRelationFilter, Prisma.ShipmentWhereInput>
 }
 
@@ -193,9 +201,10 @@ export type ShipmentEventOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   shipmentId?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  rawStatus?: Prisma.SortOrder
+  rawStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   payload?: Prisma.SortOrderInput | Prisma.SortOrder
   occurredAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   shipment?: Prisma.ShipmentOrderByWithRelationInput
 }
 
@@ -206,9 +215,10 @@ export type ShipmentEventWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ShipmentEventWhereInput | Prisma.ShipmentEventWhereInput[]
   shipmentId?: Prisma.StringFilter<"ShipmentEvent"> | string
   status?: Prisma.EnumShipmentStatusFilter<"ShipmentEvent"> | $Enums.ShipmentStatus
-  rawStatus?: Prisma.StringFilter<"ShipmentEvent"> | string
+  rawStatus?: Prisma.StringNullableFilter<"ShipmentEvent"> | string | null
   payload?: Prisma.JsonNullableFilter<"ShipmentEvent">
   occurredAt?: Prisma.DateTimeFilter<"ShipmentEvent"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"ShipmentEvent"> | Date | string
   shipment?: Prisma.XOR<Prisma.ShipmentScalarRelationFilter, Prisma.ShipmentWhereInput>
 }, "id">
 
@@ -216,9 +226,10 @@ export type ShipmentEventOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   shipmentId?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  rawStatus?: Prisma.SortOrder
+  rawStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   payload?: Prisma.SortOrderInput | Prisma.SortOrder
   occurredAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   _count?: Prisma.ShipmentEventCountOrderByAggregateInput
   _max?: Prisma.ShipmentEventMaxOrderByAggregateInput
   _min?: Prisma.ShipmentEventMinOrderByAggregateInput
@@ -231,17 +242,19 @@ export type ShipmentEventScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"ShipmentEvent"> | string
   shipmentId?: Prisma.StringWithAggregatesFilter<"ShipmentEvent"> | string
   status?: Prisma.EnumShipmentStatusWithAggregatesFilter<"ShipmentEvent"> | $Enums.ShipmentStatus
-  rawStatus?: Prisma.StringWithAggregatesFilter<"ShipmentEvent"> | string
+  rawStatus?: Prisma.StringNullableWithAggregatesFilter<"ShipmentEvent"> | string | null
   payload?: Prisma.JsonNullableWithAggregatesFilter<"ShipmentEvent">
   occurredAt?: Prisma.DateTimeWithAggregatesFilter<"ShipmentEvent"> | Date | string
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"ShipmentEvent"> | Date | string
 }
 
 export type ShipmentEventCreateInput = {
   id?: string
   status: $Enums.ShipmentStatus
-  rawStatus: string
+  rawStatus?: string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Date | string
+  createdAt?: Date | string
   shipment: Prisma.ShipmentCreateNestedOneWithoutEventsInput
 }
 
@@ -249,17 +262,19 @@ export type ShipmentEventUncheckedCreateInput = {
   id?: string
   shipmentId: string
   status: $Enums.ShipmentStatus
-  rawStatus: string
+  rawStatus?: string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Date | string
+  createdAt?: Date | string
 }
 
 export type ShipmentEventUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-  rawStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  rawStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shipment?: Prisma.ShipmentUpdateOneRequiredWithoutEventsNestedInput
 }
 
@@ -267,35 +282,39 @@ export type ShipmentEventUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   shipmentId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-  rawStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  rawStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShipmentEventCreateManyInput = {
   id?: string
   shipmentId: string
   status: $Enums.ShipmentStatus
-  rawStatus: string
+  rawStatus?: string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Date | string
+  createdAt?: Date | string
 }
 
 export type ShipmentEventUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-  rawStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  rawStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShipmentEventUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   shipmentId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-  rawStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  rawStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShipmentEventListRelationFilter = {
@@ -315,6 +334,7 @@ export type ShipmentEventCountOrderByAggregateInput = {
   rawStatus?: Prisma.SortOrder
   payload?: Prisma.SortOrder
   occurredAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
 }
 
 export type ShipmentEventMaxOrderByAggregateInput = {
@@ -323,6 +343,7 @@ export type ShipmentEventMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   rawStatus?: Prisma.SortOrder
   occurredAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
 }
 
 export type ShipmentEventMinOrderByAggregateInput = {
@@ -331,6 +352,7 @@ export type ShipmentEventMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   rawStatus?: Prisma.SortOrder
   occurredAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
 }
 
 export type ShipmentEventCreateNestedManyWithoutShipmentInput = {
@@ -378,17 +400,19 @@ export type ShipmentEventUncheckedUpdateManyWithoutShipmentNestedInput = {
 export type ShipmentEventCreateWithoutShipmentInput = {
   id?: string
   status: $Enums.ShipmentStatus
-  rawStatus: string
+  rawStatus?: string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Date | string
+  createdAt?: Date | string
 }
 
 export type ShipmentEventUncheckedCreateWithoutShipmentInput = {
   id?: string
   status: $Enums.ShipmentStatus
-  rawStatus: string
+  rawStatus?: string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Date | string
+  createdAt?: Date | string
 }
 
 export type ShipmentEventCreateOrConnectWithoutShipmentInput = {
@@ -424,41 +448,46 @@ export type ShipmentEventScalarWhereInput = {
   id?: Prisma.StringFilter<"ShipmentEvent"> | string
   shipmentId?: Prisma.StringFilter<"ShipmentEvent"> | string
   status?: Prisma.EnumShipmentStatusFilter<"ShipmentEvent"> | $Enums.ShipmentStatus
-  rawStatus?: Prisma.StringFilter<"ShipmentEvent"> | string
+  rawStatus?: Prisma.StringNullableFilter<"ShipmentEvent"> | string | null
   payload?: Prisma.JsonNullableFilter<"ShipmentEvent">
   occurredAt?: Prisma.DateTimeFilter<"ShipmentEvent"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"ShipmentEvent"> | Date | string
 }
 
 export type ShipmentEventCreateManyShipmentInput = {
   id?: string
   status: $Enums.ShipmentStatus
-  rawStatus: string
+  rawStatus?: string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Date | string
+  createdAt?: Date | string
 }
 
 export type ShipmentEventUpdateWithoutShipmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-  rawStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  rawStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShipmentEventUncheckedUpdateWithoutShipmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-  rawStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  rawStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShipmentEventUncheckedUpdateManyWithoutShipmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-  rawStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  rawStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -470,6 +499,7 @@ export type ShipmentEventSelect<ExtArgs extends runtime.Types.Extensions.Interna
   rawStatus?: boolean
   payload?: boolean
   occurredAt?: boolean
+  createdAt?: boolean
   shipment?: boolean | Prisma.ShipmentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shipmentEvent"]>
 
@@ -480,6 +510,7 @@ export type ShipmentEventSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   rawStatus?: boolean
   payload?: boolean
   occurredAt?: boolean
+  createdAt?: boolean
   shipment?: boolean | Prisma.ShipmentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shipmentEvent"]>
 
@@ -490,6 +521,7 @@ export type ShipmentEventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   rawStatus?: boolean
   payload?: boolean
   occurredAt?: boolean
+  createdAt?: boolean
   shipment?: boolean | Prisma.ShipmentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shipmentEvent"]>
 
@@ -500,9 +532,10 @@ export type ShipmentEventSelectScalar = {
   rawStatus?: boolean
   payload?: boolean
   occurredAt?: boolean
+  createdAt?: boolean
 }
 
-export type ShipmentEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "shipmentId" | "status" | "rawStatus" | "payload" | "occurredAt", ExtArgs["result"]["shipmentEvent"]>
+export type ShipmentEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "shipmentId" | "status" | "rawStatus" | "payload" | "occurredAt" | "createdAt", ExtArgs["result"]["shipmentEvent"]>
 export type ShipmentEventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   shipment?: boolean | Prisma.ShipmentDefaultArgs<ExtArgs>
 }
@@ -522,9 +555,10 @@ export type $ShipmentEventPayload<ExtArgs extends runtime.Types.Extensions.Inter
     id: string
     shipmentId: string
     status: $Enums.ShipmentStatus
-    rawStatus: string
+    rawStatus: string | null
     payload: runtime.JsonValue | null
     occurredAt: Date
+    createdAt: Date
   }, ExtArgs["result"]["shipmentEvent"]>
   composites: {}
 }
@@ -955,6 +989,7 @@ export interface ShipmentEventFieldRefs {
   readonly rawStatus: Prisma.FieldRef<"ShipmentEvent", 'String'>
   readonly payload: Prisma.FieldRef<"ShipmentEvent", 'Json'>
   readonly occurredAt: Prisma.FieldRef<"ShipmentEvent", 'DateTime'>
+  readonly createdAt: Prisma.FieldRef<"ShipmentEvent", 'DateTime'>
 }
     
 

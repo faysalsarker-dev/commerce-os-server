@@ -65,6 +65,7 @@ export const ModelName = {
   MessagingConnection: 'MessagingConnection',
   MessagingConversation: 'MessagingConversation',
   Message: 'Message',
+  Order: 'Order',
   Payment: 'Payment',
   Product: 'Product',
   ProductColor: 'ProductColor',
@@ -150,7 +151,6 @@ export type CouponUsageScalarFieldEnum = (typeof CouponUsageScalarFieldEnum)[key
 
 export const CourierAccountScalarFieldEnum = {
   id: 'id',
-  shopId: 'shopId',
   provider: 'provider',
   label: 'label',
   credentials: 'credentials',
@@ -193,7 +193,8 @@ export const ShipmentEventScalarFieldEnum = {
   status: 'status',
   rawStatus: 'rawStatus',
   payload: 'payload',
-  occurredAt: 'occurredAt'
+  occurredAt: 'occurredAt',
+  createdAt: 'createdAt'
 } as const
 
 export type ShipmentEventScalarFieldEnum = (typeof ShipmentEventScalarFieldEnum)[keyof typeof ShipmentEventScalarFieldEnum]
@@ -323,6 +324,18 @@ export const MessageScalarFieldEnum = {
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const OrderScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  saleId: 'saleId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
 
 
 export const PaymentScalarFieldEnum = {

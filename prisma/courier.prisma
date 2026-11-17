@@ -38,7 +38,8 @@ model Shipment {
   responsePayload  Json?          // what they returned
 
   
-  courierAccount   CourierAccount @relation(fields: [courierAccountId], references: [id])
+  order            Order          @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  courierAccount   CourierAccount @relation(fields: [courierAccountId], references: [id], onDelete: Restrict)
   events           ShipmentEvent[]
 
   createdAt        DateTime       @default(now())
@@ -53,13 +54,14 @@ model ShipmentEvent {       // status history timeline
   id         String   @id @default(cuid())
   shipmentId String
   status     ShipmentStatus
-  rawStatus  String
+  rawStatus  String?
   payload    Json?
   occurredAt DateTime @default(now())
+  createdAt  DateTime @default(now())
 
   shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
 
-  @@index([shipmentId])
+  @@index([shipmentId, occurredAt])
 }
 
 model WebhookLog {          // idempotency + debugging

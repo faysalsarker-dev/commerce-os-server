@@ -1,0 +1,16 @@
+model Order {
+  id         String      @id @default(cuid())
+  customerId String
+  customer   Customer    @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  saleId     String      @unique
+  sale       Sale        @relation(fields: [saleId], references: [id], onDelete: Restrict)
+  status     OrderStatus @default(PENDING)
+  shipments  Shipment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+}
