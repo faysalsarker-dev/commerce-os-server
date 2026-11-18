@@ -88,19 +88,6 @@ export const updateCourierAccountSchema = z
     message: "At least one field must be provided",
   });
 
-export const courierAccountListQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(10),
-  provider: z.enum(["PATHAO", "STEADFAST"]).optional(),
-  isActive: z.preprocess(
-    (value: unknown) =>
-      typeof value === "string" && ["true", "false"].includes(value)
-        ? value === "true"
-        : value,
-    z.boolean().optional(),
-  ),
-});
-
 export type PathaoCredentials = z.infer<typeof pathaoCredentialsSchema>;
 export type PathaoConfig = z.infer<typeof pathaoConfigSchema>;
 export type SteadfastCredentials = z.infer<typeof steadfastCredentialsSchema>;
@@ -113,7 +100,4 @@ export type CreateCourierAccountInput = z.infer<
 >;
 export type UpdateCourierAccountInput = z.infer<
   typeof updateCourierAccountSchema
->;
-export type CourierAccountListQuery = z.infer<
-  typeof courierAccountListQuerySchema
 >;

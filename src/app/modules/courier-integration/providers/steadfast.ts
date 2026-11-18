@@ -1,3 +1,4 @@
+import axios from "axios";
 import { AppError } from "../../../errors/AppError";
 import { config } from "../../../config";
 import type { SteadfastCredentials } from "../courier-integration.validation";
@@ -5,16 +6,17 @@ import type { SteadfastCredentials } from "../courier-integration.validation";
 export const testConnection = async (
   credentials: SteadfastCredentials,
 ): Promise<void> => {
-  let response: Response;
+  let response;
   try {
-    response = await fetch(
+    response = await axios.get(
       `${config.courier.steadfastBaseUrl.replace(/\/+$/, "")}/get_balance`,
       {
         headers: {
           "Api-Key": credentials.apiKey,
           "Secret-Key": credentials.secretKey,
         },
-        signal: AbortSignal.timeout(10_000),
+        timeout: 10_000,
+        validateStatus: () => true,
       },
     );
   } catch {
@@ -24,7 +26,7 @@ export const testConnection = async (
     );
   }
 
-  if (!response.ok) {
+  if (response.status < 200 || response.status >= 300) {
     throw new AppError(
       "Steadfast connection failed. Check the API credentials.",
       400,

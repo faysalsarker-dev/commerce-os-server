@@ -120,7 +120,7 @@ const resolvedConfig = buildConfig({
     pathaoBaseUrl: str("PATHAO_BASE_URL", "https://api-hermes.pathao.com"),
     pathaoSandboxBaseUrl: str(
       "PATHAO_SANDBOX_BASE_URL",
-      "https://hermes-sandbox.pathao.com",
+      "https://courier-api-sandbox.pathao.com",
     ),
     steadfastBaseUrl: str(
       "STEADFAST_BASE_URL",

@@ -16,6 +16,9 @@ export const encrypt = (value: object): string => {
   return `v1:${iv.toString("base64")}:${ciphertext.toString("base64")}`;
 };
 
+
+
+
 export const decrypt = <T>(blob: string): T => {
   try {
     const [version, encodedIv, encodedCiphertext, ...extra] = blob.split(":");
@@ -47,3 +50,4 @@ export const decrypt = <T>(blob: string): T => {
     );
   }
 };
+

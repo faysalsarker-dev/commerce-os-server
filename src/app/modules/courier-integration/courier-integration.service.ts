@@ -12,17 +12,12 @@ import { decrypt, encrypt } from "../../utils/crypto";
 import * as PathaoProvider from "./providers/pathao";
 import * as SteadfastProvider from "./providers/steadfast";
 import {
-  courierAccountListQuerySchema,
-  createCourierAccountSchema,
-  pathaoConfigSchema,
-  pathaoCredentialsSchema,
-  steadfastConfigSchema,
-  steadfastCredentialsSchema,
-  testCourierConnectionSchema,
-  updateCourierAccountSchema,
   type CreateCourierAccountInput,
+  type PathaoConfig,
+  type PathaoCredentials,
   type TestCourierConnectionInput,
   type UpdateCourierAccountInput,
+  type SteadfastCredentials,
 } from "./courier-integration.validation";
 import type {
   CourierAccountListResult,
@@ -36,14 +31,17 @@ const publicWebhookUrl = (account: CourierAccount): string => {
 };
 
 const getCredentialHint = (account: CourierAccount): string => {
+  const credentials = decrypt<unknown>(account.credentials);
   const identifier =
-    account.provider === CourierProvider.PATHAO
-      ? pathaoCredentialsSchema.parse(
-          decrypt<unknown>(account.credentials),
-        ).clientId
-      : steadfastCredentialsSchema.parse(
-          decrypt<unknown>(account.credentials),
-        ).apiKey;
+    isRecord(credentials)
+      ? account.provider === CourierProvider.PATHAO
+        ? typeof credentials.clientId === "string"
+          ? credentials.clientId
+          : ""
+        : typeof credentials.apiKey === "string"
+          ? credentials.apiKey
+          : ""
+      : "";
 
   return `${identifier.slice(0, 4)}••••`;
 };
@@ -66,27 +64,24 @@ const toPublicAccount = (
   };
 };
 
-const parseProviderCredentials = (
-  provider: CourierProvider,
-  value: unknown,
-): CreateCourierAccountInput["credentials"] | TestCourierConnectionInput["credentials"] => {
-  return provider === CourierProvider.PATHAO
-    ? pathaoCredentialsSchema.parse(value)
-    : steadfastCredentialsSchema.parse(value);
-};
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
 
-const parseProviderConfig = (
-  provider: CourierProvider,
+const isPathaoCredentials = (
   value: unknown,
-): Prisma.InputJsonValue => {
-  if (provider === CourierProvider.PATHAO) {
-    const parsed = pathaoConfigSchema.parse(value);
-    return { storeId: parsed.storeId, sandbox: parsed.sandbox };
-  }
+): value is PathaoCredentials =>
+  isRecord(value) &&
+  typeof value.clientId === "string" &&
+  typeof value.clientSecret === "string" &&
+  typeof value.username === "string" &&
+  typeof value.password === "string";
 
-  steadfastConfigSchema.parse(value ?? {});
-  return {};
-};
+const isSteadfastCredentials = (
+  value: unknown,
+): value is SteadfastCredentials =>
+  isRecord(value) &&
+  typeof value.apiKey === "string" &&
+  typeof value.secretKey === "string";
 
 const assertProviderConnection = async (
   provider: CourierProvider,
@@ -94,29 +89,41 @@ const assertProviderConnection = async (
   providerConfig: unknown,
 ): Promise<void> => {
   if (provider === CourierProvider.PATHAO) {
-    const parsedCredentials = pathaoCredentialsSchema.parse(credentials);
-    const parsedConfig = pathaoConfigSchema.parse(providerConfig);
-    await PathaoProvider.testConnection(parsedCredentials, parsedConfig);
+    if (!isPathaoCredentials(credentials) || !isRecord(providerConfig)) {
+      throw new AppError("Invalid Pathao courier credentials or config", 400);
+    }
+    if (
+      typeof providerConfig.storeId !== "number" ||
+      typeof providerConfig.sandbox !== "boolean"
+    ) {
+      throw new AppError("Invalid Pathao courier config", 400);
+    }
+    const config: PathaoConfig = {
+      storeId: providerConfig.storeId,
+      sandbox: providerConfig.sandbox,
+    };
+    await PathaoProvider.testConnection(credentials, config);
     return;
   }
 
-  const parsedCredentials = steadfastCredentialsSchema.parse(credentials);
-  steadfastConfigSchema.parse(providerConfig ?? {});
-  await SteadfastProvider.testConnection(parsedCredentials);
+  if (!isSteadfastCredentials(credentials)) {
+    throw new AppError("Invalid Steadfast courier credentials", 400);
+  }
+  await SteadfastProvider.testConnection(credentials);
 };
 
 export const getCourierAccounts = async (
-  rawQuery: unknown,
+  query: Record<string, unknown>,
 ): Promise<CourierAccountListResult> => {
-  const query = courierAccountListQuerySchema.parse(rawQuery);
   const safeQuery: Record<string, unknown> = {
     page: query.page,
     limit: query.limit,
     sortBy: "createdAt",
     sortOrder: "desc",
-    ...(query.provider && { provider: query.provider }),
-    ...(query.isActive !== undefined && { isActive: query.isActive }),
   };
+  if (query.provider) safeQuery.provider = query.provider;
+  if (query.isActive !== undefined) safeQuery.isActive = query.isActive;
+
 
   const result = await getAll<CourierAccount>(
     prisma.courierAccount,
@@ -144,58 +151,110 @@ export const getCourierAccountById = async (
 export const testCourierConnection = async (
   payload: TestCourierConnectionInput,
 ): Promise<{ provider: CourierProvider; connected: true }> => {
-  const parsed = testCourierConnectionSchema.parse(payload);
-  await assertProviderConnection(
-    parsed.provider,
-    parsed.credentials,
-    parsed.config,
-  );
+  console.info("[courier-test] Testing provider connection", {
+    name: payload.provider,
+    credentials: payload.credentials,
+    config: payload.config,
+  });
+  try {
+    await assertProviderConnection(
+      payload.provider,
+      payload.credentials,
+      payload.config,
+    );
+  } catch (error) {
+    console.error("[courier-test] Provider connection failed", {
+      provider: payload.provider,
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+    throw error;
+  }
 
-  return { provider: parsed.provider, connected: true };
+  return { provider: payload.provider, connected: true };
 };
 
 export const createCourierAccount = async (
   payload: CreateCourierAccountInput,
 ): Promise<CreatedCourierAccountResponse> => {
-  const parsed = createCourierAccountSchema.parse(payload);
-  await assertProviderConnection(
-    parsed.provider,
-    parsed.credentials,
-    parsed.config,
+  const connectionDetails =
+    payload.provider === CourierProvider.PATHAO
+      ? {
+          provider: payload.provider,
+          sandbox: payload.config.sandbox,
+          storeId: payload.config.storeId,
+        }
+      : { provider: payload.provider };
+  console.info(
+    "[courier-create] Provider connection test started",
+    connectionDetails,
   );
+  try {
+    await assertProviderConnection(
+      payload.provider,
+      payload.credentials,
+      payload.config,
+    );
+    console.info(
+      "[courier-create] Provider connection test passed",
+      connectionDetails,
+    );
+  } catch (error) {
+    console.error("[courier-create] Provider connection test failed", {
+      ...connectionDetails,
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+    throw error;
+  }
 
   const plainWebhookSecret =
-    parsed.provider === CourierProvider.PATHAO
+    payload.provider === CourierProvider.PATHAO
       ? randomBytes(32).toString("hex")
-      : parsed.webhookSecret;
-  const configData = parseProviderConfig(parsed.provider, parsed.config);
+      : payload.webhookSecret;
+  const configData: Prisma.InputJsonValue =
+    payload.provider === CourierProvider.PATHAO
+      ? { storeId: payload.config.storeId, sandbox: payload.config.sandbox }
+      : {};
 
-  const account = await prisma.$transaction(async (transaction) => {
-    if (parsed.isDefault) {
-      await transaction.courierAccount.updateMany({
-        where: { provider: parsed.provider, isDefault: true },
-        data: { isDefault: false },
-      });
-    }
+  let account: CourierAccount;
+  try {
+    account = await prisma.$transaction(async (transaction) => {
+      if (payload.isDefault) {
+        await transaction.courierAccount.updateMany({
+          where: { provider: payload.provider, isDefault: true },
+          data: { isDefault: false },
+        });
+      }
 
-    return createOne<CourierAccount>(
-      transaction.courierAccount,
-      {
-        provider: parsed.provider,
-        label: parsed.label,
-        credentials: encrypt(parsed.credentials),
-        config: configData as Prisma.JsonValue,
-        webhookSecret: plainWebhookSecret
-          ? encrypt({ secret: plainWebhookSecret })
-          : null,
-        isDefault: parsed.isDefault ?? false,
-      },
-    );
-  });
+      return createOne<CourierAccount>(
+        transaction.courierAccount,
+        {
+          provider: payload.provider,
+          label: payload.label,
+          credentials: encrypt(payload.credentials),
+          config: configData as Prisma.JsonValue,
+          webhookSecret: plainWebhookSecret
+            ? encrypt({ secret: plainWebhookSecret })
+            : null,
+          isDefault: payload.isDefault ?? false,
+        },
+      );
+    });
+    console.info("[courier-create] Account saved", {
+      provider: payload.provider,
+      accountId: account.id,
+    });
+  } catch (error) {
+    console.error("[courier-create] Database save failed", {
+      provider: payload.provider,
+      name: error instanceof Error ? error.name : "UnknownError",
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+    throw error;
+  }
 
   return {
     ...toPublicAccount(account),
-    ...(parsed.provider === CourierProvider.PATHAO && plainWebhookSecret
+    ...(payload.provider === CourierProvider.PATHAO && plainWebhookSecret
       ? { oneTimeWebhookSecret: plainWebhookSecret }
       : {}),
   };
@@ -205,7 +264,6 @@ export const updateCourierAccountById = async (
   id: string,
   payload: UpdateCourierAccountInput,
 ): Promise<CourierAccountResponse> => {
-  const parsed = updateCourierAccountSchema.parse(payload);
   const current = await prisma.courierAccount.findUnique({ where: { id } });
 
   if (!current) {
@@ -213,7 +271,7 @@ export const updateCourierAccountById = async (
   }
 
   if (
-    parsed.webhookSecret !== undefined &&
+    payload.webhookSecret !== undefined &&
     current.provider === CourierProvider.PATHAO
   ) {
     throw new AppError(
@@ -223,45 +281,65 @@ export const updateCourierAccountById = async (
   }
 
   const shouldTestConnection =
-    parsed.credentials !== undefined || parsed.config !== undefined;
+    payload.credentials !== undefined || payload.config !== undefined;
   let encryptedCredentials: string | undefined;
   let configData: Prisma.InputJsonValue | undefined;
 
   if (shouldTestConnection) {
     const credentials =
-      parsed.credentials ??
-      parseProviderCredentials(
-        current.provider,
-        decrypt<unknown>(current.credentials),
+      payload.credentials ?? decrypt<unknown>(current.credentials);
+    const providerCredentials =
+      current.provider === CourierProvider.PATHAO
+        ? isPathaoCredentials(credentials)
+          ? credentials
+          : undefined
+        : isSteadfastCredentials(credentials)
+          ? credentials
+          : undefined;
+
+    if (!providerCredentials) {
+      throw new AppError(
+        `Invalid ${current.provider === CourierProvider.PATHAO ? "Pathao" : "Steadfast"} courier credentials`,
+        400,
       );
+    }
     const providerConfig =
-      parsed.config !== undefined
-        ? parseProviderConfig(current.provider, parsed.config)
+      payload.config !== undefined
+        ? payload.config
         : current.config;
 
     await assertProviderConnection(
       current.provider,
-      credentials,
+      providerCredentials,
       providerConfig,
     );
 
-    if (parsed.credentials !== undefined) {
-      encryptedCredentials = encrypt(credentials);
+    if (payload.credentials !== undefined) {
+      encryptedCredentials = encrypt(providerCredentials);
     }
-    if (parsed.config !== undefined) {
-      configData = parseProviderConfig(current.provider, parsed.config);
+    if (payload.config !== undefined) {
+      configData =
+        current.provider === CourierProvider.PATHAO &&
+        isRecord(payload.config) &&
+        typeof payload.config.storeId === "number" &&
+        typeof payload.config.sandbox === "boolean"
+          ? {
+              storeId: payload.config.storeId,
+              sandbox: payload.config.sandbox,
+            }
+          : {};
     }
   }
 
   const encryptedWebhookSecret =
-    parsed.webhookSecret === null
+    payload.webhookSecret === null
       ? null
-      : parsed.webhookSecret !== undefined
-        ? encrypt({ secret: parsed.webhookSecret })
+      : payload.webhookSecret !== undefined
+        ? encrypt({ secret: payload.webhookSecret })
         : undefined;
 
   const account = await prisma.$transaction(async (transaction) => {
-    if (parsed.isDefault === true) {
+    if (payload.isDefault === true) {
       await transaction.courierAccount.updateMany({
         where: {
           provider: current.provider,
@@ -275,7 +353,7 @@ export const updateCourierAccountById = async (
     return transaction.courierAccount.update({
       where: { id },
       data: {
-        ...(parsed.label !== undefined && { label: parsed.label }),
+        ...(payload.label !== undefined && { label: payload.label }),
         ...(encryptedCredentials !== undefined && {
           credentials: encryptedCredentials,
         }),
@@ -283,8 +361,8 @@ export const updateCourierAccountById = async (
         ...(encryptedWebhookSecret !== undefined && {
           webhookSecret: encryptedWebhookSecret,
         }),
-        ...(parsed.isActive !== undefined && { isActive: parsed.isActive }),
-        ...(parsed.isDefault !== undefined && { isDefault: parsed.isDefault }),
+        ...(payload.isActive !== undefined && { isActive: payload.isActive }),
+        ...(payload.isDefault !== undefined && { isDefault: payload.isDefault }),
       },
     });
   });

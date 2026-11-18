@@ -3,11 +3,17 @@ import catchAsync from "../../common/catchAsync";
 import sendResponse from "../../common/sendResponse";
 import { HttpStatus } from "../../utils/network/httpStatus";
 import * as CourierIntegrationService from "./courier-integration.service";
+import type {
+  CreateCourierAccountInput,
+  TestCourierConnectionInput,
+  UpdateCourierAccountInput,
+} from "./courier-integration.validation";
 
 export const getCourierAccounts = catchAsync(
   async (req: Request, res: Response) => {
+    console.log("Request Query:", req.query); // Log the incoming query parameters
     const result = await CourierIntegrationService.getCourierAccounts(
-      req.query,
+      req.query as unknown as Record<string, unknown>,
     );
 
     sendResponse(res, {
@@ -23,7 +29,7 @@ export const getCourierAccounts = catchAsync(
 export const createCourierAccount = catchAsync(
   async (req: Request, res: Response) => {
     const account = await CourierIntegrationService.createCourierAccount(
-      req.body,
+      req.body as CreateCourierAccountInput,
     );
 
     sendResponse(res, {
@@ -54,7 +60,7 @@ export const updateCourierAccount = catchAsync(
   async (req: Request, res: Response) => {
     const account = await CourierIntegrationService.updateCourierAccountById(
       req.params.id as string,
-      req.body,
+      req.body as UpdateCourierAccountInput,
     );
 
     sendResponse(res, {
@@ -84,7 +90,7 @@ export const deleteCourierAccount = catchAsync(
 export const testCourierConnection = catchAsync(
   async (req: Request, res: Response) => {
     const result = await CourierIntegrationService.testCourierConnection(
-      req.body,
+      req.body as TestCourierConnectionInput,
     );
 
     sendResponse(res, {
