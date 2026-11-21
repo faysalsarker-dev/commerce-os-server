@@ -5,7 +5,7 @@ import { HttpStatus } from "../../utils/network/httpStatus";
 import * as OrderService from "./order.service";
 
 export const createOrder = catchAsync(async (req: Request, res: Response) => {
-  const order = await OrderService.createOrder(req.body);
+  const order = await OrderService.createOrder(req.body, req.user?.id);
 
   sendResponse(res, {
     statusCode: HttpStatus.CREATED,
@@ -44,6 +44,7 @@ export const updateOrder = catchAsync(async (req: Request, res: Response) => {
   const order = await OrderService.updateOrderById(
     req.params.id as string,
     req.body,
+    req.user?.id,
   );
 
   sendResponse(res, {

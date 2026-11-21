@@ -12,6 +12,8 @@ import expenseCategoryRoute from "../modules/expense-category/expense-category.r
 import couponRoute from "../modules/coupon/coupon.route"
 import courierIntegrationRoute from "../modules/courier-integration/courier-integration.route"
 import orderRoute from "../modules/order/order.route"
+import courierWebhookRoute from "../modules/courier-integration/courier-webhook.route"
+import campaignRoute from "../modules/campaign/campaign.route"
 
 export const router = Router()
 
@@ -21,6 +23,10 @@ interface ModuleRoute {
 }
 
 const moduleRoutes: ModuleRoute[] = [
+    {
+        path: "/webhooks/courier",
+        route: courierWebhookRoute
+    },
     {
         path: "/auth",
         route: authRoute
@@ -72,6 +78,10 @@ const moduleRoutes: ModuleRoute[] = [
     {
         path: "/orders",
         route: orderRoute
+    },
+    {
+        path: "/campaigns",
+        route: campaignRoute
     }
 ]
 

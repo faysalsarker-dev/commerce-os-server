@@ -42,15 +42,25 @@ const ensureScheduleMatchesCategory = async (
   }
 };
 
+const ensureCampaignExists = async (campaignId: string | null | undefined): Promise<void> => {
+  if (!campaignId) return;
+  const campaign = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    select: { id: true },
+  });
+  if (!campaign) throw new AppError("Campaign not found", 404);
+};
+
 export const createExpense = async (
   payload: CreateExpenseInput,
 ): Promise<Expense> => {
   await ensureCategoryExists(payload.categoryId);
   await ensureScheduleMatchesCategory(payload.scheduleId, payload.categoryId);
+  await ensureCampaignExists(payload.campaignId);
   return createOne<Expense>(
     prisma.expense,
     { ...payload, amount: new Prisma.Decimal(payload.amount) },
-    { category: true, schedule: true },
+    { category: true, schedule: true, campaign: true },
   );
 };
 
@@ -58,11 +68,12 @@ export const getExpenses = async (query: Record<string, any>) => {
   return getAll<Expense>(prisma.expense, query, ["description", "note"], {
     category: true,
     schedule: true,
+    campaign: true,
   });
 };
 
 export const getExpenseById = async (id: string): Promise<Expense> =>
-  getById<Expense>(prisma.expense, id, { category: true, schedule: true });
+  getById<Expense>(prisma.expense, id, { category: true, schedule: true, campaign: true });
 
 export const updateExpenseById = async (
   id: string,
@@ -72,9 +83,12 @@ export const updateExpenseById = async (
   const categoryId = payload.categoryId ?? currentExpense.categoryId;
   const scheduleId =
     payload.scheduleId === undefined ? currentExpense.scheduleId : payload.scheduleId;
+  const campaignId =
+    payload.campaignId === undefined ? currentExpense.campaignId : payload.campaignId;
 
   if (payload.categoryId) await ensureCategoryExists(categoryId);
   await ensureScheduleMatchesCategory(scheduleId, categoryId);
+  await ensureCampaignExists(campaignId);
 
   const { amount, ...updates } = payload;
   return updateOne<Expense>(
@@ -84,9 +98,9 @@ export const updateExpenseById = async (
       ...updates,
       ...(amount !== undefined && { amount: new Prisma.Decimal(amount) }),
     },
-    { category: true, schedule: true },
+    { category: true, schedule: true, campaign: true },
   );
 };
 
 export const deleteExpenseById = async (id: string): Promise<Expense> =>
-  deleteOne<Expense>(prisma.expense, id, { category: true, schedule: true });
+  deleteOne<Expense>(prisma.expense, id, { category: true, schedule: true, campaign: true });

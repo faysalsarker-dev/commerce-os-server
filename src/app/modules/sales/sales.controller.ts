@@ -29,17 +29,6 @@ export const checkoutSale = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const returnProduct = catchAsync(async (req: Request, res: Response) => {
-  const result = await SalesService.returnProduct(req.body);
-
-  sendResponse(res, {
-    statusCode: HttpStatus.OK,
-    success: true,
-    message: "Product returned successfully",
-    data: result,
-  });
-});
-
 export const getSalesHistory = catchAsync(async (_req: Request, res: Response) => {
   const result = await SalesService.getSalesHistory();
 

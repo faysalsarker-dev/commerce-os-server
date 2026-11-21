@@ -18,6 +18,11 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model Campaign
+ * 
+ */
+export type Campaign = Prisma.CampaignModel
+/**
  * Model Category
  * 
  */
@@ -58,6 +63,16 @@ export type WebhookLog = Prisma.WebhookLogModel
  */
 export type Customer = Prisma.CustomerModel
 /**
+ * Model Exchange
+ * 
+ */
+export type Exchange = Prisma.ExchangeModel
+/**
+ * Model ExchangeItem
+ * 
+ */
+export type ExchangeItem = Prisma.ExchangeItemModel
+/**
  * Model ExpenseCategory
  * 
  */
@@ -92,6 +107,11 @@ export type Message = Prisma.MessageModel
  * 
  */
 export type Order = Prisma.OrderModel
+/**
+ * Model OrderStatusHistory
+ * 
+ */
+export type OrderStatusHistory = Prisma.OrderStatusHistoryModel
 /**
  * Model Payment
  * 

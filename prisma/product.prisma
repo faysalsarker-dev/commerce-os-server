@@ -56,6 +56,8 @@ model ProductVariant {
   stockMovements StockMovement[]
 
   saleItems      SaleItem[]        // ← add this
+  exchangesOut   ExchangeItem[]    @relation("ExchangeOriginalVariant")
+  exchangesIn    ExchangeItem[]    @relation("ExchangeReplacementVariant")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

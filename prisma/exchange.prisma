@@ -1,0 +1,32 @@
+model Exchange {
+  id             String         @id @default(cuid())
+  saleId         String
+  sale           Sale           @relation(fields: [saleId], references: [id], onDelete: Restrict)
+  status         ExchangeStatus @default(COMPLETED)
+  reason         String?
+  processedById  String?
+  processedBy    User?          @relation("ExchangeProcessedBy", fields: [processedById], references: [id], onDelete: SetNull)
+  items          ExchangeItem[]
+  createdAt      DateTime       @default(now())
+
+  @@index([saleId, createdAt])
+  @@index([processedById])
+}
+
+model ExchangeItem {
+  id                   String         @id @default(cuid())
+  exchangeId           String
+  exchange             Exchange       @relation(fields: [exchangeId], references: [id], onDelete: Restrict)
+  originalSaleItemId   String
+  originalSaleItem     SaleItem       @relation("ExchangeOriginalSaleItem", fields: [originalSaleItemId], references: [id], onDelete: Restrict)
+  originalVariantId    String
+  originalVariant      ProductVariant @relation("ExchangeOriginalVariant", fields: [originalVariantId], references: [id], onDelete: Restrict)
+  replacementVariantId String
+  replacementVariant   ProductVariant @relation("ExchangeReplacementVariant", fields: [replacementVariantId], references: [id], onDelete: Restrict)
+  quantity             Int
+  unitPriceDifference  Decimal        @db.Decimal(10, 2)
+
+  @@index([exchangeId])
+  @@index([originalSaleItemId])
+  @@index([replacementVariantId])
+}

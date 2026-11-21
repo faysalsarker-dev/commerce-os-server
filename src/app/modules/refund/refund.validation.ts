@@ -48,6 +48,17 @@ export const createRefundSchema = z.object({
   processedById: z.preprocess(emptyToUndefined, z.string().optional()),
 });
 
+export const createExchangeSchema = z.object({
+  saleId: z.string().min(1, "Sale ID is required"),
+  reason: z.preprocess(emptyToUndefined, z.string().max(500).optional()),
+  processedById: z.preprocess(emptyToUndefined, z.string().optional()),
+  items: z.array(z.object({
+    saleItemId: z.string().min(1),
+    replacementVariantId: z.string().min(1),
+    quantity: z.coerce.number().int().positive(),
+  })).min(1),
+});
+
 export const getRefundsQuerySchema = z.object({
   saleId: z.preprocess(emptyToUndefined, z.string().optional()),
   processedById: z.preprocess(emptyToUndefined, z.string().optional()),

@@ -57,6 +57,12 @@ export const checkoutSaleSchema = z.object({
   customerName: z.preprocess(emptyToUndefined, z.string().optional()),
   customerPhone: z.preprocess(emptyToUndefined, z.string().optional()),
   customerId: z.preprocess(emptyToUndefined, z.string().optional()),
+  campaignId: z.preprocess(emptyToUndefined, z.string().trim().min(1).optional()),
+  utmSource: z.preprocess(emptyToUndefined, z.string().trim().max(200).optional()),
+  utmMedium: z.preprocess(emptyToUndefined, z.string().trim().max(200).optional()),
+  utmCampaign: z.preprocess(emptyToUndefined, z.string().trim().max(200).optional()),
+  utmContent: z.preprocess(emptyToUndefined, z.string().trim().max(200).optional()),
+  utmTerm: z.preprocess(emptyToUndefined, z.string().trim().max(200).optional()),
   soldById: z.preprocess(emptyToUndefined, z.string().optional()),
   channel: z.enum(["ONLINE", "OFFLINE"]).optional().default("OFFLINE"),
   status: z
@@ -77,8 +83,3 @@ export const checkoutSaleSchema = z.object({
   invoiceNo: z.preprocess(emptyToUndefined, z.string().optional()),
 });
 
-export const returnProductSchema = z.object({
-  variantId: z.string().min(1, "Variant id is required"),
-  quantity: z.coerce.number().int().positive("Quantity must be greater than 0"),
-  reason: z.preprocess(emptyToUndefined, z.string().optional()),
-});

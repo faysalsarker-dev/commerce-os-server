@@ -81,12 +81,22 @@ export const OrderStatus = {
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
   PROCESSING: 'PROCESSING',
+  PACKED: 'PACKED',
+  SHIPPED: 'SHIPPED',
   COMPLETED: 'COMPLETED',
   CANCELLED: 'CANCELLED',
   RETURNED: 'RETURNED'
 } as const
 
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
+
+
+export const ExchangeStatus = {
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type ExchangeStatus = (typeof ExchangeStatus)[keyof typeof ExchangeStatus]
 
 
 export const PaymentMethod = {
@@ -182,6 +192,19 @@ export const ShipmentStatus = {
 } as const
 
 export type ShipmentStatus = (typeof ShipmentStatus)[keyof typeof ShipmentStatus]
+
+
+export const Platform = {
+  FACEBOOK: 'FACEBOOK',
+  INSTAGRAM: 'INSTAGRAM',
+  TIKTOK: 'TIKTOK',
+  WHATSAPP: 'WHATSAPP',
+  GOOGLE: 'GOOGLE',
+  YOUTUBE: 'YOUTUBE',
+  OTHER: 'OTHER'
+} as const
+
+export type Platform = (typeof Platform)[keyof typeof Platform]
 
 
 export const ExpenseFrequency = {

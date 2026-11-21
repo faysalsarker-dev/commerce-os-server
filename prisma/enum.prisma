@@ -56,9 +56,16 @@ enum OrderStatus {
   PENDING
   CONFIRMED
   PROCESSING
+  PACKED
+  SHIPPED
   COMPLETED
   CANCELLED
   RETURNED
+}
+
+enum ExchangeStatus {
+  COMPLETED
+  CANCELLED
 }
 
 enum PaymentMethod {
@@ -129,4 +136,14 @@ enum ShipmentStatus {
   PARTIAL_DELIVERED
   RETURNED
   CANCELLED
+}
+
+enum Platform {
+  FACEBOOK
+  INSTAGRAM
+  TIKTOK
+  WHATSAPP
+  GOOGLE
+  YOUTUBE
+  OTHER
 }

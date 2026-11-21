@@ -535,12 +535,24 @@ export const updateProductVariant = async (
   }
 
   const updated = await prisma.$transaction(async (tx) => {
+    if (
+      payload.stockQty !== undefined &&
+      payload.stockQty !== existingVariant.stockQty
+    ) {
+      const stockClaim = await tx.productVariant.updateMany({
+        where: { id: variantId, stockQty: existingVariant.stockQty },
+        data: { stockQty: payload.stockQty },
+      });
+      if (stockClaim.count === 0) {
+        throw new AppError("Stock changed during this update. Reload and try again.", 409);
+      }
+    }
+
     const updatedVariant = await tx.productVariant.update({
       where: { id: variantId },
       data: {
         ...(newSize && { sizeId: newSize.id }),
         ...(payload.sku && { sku: payload.sku }),
-        ...(payload.stockQty !== undefined && { stockQty: payload.stockQty }),
         ...(payload.costPriceOverride !== undefined && { costPriceOverride: payload.costPriceOverride }),
         ...(payload.sellingPriceOverride !== undefined && { sellingPriceOverride: payload.sellingPriceOverride }),
         ...(payload.qrCode && { qrCode: payload.qrCode }),

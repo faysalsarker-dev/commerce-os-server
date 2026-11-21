@@ -22,6 +22,8 @@ import {
 import type {
   CourierAccountListResult,
   CourierAccountResponse,
+  CourierCustomerHistoryAccountResult,
+  CourierCustomerHistoryResult,
   CreatedCourierAccountResponse,
 } from "./courier-integration.types";
 
@@ -151,110 +153,129 @@ export const getCourierAccountById = async (
 export const testCourierConnection = async (
   payload: TestCourierConnectionInput,
 ): Promise<{ provider: CourierProvider; connected: true }> => {
-  console.info("[courier-test] Testing provider connection", {
-    name: payload.provider,
-    credentials: payload.credentials,
-    config: payload.config,
-  });
-  try {
-    await assertProviderConnection(
-      payload.provider,
-      payload.credentials,
-      payload.config,
-    );
-  } catch (error) {
-    console.error("[courier-test] Provider connection failed", {
-      provider: payload.provider,
-      message: error instanceof Error ? error.message : "Unknown error",
-    });
-    throw error;
-  }
+  await assertProviderConnection(
+    payload.provider,
+    payload.credentials,
+    payload.config,
+  );
 
   return { provider: payload.provider, connected: true };
+};
+
+const getAccountCustomerHistory = async (
+  account: CourierAccount,
+  phone: string,
+): Promise<CourierCustomerHistoryAccountResult> => {
+  const accountDetails = {
+    accountId: account.id,
+    provider: account.provider,
+    label: account.label,
+  };
+
+  if (!account.isActive) {
+    return {
+      ...accountDetails,
+      status: "inactive",
+      message: "Courier account is inactive.",
+    };
+  }
+
+  try {
+    const credentials = decrypt<unknown>(account.credentials);
+    let data: unknown;
+
+    if (account.provider === CourierProvider.PATHAO) {
+      if (!isPathaoCredentials(credentials)) {
+        throw new AppError("Stored Pathao credentials are invalid.", 500);
+      }
+      if (!isRecord(account.config) || typeof account.config.sandbox !== "boolean") {
+        throw new AppError("Stored Pathao configuration is invalid.", 500);
+      }
+      data = await PathaoProvider.getCustomerHistory(
+        credentials,
+        account.config.sandbox,
+        phone,
+      );
+    } else {
+      if (!isSteadfastCredentials(credentials)) {
+        throw new AppError("Stored Steadfast credentials are invalid.", 500);
+      }
+      data = await SteadfastProvider.getCustomerHistory(credentials, phone);
+    }
+
+    return { ...accountDetails, status: "success", data };
+  } catch (error) {
+    return {
+      ...accountDetails,
+      status: "failed",
+      message:
+        error instanceof AppError
+          ? error.message
+          : "Courier customer-history lookup failed.",
+    };
+  }
+};
+
+export const getCourierCustomerHistory = async (
+  phone: string,
+): Promise<CourierCustomerHistoryResult> => {
+  const accounts = await prisma.courierAccount.findMany({
+    orderBy: { createdAt: "asc" },
+  });
+  const results = await Promise.all(
+    accounts.map((account) => getAccountCustomerHistory(account, phone)),
+  );
+
+  return { phone, accounts: results };
 };
 
 export const createCourierAccount = async (
   payload: CreateCourierAccountInput,
 ): Promise<CreatedCourierAccountResponse> => {
-  const connectionDetails =
-    payload.provider === CourierProvider.PATHAO
-      ? {
-          provider: payload.provider,
-          sandbox: payload.config.sandbox,
-          storeId: payload.config.storeId,
-        }
-      : { provider: payload.provider };
-  console.info(
-    "[courier-create] Provider connection test started",
-    connectionDetails,
+  await assertProviderConnection(
+    payload.provider,
+    payload.credentials,
+    payload.config,
   );
-  try {
-    await assertProviderConnection(
-      payload.provider,
-      payload.credentials,
-      payload.config,
-    );
-    console.info(
-      "[courier-create] Provider connection test passed",
-      connectionDetails,
-    );
-  } catch (error) {
-    console.error("[courier-create] Provider connection test failed", {
-      ...connectionDetails,
-      message: error instanceof Error ? error.message : "Unknown error",
-    });
-    throw error;
-  }
 
+  const suppliedWebhookSecret =
+    payload.provider === CourierProvider.STEADFAST
+      ? payload.webhookSecret
+      : undefined;
+  const generatedWebhookSecret = suppliedWebhookSecret === undefined;
   const plainWebhookSecret =
-    payload.provider === CourierProvider.PATHAO
-      ? randomBytes(32).toString("hex")
-      : payload.webhookSecret;
+    suppliedWebhookSecret ?? randomBytes(32).toString("hex");
   const configData: Prisma.InputJsonValue =
     payload.provider === CourierProvider.PATHAO
       ? { storeId: payload.config.storeId, sandbox: payload.config.sandbox }
       : {};
 
-  let account: CourierAccount;
-  try {
-    account = await prisma.$transaction(async (transaction) => {
-      if (payload.isDefault) {
-        await transaction.courierAccount.updateMany({
-          where: { provider: payload.provider, isDefault: true },
-          data: { isDefault: false },
-        });
-      }
+  const account = await prisma.$transaction(async (transaction) => {
+    if (payload.isDefault) {
+      await transaction.courierAccount.updateMany({
+        where: { provider: payload.provider, isDefault: true },
+        data: { isDefault: false },
+      });
+    }
 
-      return createOne<CourierAccount>(
-        transaction.courierAccount,
-        {
-          provider: payload.provider,
-          label: payload.label,
-          credentials: encrypt(payload.credentials),
-          config: configData as Prisma.JsonValue,
-          webhookSecret: plainWebhookSecret
-            ? encrypt({ secret: plainWebhookSecret })
-            : null,
-          isDefault: payload.isDefault ?? false,
-        },
-      );
-    });
-    console.info("[courier-create] Account saved", {
-      provider: payload.provider,
-      accountId: account.id,
-    });
-  } catch (error) {
-    console.error("[courier-create] Database save failed", {
-      provider: payload.provider,
-      name: error instanceof Error ? error.name : "UnknownError",
-      message: error instanceof Error ? error.message : "Unknown error",
-    });
-    throw error;
-  }
+    return createOne<CourierAccount>(
+      transaction.courierAccount,
+      {
+        provider: payload.provider,
+        label: payload.label,
+        credentials: encrypt(payload.credentials),
+        config: configData as Prisma.JsonValue,
+        webhookSecret: plainWebhookSecret
+          ? encrypt({ secret: plainWebhookSecret })
+          : null,
+        isDefault: payload.isDefault ?? false,
+      },
+    );
+  });
 
   return {
     ...toPublicAccount(account),
-    ...(payload.provider === CourierProvider.PATHAO && plainWebhookSecret
+    ...(generatedWebhookSecret
       ? { oneTimeWebhookSecret: plainWebhookSecret }
       : {}),
   };
@@ -377,18 +398,12 @@ export const deleteCourierAccountById = async (
   return toPublicAccount(account);
 };
 
-export const regeneratePathaoWebhookSecret = async (
+export const regenerateCourierWebhookSecret = async (
   id: string,
 ): Promise<CreatedCourierAccountResponse> => {
   const current = await prisma.courierAccount.findUnique({ where: { id } });
   if (!current) {
     throw new AppError("Courier account not found", 404);
-  }
-  if (current.provider !== CourierProvider.PATHAO) {
-    throw new AppError(
-      "Webhook secret regeneration is only available for Pathao accounts.",
-      400,
-    );
   }
 
   const plainWebhookSecret = randomBytes(32).toString("hex");

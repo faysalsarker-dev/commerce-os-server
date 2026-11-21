@@ -2,7 +2,7 @@ import prisma from "../../lib/prisma";
 import { AppError } from "../../errors/AppError";
 import { $Enums, Prisma } from "../../generated/prisma/client";
 import { broadcastStockUpdate, type StockUpdatePayload } from "../../config/socket";
-import { deleteOne, getAll, getById } from "../../services/base.service";
+import { getAll, getById } from "../../services/base.service";
 import { Refund } from "../../generated/prisma/client";
 
 export type CreateRefundPayload = {
@@ -64,6 +64,12 @@ export const createRefund = async (payload: CreateRefundPayload) => {
   const refundMethod = mapPaymentMethod(payload.method);
 
   const transactionResult = await prisma.$transaction(async (tx) => {
+    const lockIds = [...new Set(payload.items.map((item) => item.saleItemId))].sort();
+    if (lockIds.length) {
+      await tx.$queryRaw<Array<{ id: string }>>(
+        Prisma.sql`SELECT "id" FROM "SaleItem" WHERE "id" IN (${Prisma.join(lockIds)}) ORDER BY "id" FOR UPDATE`,
+      );
+    }
     // 1. Fetch sale with existing items and refunds
     const sale = await tx.sale.findUnique({
       where: { id: payload.saleId },
@@ -74,6 +80,7 @@ export const createRefund = async (payload: CreateRefundPayload) => {
             items: true,
           },
         },
+        exchanges: { include: { items: true } },
       },
     });
 
@@ -110,6 +117,16 @@ export const createRefund = async (payload: CreateRefundPayload) => {
         refundedQtyMap.set(refItem.saleItemId, current + refItem.quantity);
       }
     }
+    const processedQtyMap = new Map(refundedQtyMap);
+    for (const exchange of sale.exchanges) {
+      for (const exchangeItem of exchange.items) {
+        const current = processedQtyMap.get(exchangeItem.originalSaleItemId) ?? 0;
+        processedQtyMap.set(
+          exchangeItem.originalSaleItemId,
+          current + exchangeItem.quantity,
+        );
+      }
+    }
 
     const preparedRefundItems: Prisma.RefundItemCreateWithoutRefundInput[] = [];
     const stockUpdates: StockUpdatePayload[] = [];
@@ -125,7 +142,7 @@ export const createRefund = async (payload: CreateRefundPayload) => {
         );
       }
 
-      const alreadyRefundedQty = refundedQtyMap.get(saleItem.id) ?? 0;
+      const alreadyRefundedQty = processedQtyMap.get(saleItem.id) ?? 0;
       const maxRefundableQty = saleItem.quantity - alreadyRefundedQty;
 
       if (itemInput.quantity > maxRefundableQty) {
@@ -189,7 +206,11 @@ export const createRefund = async (payload: CreateRefundPayload) => {
         updatedAt: new Date(),
       });
 
-      refundedQtyMap.set(saleItem.id, alreadyRefundedQty + itemInput.quantity);
+      processedQtyMap.set(saleItem.id, alreadyRefundedQty + itemInput.quantity);
+      refundedQtyMap.set(
+        saleItem.id,
+        (refundedQtyMap.get(saleItem.id) ?? 0) + itemInput.quantity,
+      );
     }
 
     const refundPayments = payload.payments
@@ -216,6 +237,18 @@ export const createRefund = async (payload: CreateRefundPayload) => {
         "Refund payment amounts must equal the total refund amount.",
         400,
       );
+    }
+    if (
+      Math.round(Number(sale.refundedAmount) * 100) + totalRefundCents >
+      Math.round(Number(sale.total) * 100)
+    ) {
+      throw new AppError("Refund amount cannot exceed the remaining sale value.", 400);
+    }
+    if (
+      totalRefundCents >
+      Math.round((Number(sale.paidAmount) - Number(sale.refundedAmount)) * 100)
+    ) {
+      throw new AppError("Refund amount cannot exceed the sale's remaining collected payments.", 400);
     }
 
     const refundMethods = new Set(refundPayments.map((payment) => payment.method));
@@ -284,6 +317,21 @@ export const createRefund = async (payload: CreateRefundPayload) => {
         paymentStatus: newPaymentStatus,
       },
     });
+    if (isFullyRefunded) {
+      const linkedOrder = await tx.order.findUnique({
+        where: { saleId: sale.id },
+        select: { id: true, status: true },
+      });
+      if (linkedOrder && linkedOrder.status !== "RETURNED") {
+        await tx.order.update({
+          where: { id: linkedOrder.id },
+          data: { status: "RETURNED" },
+        });
+        await tx.orderStatusHistory.create({
+          data: { orderId: linkedOrder.id, status: "RETURNED", changedById: processedById },
+        });
+      }
+    }
 
     return {
       refund,
@@ -381,7 +429,126 @@ export const getRefundsBySaleId = async (saleId: string) => {
   return refunds;
 };
 
-export const deleteRefundById = async (id: string): Promise<Refund> => {
-  const refund = await deleteOne<Refund>(prisma.refund, id);
-  return refund;
+export const getExchangesBySaleId = async (saleId: string) => {
+  return prisma.exchange.findMany({
+    where: { saleId },
+    include: {
+      items: { include: { originalSaleItem: true, originalVariant: true, replacementVariant: true } },
+      processedBy: { select: { id: true, name: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+};
+
+export const createExchange = async (payload: {
+  saleId: string;
+  reason?: string;
+  processedById?: string;
+  items: Array<{ saleItemId: string; replacementVariantId: string; quantity: number }>;
+}) => {
+  const stockUpdates: StockUpdatePayload[] = [];
+  const exchange = await prisma.$transaction(async (tx) => {
+    const saleItemIds = [...new Set(payload.items.map((item) => item.saleItemId))].sort();
+    await tx.$queryRaw<Array<{ id: string }>>(
+      Prisma.sql`SELECT "id" FROM "SaleItem" WHERE "id" IN (${Prisma.join(saleItemIds)}) ORDER BY "id" FOR UPDATE`,
+    );
+
+    const sale = await tx.sale.findUnique({
+      where: { id: payload.saleId },
+      include: {
+        items: true,
+        refunds: { include: { items: true } },
+        exchanges: { include: { items: true } },
+      },
+    });
+    if (!sale) throw new AppError("Sale not found", 404);
+
+    const processed = new Map<string, number>();
+    for (const refund of sale.refunds) {
+      for (const item of refund.items) {
+        processed.set(item.saleItemId, (processed.get(item.saleItemId) ?? 0) + item.quantity);
+      }
+    }
+    for (const priorExchange of sale.exchanges) {
+      for (const item of priorExchange.items) {
+        processed.set(item.originalSaleItemId, (processed.get(item.originalSaleItemId) ?? 0) + item.quantity);
+      }
+    }
+
+    const itemCreates: Prisma.ExchangeItemCreateWithoutExchangeInput[] = [];
+    for (const input of payload.items) {
+      const soldItem = sale.items.find((item) => item.id === input.saleItemId);
+      if (!soldItem) throw new AppError("Sale item does not belong to this sale", 400);
+      const consumed = processed.get(soldItem.id) ?? 0;
+      if (input.quantity > soldItem.quantity - consumed) {
+        throw new AppError(`Only ${soldItem.quantity - consumed} unit(s) remain eligible for exchange.`, 409);
+      }
+      const replacement = await tx.productVariant.findUnique({
+        where: { id: input.replacementVariantId },
+        include: { size: true, productColor: { include: { product: true } } },
+      });
+      if (!replacement) throw new AppError("Replacement variant not found", 404);
+      if (replacement.id === soldItem.variantId) {
+        throw new AppError("Replacement must be a different variant", 400);
+      }
+      const replacementPrice = Number(
+        replacement.sellingPriceOverride ?? replacement.productColor.product.sellingPrice,
+      );
+      const originalUnitPrice = Number(soldItem.subtotal) / soldItem.quantity;
+      const difference = Math.round((replacementPrice - originalUnitPrice) * 100) / 100;
+      if (Math.abs(difference) > 0.009) {
+        throw new AppError("This exchange requires a price settlement and cannot be balanced automatically.", 409);
+      }
+
+      const stockResult = await tx.productVariant.updateMany({
+        where: { id: replacement.id, stockQty: { gte: input.quantity } },
+        data: { stockQty: { decrement: input.quantity } },
+      });
+      if (!stockResult.count) throw new AppError("Insufficient replacement stock", 409);
+      const returnedVariant = await tx.productVariant.update({
+        where: { id: soldItem.variantId },
+        data: { stockQty: { increment: input.quantity } },
+        include: { size: true, productColor: { include: { product: true } } },
+      });
+      const replacementAfter = await tx.productVariant.findUniqueOrThrow({
+        where: { id: replacement.id },
+        include: { size: true, productColor: { include: { product: true } } },
+      });
+      await tx.stockMovement.createMany({ data: [
+        { variantId: replacement.id, type: "SALE_OUT", quantity: input.quantity, reason: "Customer exchange replacement" },
+        { variantId: soldItem.variantId, type: "RETURN_IN", quantity: input.quantity, reason: payload.reason ?? "Customer exchange" },
+      ] });
+      const toPayload = (variant: typeof replacement, movementType: "SALE_OUT" | "RETURN_IN"): StockUpdatePayload => ({
+        variantId: variant.id,
+        productId: variant.productColor.product.id,
+        productName: variant.productColor.product.name,
+        colorName: variant.productColor.colorName,
+        size: variant.size.size,
+        stockQty: variant.stockQty,
+        movementType,
+        updatedAt: new Date(),
+      });
+      stockUpdates.push(toPayload(replacementAfter, "SALE_OUT"), toPayload(returnedVariant, "RETURN_IN"));
+      itemCreates.push({
+        originalSaleItem: { connect: { id: soldItem.id } },
+        originalVariant: { connect: { id: soldItem.variantId } },
+        replacementVariant: { connect: { id: replacement.id } },
+        quantity: input.quantity,
+        unitPriceDifference: difference,
+      });
+      processed.set(soldItem.id, consumed + input.quantity);
+    }
+
+    return tx.exchange.create({
+      data: {
+        sale: { connect: { id: sale.id } },
+        processedBy: payload.processedById ? { connect: { id: payload.processedById } } : undefined,
+        reason: payload.reason,
+        items: { create: itemCreates },
+      },
+      include: { items: true, processedBy: { select: { id: true, name: true } } },
+    });
+  });
+  stockUpdates.forEach(broadcastStockUpdate);
+  return exchange;
 };

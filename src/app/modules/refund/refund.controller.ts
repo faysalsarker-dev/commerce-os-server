@@ -18,6 +18,19 @@ export const createRefund = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const createExchange = catchAsync(async (req: Request, res: Response) => {
+  const result = await RefundService.createExchange({
+    ...req.body,
+    processedById: req.user?.id,
+  });
+  sendResponse(res, {
+    statusCode: HttpStatus.CREATED,
+    success: true,
+    message: "Exchange processed successfully",
+    data: result,
+  });
+});
+
 export const getRefunds = catchAsync(async (req: Request, res: Response) => {
   const result = await RefundService.getRefunds(req.query);
 
@@ -54,15 +67,13 @@ export const getRefundsBySale = catchAsync(async (req: Request, res: Response) =
   });
 });
 
-export const deleteRefund = catchAsync(async (req: Request, res: Response) => {
-  const refund = await RefundService.deleteRefundById(
-    req.params.id as string,
-  );
-
+export const getExchangesBySale = catchAsync(async (req: Request, res: Response) => {
+  const exchanges = await RefundService.getExchangesBySaleId(req.params.saleId as string);
   sendResponse(res, {
     statusCode: HttpStatus.OK,
     success: true,
-    message: "Refund record deleted successfully",
-    data: refund,
+    message: "Sale exchanges fetched successfully",
+    data: exchanges,
   });
 });
+

@@ -51,6 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Campaign: 'Campaign',
   Category: 'Category',
   Coupon: 'Coupon',
   CouponUsage: 'CouponUsage',
@@ -59,6 +60,8 @@ export const ModelName = {
   ShipmentEvent: 'ShipmentEvent',
   WebhookLog: 'WebhookLog',
   Customer: 'Customer',
+  Exchange: 'Exchange',
+  ExchangeItem: 'ExchangeItem',
   ExpenseCategory: 'ExpenseCategory',
   ExpenseSchedule: 'ExpenseSchedule',
   Expense: 'Expense',
@@ -66,6 +69,7 @@ export const ModelName = {
   MessagingConversation: 'MessagingConversation',
   Message: 'Message',
   Order: 'Order',
+  OrderStatusHistory: 'OrderStatusHistory',
   Payment: 'Payment',
   Product: 'Product',
   ProductColor: 'ProductColor',
@@ -96,6 +100,22 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const CampaignScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  platform: 'platform',
+  trackingCode: 'trackingCode',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  isActive: 'isActive',
+  isCampEnd: 'isCampEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CampaignScalarFieldEnum = (typeof CampaignScalarFieldEnum)[keyof typeof CampaignScalarFieldEnum]
 
 
 export const CategoryScalarFieldEnum = {
@@ -230,6 +250,31 @@ export const CustomerScalarFieldEnum = {
 export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
 
 
+export const ExchangeScalarFieldEnum = {
+  id: 'id',
+  saleId: 'saleId',
+  status: 'status',
+  reason: 'reason',
+  processedById: 'processedById',
+  createdAt: 'createdAt'
+} as const
+
+export type ExchangeScalarFieldEnum = (typeof ExchangeScalarFieldEnum)[keyof typeof ExchangeScalarFieldEnum]
+
+
+export const ExchangeItemScalarFieldEnum = {
+  id: 'id',
+  exchangeId: 'exchangeId',
+  originalSaleItemId: 'originalSaleItemId',
+  originalVariantId: 'originalVariantId',
+  replacementVariantId: 'replacementVariantId',
+  quantity: 'quantity',
+  unitPriceDifference: 'unitPriceDifference'
+} as const
+
+export type ExchangeItemScalarFieldEnum = (typeof ExchangeItemScalarFieldEnum)[keyof typeof ExchangeItemScalarFieldEnum]
+
+
 export const ExpenseCategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -268,6 +313,7 @@ export const ExpenseScalarFieldEnum = {
   id: 'id',
   categoryId: 'categoryId',
   scheduleId: 'scheduleId',
+  campaignId: 'campaignId',
   amount: 'amount',
   expenseDate: 'expenseDate',
   description: 'description',
@@ -336,6 +382,18 @@ export const OrderScalarFieldEnum = {
 } as const
 
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
+
+
+export const OrderStatusHistoryScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  status: 'status',
+  changedById: 'changedById',
+  note: 'note',
+  createdAt: 'createdAt'
+} as const
+
+export type OrderStatusHistoryScalarFieldEnum = (typeof OrderStatusHistoryScalarFieldEnum)[keyof typeof OrderStatusHistoryScalarFieldEnum]
 
 
 export const PaymentScalarFieldEnum = {
@@ -454,6 +512,12 @@ export const SaleScalarFieldEnum = {
   channel: 'channel',
   status: 'status',
   couponId: 'couponId',
+  campaignId: 'campaignId',
+  utmSource: 'utmSource',
+  utmMedium: 'utmMedium',
+  utmCampaign: 'utmCampaign',
+  utmContent: 'utmContent',
+  utmTerm: 'utmTerm',
   subtotal: 'subtotal',
   discount: 'discount',
   shippingFee: 'shippingFee',

@@ -131,6 +131,12 @@ interface InvoiceReceipt {
 
 export interface CheckoutSalePayload {
   customerId?: string;           // frontend passes this if an existing customer was selected
+  campaignId?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+  utmTerm?: string;
   items: CheckoutItemInput[];
   discount?: number;             // order-level manual discount, e.g. 20 (taka) off a 200 total
   shippingFee?: number;
@@ -215,6 +221,21 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
       if (!customer) {
         throw new AppError("Selected customer does not exist.", 404);
       }
+    }
+
+    let campaignId = payload.campaignId?.trim() || null;
+    if (campaignId) {
+      const campaign = await tx.campaign.findFirst({
+        where: { id: campaignId, isActive: true },
+        select: { id: true },
+      });
+      if (!campaign) throw new AppError("Selected campaign does not exist or is inactive.", 404);
+    } else if (payload.utmCampaign?.trim()) {
+      const campaign = await tx.campaign.findFirst({
+        where: { trackingCode: payload.utmCampaign.trim(), isActive: true },
+        select: { id: true },
+      });
+      campaignId = campaign?.id ?? null;
     }
  
     // ---- STEP 2: resolve every variant's real price + validate stock, ATOMICALLY per item ----
@@ -306,16 +327,21 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
       // Computed locally instead of re-querying — this is only used for the live
       // broadcast/UI hint, not as a source of truth (StockMovement + the DB row
       // remain the real source of truth regardless of what this number says).
-      stockUpdates.push({
-        variantId: item.variantId,
-        productId: variant.productColor?.product?.id,
-        productName: variant.productColor?.product?.name,
-        colorName: variant.productColor?.colorName,
-        size: variant.size.size,
-        stockQty: Math.max(0, variant.stockQty - item.quantity),
-        movementType: "SALE_OUT",
-        updatedAt: new Date(),
-      });
+      const priorStockUpdate = stockUpdates.find((update) => update.variantId === item.variantId);
+      if (priorStockUpdate) {
+        priorStockUpdate.stockQty = Math.max(0, priorStockUpdate.stockQty - item.quantity);
+      } else {
+        stockUpdates.push({
+          variantId: item.variantId,
+          productId: variant.productColor?.product?.id,
+          productName: variant.productColor?.product?.name,
+          colorName: variant.productColor?.colorName,
+          size: variant.size.size,
+          stockQty: Math.max(0, variant.stockQty - item.quantity),
+          movementType: "SALE_OUT",
+          updatedAt: new Date(),
+        });
+      }
     }
  
     // One batched insert instead of one-per-item — cuts N round-trips down to 1.
@@ -392,6 +418,12 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
       data: {
         invoiceNo,
         customerId: customer?.id ?? null,
+        campaignId,
+        utmSource: payload.utmSource?.trim() || null,
+        utmMedium: payload.utmMedium?.trim() || null,
+        utmCampaign: payload.utmCampaign?.trim() || null,
+        utmContent: payload.utmContent?.trim() || null,
+        utmTerm: payload.utmTerm?.trim() || null,
         soldById: payload.soldById,
         channel: payload.channel ?? $Enums.SaleChannel.OFFLINE,
         status: $Enums.SaleStatus.COMPLETED,
@@ -517,61 +549,6 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
 };
  
 
-
-export const returnProduct = async (payload: {
-  variantId: string;
-  quantity: number;
-  reason?: string;
-}) => {
-  const transactionResult = await prisma.$transaction(async (tx) => {
-    const variant = await tx.productVariant.findUnique({
-      where: { id: payload.variantId },
-      include: variantInclude,
-    });
-
-    if (!variant) {
-      throw new AppError("Variant not found", 404);
-    }
-
-    const updatedVariant = await tx.productVariant.update({
-      where: { id: payload.variantId },
-      data: {
-        stockQty: variant.stockQty + payload.quantity,
-      },
-    });
-
-    await tx.stockMovement.create({
-      data: {
-        variantId: payload.variantId,
-        type: $Enums.StockMovementType.RETURN_IN,
-        quantity: payload.quantity,
-        reason: payload.reason ?? "Customer return",
-      },
-    });
-
-    return {
-      updatedStock: updatedVariant.stockQty,
-      stockUpdate: {
-        variantId: payload.variantId,
-        productId: variant.productColor?.product?.id,
-        productName: variant.productColor?.product?.name,
-        colorName: variant.productColor?.colorName,
-        size: variant.size.size,
-        stockQty: updatedVariant.stockQty,
-        movementType: "RETURN_IN" as const,
-        updatedAt: new Date(),
-      } satisfies StockUpdatePayload,
-    };
-  });
-
-  broadcastStockUpdate(transactionResult.stockUpdate);
-
-  return {
-    variantId: payload.variantId,
-    returnedQuantity: payload.quantity,
-    updatedStock: transactionResult.updatedStock,
-  };
-};
 
 export const getSalesHistory = async () => {
   const sales = await prisma.sale.findMany({

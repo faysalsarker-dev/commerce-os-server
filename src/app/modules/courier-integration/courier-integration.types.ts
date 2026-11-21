@@ -21,3 +21,17 @@ export interface CourierAccountListResult {
     total: number;
   };
 }
+
+export interface CourierCustomerHistoryAccountResult {
+  accountId: string;
+  provider: CourierAccount["provider"];
+  label: string;
+  status: "success" | "inactive" | "failed";
+  data?: unknown;
+  message?: string;
+}
+
+export interface CourierCustomerHistoryResult {
+  phone: string;
+  accounts: CourierCustomerHistoryAccountResult[];
+}

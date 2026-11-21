@@ -33,23 +33,25 @@ const unreachablePathaoError = (
   );
 };
 
-export const testConnection = async (
-  credentials: PathaoCredentials,
-  courierConfig: PathaoConfig,
-): Promise<void> => {
-  const configuredBaseUrl = courierConfig.sandbox
+const getPathaoBaseUrl = (sandbox: boolean): string => {
+  const configuredBaseUrl = sandbox
     ? config.courier.pathaoSandboxBaseUrl
     : config.courier.pathaoBaseUrl;
-  const baseUrl =
-    courierConfig.sandbox &&
-    configuredBaseUrl.includes("hermes-sandbox.pathao.com")
-      ? "https://courier-api-sandbox.pathao.com"
-      : configuredBaseUrl;
 
+  return sandbox &&
+    configuredBaseUrl.includes("hermes-sandbox.pathao.com")
+    ? "https://courier-api-sandbox.pathao.com"
+    : configuredBaseUrl;
+};
+
+const getAccessToken = async (
+  credentials: PathaoCredentials,
+  sandbox: boolean,
+): Promise<string> => {
   let tokenResponse;
   try {
     tokenResponse = await axios.post<unknown>(
-      pathaoUrl(baseUrl, "/aladdin/api/v1/issue-token"),
+      pathaoUrl(getPathaoBaseUrl(sandbox), "/aladdin/api/v1/issue-token"),
       {
         client_id: credentials.clientId,
         client_secret: credentials.clientSecret,
@@ -96,6 +98,85 @@ export const testConnection = async (
     );
   }
 
+  return token;
+};
+
+export const getCustomerHistory = async (
+  credentials: PathaoCredentials,
+  sandbox: boolean,
+  phone: string,
+): Promise<unknown> => {
+  const token = await getAccessToken(credentials, sandbox);
+  let response;
+  try {
+    response = await axios.post<unknown>(
+      pathaoUrl(
+        getPathaoBaseUrl(sandbox),
+        "/aladdin/api/v1/user/success-rate",
+      ),
+      { phone },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: PATHAO_TIMEOUT_MS,
+        validateStatus: () => true,
+      },
+    );
+  } catch (error) {
+    throw unreachablePathaoError(error, "customer-history request");
+  }
+
+  if (response.status < 200 || response.status >= 300) {
+    throw new AppError(
+      `Pathao customer-history request failed (HTTP ${response.status}).`,
+      502,
+    );
+  }
+
+  return response.data;
+};
+
+export const createShipment = async (
+  credentials: PathaoCredentials,
+  sandbox: boolean,
+  payload: Record<string, string | number>,
+): Promise<unknown> => {
+  const token = await getAccessToken(credentials, sandbox);
+  let response;
+  try {
+    response = await axios.post<unknown>(
+      pathaoUrl(getPathaoBaseUrl(sandbox), "/aladdin/api/v1/orders"),
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        timeout: PATHAO_TIMEOUT_MS,
+        validateStatus: () => true,
+      },
+    );
+  } catch (error) {
+    throw unreachablePathaoError(error, "shipment creation");
+  }
+
+  if (response.status < 200 || response.status >= 300) {
+    throw new AppError(
+      `Pathao shipment creation failed (HTTP ${response.status}).`,
+      response.status < 500 ? 400 : 502,
+    );
+  }
+
+  return response.data;
+};
+
+export const testConnection = async (
+  credentials: PathaoCredentials,
+  courierConfig: PathaoConfig,
+): Promise<void> => {
+  const baseUrl = getPathaoBaseUrl(courierConfig.sandbox);
+  const token = await getAccessToken(credentials, courierConfig.sandbox);
+
   let storesResponse;
   try {
     storesResponse = await axios.get<unknown>(
@@ -123,6 +204,8 @@ export const testConnection = async (
     ? storesData
     : isRecord(storesData) && Array.isArray(storesData.stores)
       ? storesData.stores
+      : isRecord(storesData) && Array.isArray(storesData.data)
+        ? storesData.data
       : [];
   const hasConfiguredStore = stores.some((store: unknown) => {
     if (!isRecord(store)) return false;

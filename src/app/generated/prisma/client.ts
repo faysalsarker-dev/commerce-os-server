@@ -29,8 +29,8 @@ export * from "./enums"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Categories
- * const categories = await prisma.category.findMany()
+ * // Fetch zero or more Campaigns
+ * const campaigns = await prisma.campaign.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -39,6 +39,11 @@ export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 export { Prisma }
 
+/**
+ * Model Campaign
+ * 
+ */
+export type Campaign = Prisma.CampaignModel
 /**
  * Model Category
  * 
@@ -80,6 +85,16 @@ export type WebhookLog = Prisma.WebhookLogModel
  */
 export type Customer = Prisma.CustomerModel
 /**
+ * Model Exchange
+ * 
+ */
+export type Exchange = Prisma.ExchangeModel
+/**
+ * Model ExchangeItem
+ * 
+ */
+export type ExchangeItem = Prisma.ExchangeItemModel
+/**
  * Model ExpenseCategory
  * 
  */
@@ -114,6 +129,11 @@ export type Message = Prisma.MessageModel
  * 
  */
 export type Order = Prisma.OrderModel
+/**
+ * Model OrderStatusHistory
+ * 
+ */
+export type OrderStatusHistory = Prisma.OrderStatusHistoryModel
 /**
  * Model Payment
  * 

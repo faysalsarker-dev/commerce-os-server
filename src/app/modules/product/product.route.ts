@@ -10,40 +10,46 @@ import {
   updateProductVariantSchema,
 } from "./product.validation";
 import { uploadHandler } from "../../utils/helper/upload-handler";
+import { checkAuth } from "../../middleware/authenticate";
 
 const router = Router();
 
 // ==================== STEP 2: PRODUCT COLORS ====================
 router.post(
   "/color",
+  checkAuth(),
   ...uploadHandler("images", { multiple: true, maxCount: 10 }),
   validate(createProductColorSchema),
   ProductController.addProductColor,
 );
 router.patch(
   "/color/:id",
+  checkAuth(),
   ...uploadHandler("images", { multiple: true, maxCount: 10 }),
   validate(updateProductColorSchema),
   ProductController.updateProductColor,
 );
-router.delete("/color/:id", ProductController.deleteProductColor);
+router.delete("/color/:id", checkAuth(), ProductController.deleteProductColor);
 
 // ==================== STEP 3: PRODUCT VARIANTS ====================
 router.post(
   "/variant",
+  checkAuth(),
   validate(createProductVariantSchema),
   ProductController.addProductVariant,
 );
 router.patch(
   "/variant/:id",
+  checkAuth(),
   validate(updateProductVariantSchema),
   ProductController.updateProductVariant,
 );
-router.delete("/variant/:id", ProductController.deleteProductVariant);
+router.delete("/variant/:id", checkAuth(), ProductController.deleteProductVariant);
 
 // ==================== STEP 1: BASE PRODUCT CONTAINERS ====================
 router.post(
   "/",
+  checkAuth(),
   validate(createProductSchema),
   ProductController.createProduct,
 );
@@ -51,9 +57,10 @@ router.get("/", ProductController.getProducts);
 router.get("/:id", ProductController.getProduct);
 router.patch(
   "/:id",
+  checkAuth(),
   validate(updateProductSchema),
   ProductController.updateProduct,
 );
-router.delete("/:id", ProductController.deleteProduct);
+router.delete("/:id", checkAuth(), ProductController.deleteProduct);
 
 export default router;

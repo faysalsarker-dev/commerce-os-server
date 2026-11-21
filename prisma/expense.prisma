@@ -73,6 +73,9 @@ model Expense {
   scheduleId String?
   schedule    ExpenseSchedule? @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
 
+  campaignId String?
+  campaign   Campaign? @relation(fields: [campaignId], references: [id], onDelete: Restrict)
+
   amount      Decimal  @db.Decimal(12, 2)
   expenseDate DateTime @default(now())
 
@@ -85,4 +88,5 @@ model Expense {
   @@index([expenseDate])
   @@index([categoryId, expenseDate])
   @@index([scheduleId])
+  @@index([campaignId, expenseDate])
 }

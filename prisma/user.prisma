@@ -21,6 +21,8 @@ model User {
  payments Payment[] @relation("PaymentReceivedBy")
  refunds  Refund[]  @relation("RefundProcessedBy")
  createdCoupons Coupon[] @relation("CouponCreatedBy")
+ orderStatusChanges OrderStatusHistory[] @relation("OrderStatusChangedBy")
+ exchangesProcessed Exchange[] @relation("ExchangeProcessedBy")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

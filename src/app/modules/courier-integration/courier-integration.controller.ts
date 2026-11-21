@@ -3,15 +3,18 @@ import catchAsync from "../../common/catchAsync";
 import sendResponse from "../../common/sendResponse";
 import { HttpStatus } from "../../utils/network/httpStatus";
 import * as CourierIntegrationService from "./courier-integration.service";
+import * as CourierWebhookService from "./courier-webhook.service";
+import * as ShipmentService from "./shipment.service";
 import type {
+  CustomerHistoryInput,
   CreateCourierAccountInput,
+  DispatchShipmentInput,
   TestCourierConnectionInput,
   UpdateCourierAccountInput,
 } from "./courier-integration.validation";
 
 export const getCourierAccounts = catchAsync(
   async (req: Request, res: Response) => {
-    console.log("Request Query:", req.query); // Log the incoming query parameters
     const result = await CourierIntegrationService.getCourierAccounts(
       req.query as unknown as Record<string, unknown>,
     );
@@ -102,10 +105,70 @@ export const testCourierConnection = catchAsync(
   },
 );
 
+export const getCourierCustomerHistory = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await CourierIntegrationService.getCourierCustomerHistory(
+      (req.body as CustomerHistoryInput).phone,
+    );
+
+    sendResponse(res, {
+      statusCode: HttpStatus.OK,
+      success: true,
+      message: "Courier customer history fetched successfully",
+      data: result,
+    });
+  },
+);
+
+export const dispatchCourierShipment = catchAsync(
+  async (req: Request, res: Response) => {
+    const shipment = await ShipmentService.dispatchCourierShipment(
+      req.body as DispatchShipmentInput,
+    );
+
+    sendResponse(res, {
+      statusCode: HttpStatus.CREATED,
+      success: true,
+      message: "Courier shipment created successfully",
+      data: shipment,
+    });
+  },
+);
+
+export const getCourierShipment = catchAsync(
+  async (req: Request, res: Response) => {
+    const shipment = await ShipmentService.getCourierShipmentById(
+      req.params.shipmentId as string,
+    );
+
+    sendResponse(res, {
+      statusCode: HttpStatus.OK,
+      success: true,
+      message: "Courier shipment fetched successfully",
+      data: shipment,
+    });
+  },
+);
+
+export const getCourierWebhookLogs = catchAsync(
+  async (req: Request, res: Response) => {
+    const logs = await CourierWebhookService.getCourierWebhookLogs(
+      req.params.id as string,
+    );
+
+    sendResponse(res, {
+      statusCode: HttpStatus.OK,
+      success: true,
+      message: "Courier webhook logs fetched successfully",
+      data: logs,
+    });
+  },
+);
+
 export const regenerateWebhookSecret = catchAsync(
   async (req: Request, res: Response) => {
     const account =
-      await CourierIntegrationService.regeneratePathaoWebhookSecret(
+      await CourierIntegrationService.regenerateCourierWebhookSecret(
         req.params.id as string,
       );
 

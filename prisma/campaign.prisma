@@ -1,0 +1,20 @@
+model Campaign {
+  id           String   @id @default(cuid())
+  name         String
+  platform     Platform
+  trackingCode String?  @unique
+  startDate    DateTime?
+  endDate      DateTime?
+  isActive     Boolean  @default(true)
+  isCampEnd    Boolean  @default(false)
+
+  sales    Sale[]
+  expenses Expense[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([platform, isActive])
+  @@index([startDate, endDate])
+}
+ 

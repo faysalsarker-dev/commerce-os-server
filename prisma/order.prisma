@@ -6,6 +6,7 @@ model Order {
   sale       Sale        @relation(fields: [saleId], references: [id], onDelete: Restrict)
   status     OrderStatus @default(PENDING)
   shipments  Shipment[]
+  statusHistory OrderStatusHistory[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -13,4 +14,18 @@ model Order {
   @@index([customerId])
   @@index([status])
   @@index([createdAt])
+}
+
+model OrderStatusHistory {
+  id          String      @id @default(cuid())
+  orderId     String
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status      OrderStatus
+  changedById String?
+  changedBy   User?       @relation("OrderStatusChangedBy", fields: [changedById], references: [id], onDelete: SetNull)
+  note        String?
+  createdAt   DateTime    @default(now())
+
+  @@index([orderId, createdAt])
+  @@index([changedById])
 }
