@@ -29,14 +29,15 @@ export const checkoutSale = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const getSalesHistory = catchAsync(async (_req: Request, res: Response) => {
-  const result = await SalesService.getSalesHistory();
+export const getSalesHistory = catchAsync(async (req: Request, res: Response) => {
+  const result = await SalesService.getSalesHistory(req.query);
 
   sendResponse(res, {
     statusCode: HttpStatus.OK,
     success: true,
     message: "Sales history fetched successfully",
-    data: result,
+    data: result.data,
+    meta: result.meta,
   });
 });
 

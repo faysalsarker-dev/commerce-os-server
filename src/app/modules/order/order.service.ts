@@ -25,6 +25,9 @@ const orderListInclude = {
       status: true,
       total: true,
       paymentStatus: true,
+      campaign: {
+        select: { id: true, name: true, platform: true },
+      },
     },
   },
   _count: {
@@ -38,6 +41,9 @@ const orderDetailInclude = {
   },
   sale: {
     include: {
+      campaign: {
+        select: { id: true, name: true, platform: true },
+      },
       items: {
         include: {
           variant: {
@@ -147,6 +153,7 @@ export const getOrders = async (query: Record<string, unknown>) => {
   if (filters.customerId) conditions.push({ customerId: filters.customerId });
   if (filters.saleId) conditions.push({ saleId: filters.saleId });
   if (filters.channel) conditions.push({ sale: { channel: filters.channel } });
+  if (filters.campaignId) conditions.push({ sale: { campaignId: filters.campaignId } });
   if (filters.searchTerm) {
     conditions.push({
       OR: [

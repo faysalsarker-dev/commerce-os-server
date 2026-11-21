@@ -83,7 +83,7 @@ Base URL: `/api/v1`
 |---|---|---|---|
 | POST | `/sales/scan` | No | Scan a product code to look up item details during checkout. |
 | POST | `/sales/checkout` | No | Complete a sale transaction. |
-| GET | `/sales/history` | No | View the sales history for reporting or reconciliation. |
+| GET | `/sales/history` | No | View paginated, table-ready sales summaries. Supports `page`, `limit`, `searchTerm` (invoice, customer name or phone), `channel`, `status`, `paymentStatus`, `dateFrom`, `dateTo`, `sortBy` and `sortOrder`. Returns customer name/phone, product quantity, date, amounts and payment status. Use `/sales/invoice/:invoiceNo` for full receipt details. |
 
 For split tender checkout, `/sales/checkout` accepts `payments` entries with an actual method, amount, and optional transaction reference. Their amounts must equal the sale total for a full payment; for a sale with a due balance, set `isFullPayment` to `false` and the remaining amount is calculated by the server.
 
@@ -262,12 +262,14 @@ All order endpoints require authentication. An order references a customer and a
 | Method | Endpoint | Auth | Use Case |
 |---|---|---|---|
 | POST | `/orders` | Yes | Create an order from an existing sale and customer. Requires `customerId` and `saleId`; the sale is linked to the customer if it did not already have one. A sale can belong to only one order. |
-| GET | `/orders` | Yes | List orders with pagination, status/customer/sale/channel filters, and search across customer name/phone and sale invoice number. |
-| GET | `/orders/:id` | Yes | Fetch order details with its customer, sale items, payments, refunds, shipments, and shipment events. |
+| GET | `/orders` | Yes | List orders with pagination, status/customer/sale/channel/campaign filters, and search across customer name/phone and sale invoice number. |
+| GET | `/orders/:id` | Yes | Fetch order details with its customer, campaign attribution, sale items, payments, refunds, shipments, and shipment events. |
 | PATCH | `/orders/:id` | Yes | Advance through valid order states: Pending → Confirmed → Processing → Packed → Shipped → Completed. Eligible unpaid orders may be cancelled. Each transition is recorded in order status history. |
 | DELETE | `/orders/:id` | Yes | Delete an order only when it has no shipment history. |
 
-Order-list query parameters: `page`, `limit` (maximum 100), `status`, `customerId`, `saleId`, `channel`, `searchTerm`, `sortBy` (`createdAt` or `updatedAt`), and `sortOrder` (`asc` or `desc`).
+Order-list query parameters: `page`, `limit` (maximum 100), `status`, `customerId`, `saleId`, `channel`, `campaignId`, `searchTerm`, `sortBy` (`createdAt` or `updatedAt`), and `sortOrder` (`asc` or `desc`). `meta.total` provides the order count for a campaign filter.
+
+Sale channels are `ONLINE`, `OFFLINE`, `SOCIAL`, `FACEBOOK`, `INSTAGRAM`, `TIKTOK`, `WHATSAPP`, `GOOGLE`, `YOUTUBE`, and `OTHER`. Campaign attribution remains on `Sale.campaignId`; because each order references one sale, filter orders with `/orders?campaignId=<id>` to list/count orders attributed to a campaign.
 
 ## 13. Marketing Campaigns
 

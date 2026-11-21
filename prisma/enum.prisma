@@ -39,6 +39,14 @@ enum ProductStatus {
 enum SaleChannel {
   ONLINE
   OFFLINE
+  SOCIAL
+  FACEBOOK
+  INSTAGRAM
+  TIKTOK
+  WHATSAPP
+  GOOGLE
+  YOUTUBE
+  OTHER
 }
 
 enum SaleStatus {

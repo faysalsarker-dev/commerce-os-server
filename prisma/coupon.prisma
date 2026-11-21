@@ -18,7 +18,7 @@ model Coupon {
   perCustomerLimit  Int?          @default(1) // redemption limit per individual customer (null = unlimited)
 
   isActive          Boolean       @default(true) // quick status toggle
-  channel           SaleChannel?  // ONLINE, OFFLINE, or null for ALL channels
+  channel           SaleChannel?  // null applies to all sales channels
 
   // Relationships
   usages            CouponUsage[]

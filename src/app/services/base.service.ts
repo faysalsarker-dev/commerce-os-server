@@ -30,6 +30,11 @@ export interface PaginatedResult<T> {
   };
 }
 
+export interface GetAllOptions {
+  where?: Record<string, any>;
+  select?: Record<string, any>;
+}
+
 // ─── Functions ────────────────────────────────────────────────────────────────
 
 export const createOne = async <T>(
@@ -46,16 +51,29 @@ export const getAll = async <T>(
   model: PrismaModel,
   query: Record<string, any> = {},
   searchableFields: string[] = [],
-  include?: Record<string, any>
+  include?: Record<string, any>,
+  options: GetAllOptions = {}
 ): Promise<PaginatedResult<T>> => {
   const { where, orderBy, skip, take, page } = buildPrismaQuery<T>(
     query,
     searchableFields
   );
+  const combinedWhere = options.where
+    ? Object.keys(where).length > 0
+      ? { AND: [where, options.where] }
+      : options.where
+    : where;
 
   const [data, total] = await Promise.all([
-    model.findMany({ where, orderBy, skip, take, ...(include && { include }) }),
-    model.count({ where }),
+    model.findMany({
+      where: combinedWhere,
+      orderBy,
+      skip,
+      take,
+      ...(include && { include }),
+      ...(options.select && { select: options.select }),
+    }),
+    model.count({ where: combinedWhere }),
   ]);
 
   const totalPages = Math.ceil(total / take);

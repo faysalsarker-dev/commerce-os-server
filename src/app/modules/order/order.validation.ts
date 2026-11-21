@@ -19,6 +19,7 @@ export const listOrdersQuerySchema = z.object({
   channel: z.nativeEnum(SaleChannel).optional(),
   customerId: requiredId.optional(),
   saleId: requiredId.optional(),
+  campaignId: requiredId.optional(),
   searchTerm: z.string().trim().max(100).optional(),
   sortBy: z.enum(["createdAt", "updatedAt"]).default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),

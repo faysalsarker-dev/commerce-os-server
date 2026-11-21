@@ -1,4 +1,9 @@
 import { z } from "zod";
+import {
+  PaymentStatus,
+  SaleChannel,
+  SaleStatus,
+} from "../../generated/prisma/enums";
 
 const emptyToUndefined = (val: unknown) => (val === "" ? undefined : val);
 const paymentMethodSchema = z.enum([
@@ -64,7 +69,7 @@ export const checkoutSaleSchema = z.object({
   utmContent: z.preprocess(emptyToUndefined, z.string().trim().max(200).optional()),
   utmTerm: z.preprocess(emptyToUndefined, z.string().trim().max(200).optional()),
   soldById: z.preprocess(emptyToUndefined, z.string().optional()),
-  channel: z.enum(["ONLINE", "OFFLINE"]).optional().default("OFFLINE"),
+  channel: z.nativeEnum(SaleChannel).optional().default(SaleChannel.OFFLINE),
   status: z
     .enum([
       "DRAFT",
@@ -82,4 +87,24 @@ export const checkoutSaleSchema = z.object({
   reference: z.preprocess(emptyToUndefined, z.string().optional()),
   invoiceNo: z.preprocess(emptyToUndefined, z.string().optional()),
 });
+
+export const salesHistoryQuerySchema = z
+  .object({
+    page: z.coerce.number().int().positive().default(1),
+    limit: z.coerce.number().int().positive().max(100).default(20),
+    searchTerm: z.string().trim().max(100).optional(),
+    channel: z.nativeEnum(SaleChannel).optional(),
+    status: z.nativeEnum(SaleStatus).optional(),
+    paymentStatus: z.nativeEnum(PaymentStatus).optional(),
+    dateFrom: z.coerce.date().optional(),
+    dateTo: z.coerce.date().optional(),
+    sortBy: z
+      .enum(["createdAt", "invoiceNo", "channel", "status", "subtotal", "discount", "total"])
+      .default("createdAt"),
+    sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  })
+  .refine(
+    ({ dateFrom, dateTo }) => !dateFrom || !dateTo || dateFrom <= dateTo,
+    { message: "dateFrom must be on or before dateTo", path: ["dateFrom"] },
+  );
 

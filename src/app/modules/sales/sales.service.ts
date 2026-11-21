@@ -2,6 +2,8 @@ import prisma from "../../lib/prisma";
 import { AppError } from "../../errors/AppError";
 import { $Enums, Prisma } from "../../generated/prisma/client";
 import { broadcastStockUpdate, type StockUpdatePayload } from "../../config/socket";
+import { getAll } from "../../services/base.service";
+import { salesHistoryQuerySchema } from "./sales.validation";
 
 const variantInclude = {
   size: true,
@@ -550,33 +552,113 @@ export const checkoutSale = async (payload: CheckoutSalePayload) => {
  
 
 
-export const getSalesHistory = async () => {
-  const sales = await prisma.sale.findMany({
-    include: {
-      customer: true,
-      soldBy: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
-      items: {
-        include: {
-          variant: {
-            include: variantInclude,
-          },
-        },
-      },
-      payments: true,
-      refunds: true,
+const salesHistorySelect = {
+  id: true,
+  invoiceNo: true,
+  createdAt: true,
+  channel: true,
+  status: true,
+  subtotal: true,
+  discount: true,
+  shippingFee: true,
+  total: true,
+  paidAmount: true,
+  dueAmount: true,
+  paymentStatus: true,
+  customer: {
+    select: {
+      id: true,
+      name: true,
+      phone: true,
     },
-    orderBy: {
-      createdAt: "desc",
+  },
+  items: {
+    select: {
+      quantity: true,
     },
-  });
+  },
+} satisfies Prisma.SaleSelect;
 
-  return sales;
+type SalesHistoryRecord = Prisma.SaleGetPayload<{
+  select: typeof salesHistorySelect;
+}>;
+
+export const getSalesHistory = async (query: Record<string, unknown>) => {
+  const filters = salesHistoryQuerySchema.parse(query);
+  const {
+    page,
+    limit,
+    searchTerm,
+    channel,
+    status,
+    paymentStatus,
+    dateFrom,
+    dateTo,
+    sortBy,
+    sortOrder,
+  } = filters;
+  const conditions: Prisma.SaleWhereInput[] = [];
+
+  if (searchTerm) {
+    conditions.push({
+      OR: [
+        { invoiceNo: { contains: searchTerm, mode: "insensitive" } },
+        { customer: { is: { name: { contains: searchTerm, mode: "insensitive" } } } },
+        { customer: { is: { phone: { contains: searchTerm, mode: "insensitive" } } } },
+      ],
+    });
+  }
+  if (dateFrom) {
+    const start = new Date(dateFrom);
+    start.setUTCHours(0, 0, 0, 0);
+    conditions.push({ createdAt: { gte: start } });
+  }
+  if (dateTo) {
+    const endExclusive = new Date(dateTo);
+    endExclusive.setUTCDate(endExclusive.getUTCDate() + 1);
+    endExclusive.setUTCHours(0, 0, 0, 0);
+    conditions.push({ createdAt: { lt: endExclusive } });
+  }
+
+  const result = await getAll<SalesHistoryRecord>(
+    prisma.sale,
+    {
+      page,
+      limit,
+      ...(channel && { channel }),
+      ...(status && { status }),
+      ...(paymentStatus && { paymentStatus }),
+      sortBy,
+      sortOrder,
+    },
+    [],
+    undefined,
+    {
+      where: conditions.length ? { AND: conditions } : undefined,
+      select: salesHistorySelect,
+    },
+  );
+
+  return {
+    data: result.data.map((sale) => ({
+      saleId: sale.id,
+      invoiceNo: sale.invoiceNo,
+      customerName: sale.customer?.name ?? "Walk-in Customer",
+      customerPhone: sale.customer?.phone ?? null,
+      totalProducts: sale.items.reduce((total, item) => total + item.quantity, 0),
+      date: sale.createdAt.toISOString(),
+      channel: sale.channel,
+      status: sale.status,
+      subtotal: Number(sale.subtotal),
+      discount: Number(sale.discount),
+      shippingFee: Number(sale.shippingFee),
+      total: Number(sale.total),
+      paidAmount: Number(sale.paidAmount),
+      dueAmount: Number(sale.dueAmount),
+      paymentStatus: sale.paymentStatus,
+    })),
+    meta: result.meta,
+  };
 };
 
 

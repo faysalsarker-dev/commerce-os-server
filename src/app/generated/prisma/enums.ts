@@ -57,7 +57,15 @@ export type ProductStatus = (typeof ProductStatus)[keyof typeof ProductStatus]
 
 export const SaleChannel = {
   ONLINE: 'ONLINE',
-  OFFLINE: 'OFFLINE'
+  OFFLINE: 'OFFLINE',
+  SOCIAL: 'SOCIAL',
+  FACEBOOK: 'FACEBOOK',
+  INSTAGRAM: 'INSTAGRAM',
+  TIKTOK: 'TIKTOK',
+  WHATSAPP: 'WHATSAPP',
+  GOOGLE: 'GOOGLE',
+  YOUTUBE: 'YOUTUBE',
+  OTHER: 'OTHER'
 } as const
 
 export type SaleChannel = (typeof SaleChannel)[keyof typeof SaleChannel]

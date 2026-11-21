@@ -22,7 +22,7 @@ router.patch("/reset-password", validate(resetPasswordSchema), AuthController.re
 
 
 router.get("/profile", checkAuth(), AuthController.getProfile);
-router.get("/me", checkAuth(), AuthController.getProfile);
+router.get("/me", checkAuth(), AuthController.getMe);
 router.patch("/profile", checkAuth(), validate(updateProfileSchema), AuthController.updateProfile);
 router.patch("/password", checkAuth(), validate(updatePasswordSchema), AuthController.updatePassword);
 
